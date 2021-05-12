@@ -1,0 +1,57 @@
+{
+  "name": "eufy-security-ws",
+  "version": "0.1.0",
+  "description": "Node WebSocket server implementation to integrate Eufy Security devices",
+  "main": "dist/lib/index.js",
+  "bin": {
+    "eufy-security-server": "dist/bin/server.js",
+    "eufy-security-client": "dist/bin/client.js"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "lint": "eslint --ext .ts .",
+    "lint:fix": "eslint --fix --ext .ts . && prettier -w .",
+    "test": "prettier --check src && tsc --noEmit && npm run lint && ts-node src/test/integration.ts",
+    "build": "tsc -p .",
+    "prepare": "npm run build",
+    "prepublishOnly": "rm -rf dist && npm run build",
+    "build:ts": "tsc -p ."
+  },
+  "author": {
+    "name": "bropat",
+    "email": "patrick.broetto@gmail.com"
+  },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bropat/eufy-security-ws"
+  },
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "dependencies": {
+    "ansi-colors": "^4.1.1",
+    "commander": "^7.2.0",
+    "eufy-security-client": "^0.8.0",
+    "fs-extra": "^10.0.0",
+    "promptly": "^3.2.0",
+    "tslog": "^3.2.0",
+    "ws": "^7.4.5"
+  },
+  "devDependencies": {
+    "@types/ansi-colors": "3.2.2",
+    "@types/node": "^15.0.2",
+    "@types/node-rsa": "^1.1.0",
+    "@types/promptly": "^3.0.1",
+    "@types/ws": "^7.4.4",
+    "@typescript-eslint/eslint-plugin": "^4.23.0",
+    "@typescript-eslint/parser": "^4.23.0",
+    "eslint": "^7.26.0",
+    "eslint-config-prettier": "^8.3.0",
+    "prettier": "^2.3.0",
+    "ts-node": "^9.1.1",
+    "typescript": "^4.2.4"
+  }
+}

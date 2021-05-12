@@ -1,0 +1,15 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the README at:
+// https://github.com/microsoft/vscode-dev-containers/tree/v0.158.0/containers/typescript-node
+{
+  "name": "Eufy Security WS Server",
+  "image": "mcr.microsoft.com/vscode/devcontainers/javascript-node:12",
+  "context": "..",
+  "postCreateCommand": "npm install",
+  "forwardPorts": [3000],
+  "remoteUser": "node",
+  "extensions": [
+    "dbaeumer.vscode-eslint",
+    "github.vscode-pull-request-github",
+    "esbenp.prettier-vscode"
+  ]
+}
