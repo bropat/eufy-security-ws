@@ -46,7 +46,7 @@ export interface EufySecurityConfig {
     persistentDir?: string;                 // Directory in which the persistent information is saved (default: module path)
     p2pConnectionSetup: number;             // P2P connection setup (default: 0 ; Prefers local connection over cloud)
     pollingIntervalMinutes: number;         // Polling intervall for data refresh from Eufy Cloud (default: 10 min.)
-    eventDurationSeconds: number;           // Duration in seconds befora an event is reset E.g. motion event (default: 10 sec.)
+    eventDurationSeconds: number;           // Duration in seconds before an event is reset E.g. motion event (default: 10 sec.)
 }
 ```
 
@@ -627,3 +627,30 @@ In an attempt to keep compatibility between different server and client versions
 ## Authentication
 
 eufy-security-ws does not handle authentication and allows all connections to the websocket API. If you want to add authentication, add authentication middleware to your Express instance or run NGINX in front of Express instance.
+
+## Docker
+
+eufy-security-ws is available via a Docker image
+([`bropat/eufy-security-ws`](https://hub.docker.com/r/bropat/eufy-security-ws)). It is configured by a handful of environment variables that correspond to the options found in the config file above:
+
+* `USERNAME:` Eufy Account Username (required)
+* `PASSWORD:` Eufy Account Password (required)
+* `COUNTRY:` ISO 3166-1 Alpha-2 country code (default: US)
+* `LANGUAGE:` ISO 639 language code (default: en)
+* `TRUSTED_DEVICE_NAME:` Label of the trusted devices (viewable with 2fa activated in Eufy App; default: eufyclient)
+* `EVENT_DURATION_SECONDS:` Duration in seconds before an event is reset E.g. motion event (default: 10 sec.)
+* `P2P_CONNECTION_SETUP:` P2P connection setup (default: 0 ; Prefers local connection over cloud)
+* `POLLING_INTERVAL_MINUTES:` Polling intervall for data refresh from Eufy Cloud (default: 10 min.)
+
+The image also exposes a `/data` volume that corresponds to the `persistentDir`.
+
+Running the image is straightforward:
+
+```
+docker run -it \
+    -e USERNAME=user \
+    -e PASSWORD=password \
+    -v "$(PWD)"/data:/data \
+    -p 3000:0000 \
+    bropat/eufy-security-ws:latest
+```
