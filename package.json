@@ -24,6 +24,16 @@
     "email": "patrick.broetto@gmail.com"
   },
   "license": "MIT",
+  "keywords": [
+    "eufy",
+    "eufycam",
+    "cam",
+    "cameras",
+    "security",
+    "eufy-security",
+    "ws",
+    "websocket"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/bropat/eufy-security-ws"

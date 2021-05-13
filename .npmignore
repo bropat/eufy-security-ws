@@ -28,3 +28,4 @@ tsconfig.tsbuildinfo
 # npm package files
 *.tgz
 package-lock.json
+config.json

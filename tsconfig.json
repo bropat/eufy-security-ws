@@ -12,6 +12,7 @@
         "esModuleInterop": true,
         "resolveJsonModule": true,
         "strict": true,
-        "sourceMap": true
+        "sourceMap": true,
+        "noEmit": false,
     }
 }
