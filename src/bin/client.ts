@@ -89,7 +89,7 @@ const isNumber = (value: string): boolean => {
     } catch (error) {
         return false;
     }
-}
+};
 
 const isTrueFalse = (value: string): boolean => {
     if (value.toLowerCase() === "true" || value.toLowerCase() === "false") {
