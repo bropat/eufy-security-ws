@@ -1,4 +1,5 @@
-import { PropertyName, Station } from "eufy-security-client"
+import { DeviceType, PropertyName, Station } from "eufy-security-client"
+import { Modify } from "../state";
 
 export interface StationStateSchema0 {
     name: string;
@@ -13,8 +14,14 @@ export interface StationStateSchema0 {
     connected: boolean;
 }
 
+type StationStateSchema1 = Modify<
+StationStateSchema0,
+{ type: DeviceType }
+>;
+
 export type StationState = 
- | StationStateSchema0;
+ | StationStateSchema0
+ | StationStateSchema1;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const dumpStation = (station: Station, schemaVersion: number): StationState => {
@@ -31,5 +38,13 @@ export const dumpStation = (station: Station, schemaVersion: number): StationSta
         connected: station.isConnected(),
     };
 
-    return base as StationStateSchema0;
+    if (schemaVersion == 0) {
+        return base as StationStateSchema0;
+    }
+
+    // All schemas >= 1
+    const station1 = base as StationStateSchema1;
+    station1.type = station.getPropertyValue(PropertyName.Type).value as number;
+
+    return station1;
 };

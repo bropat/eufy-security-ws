@@ -4,7 +4,7 @@ import { DriverState } from "./driver/state"
 import { dumpStation, StationState } from "./station/state";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-type Modify<T, R> = Omit<T, keyof R> & R;
+export type Modify<T, R> = Omit<T, keyof R> & R;
 
 //TODO: Finish Implementation
 export interface EufySecurityStateSchema0 {

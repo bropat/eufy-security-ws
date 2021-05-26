@@ -1,4 +1,5 @@
-import { Device, PropertyName } from "eufy-security-client"
+import { Device, DeviceType, PropertyName } from "eufy-security-client"
+import { Modify } from "../state";
 
 export interface DeviceStateSchema0 {
     name: string;
@@ -41,8 +42,14 @@ export interface DeviceStateSchema0 {
     pictureUrl?: string;
 }
 
+type DeviceStateSchema1 = Modify<
+DeviceStateSchema0,
+{ type: DeviceType }
+>;
+
 export type DeviceState = 
-  | DeviceStateSchema0;
+  | DeviceStateSchema0
+  | DeviceStateSchema1;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const dumpDevice = (device: Device, schemaVersion: number): DeviceState => {
@@ -85,5 +92,14 @@ export const dumpDevice = (device: Device, schemaVersion: number): DeviceState =
         pictureUrl: device.getPropertyValue(PropertyName.DevicePictureUrl)?.value as string,
     };
 
-    return base as DeviceStateSchema0;
+    if (schemaVersion == 0) {
+        return base as DeviceStateSchema0;
+    }
+
+    // All schemas >= 1
+    const device1 = base as DeviceStateSchema1;
+    device1.type = device.getPropertyValue(PropertyName.Type).value as number;
+
+    return device1;
+    
 };
