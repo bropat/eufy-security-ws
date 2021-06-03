@@ -14,4 +14,7 @@ export interface DeviceResultTypes {
     [DeviceCommand.getPropertiesMetadata]: { properties: Record<string, unknown>; };
     [DeviceCommand.getProperties]: { properties: Record<string, unknown>; };
     [DeviceCommand.setProperty]: Record<string, never>;
+    [DeviceCommand.startLivestream]: Record<string, never>;
+    [DeviceCommand.stopLivestream]: Record<string, never>;
+    [DeviceCommand.isLiveStreaming]: { livestreaming: boolean };
 }

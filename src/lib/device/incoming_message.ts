@@ -69,6 +69,18 @@ export interface IncomingCommandDeviceSetProperty extends IncomingCommandDeviceB
     value: unknown;
 }
 
+export interface IncomingCommandDeviceStartLivestream extends IncomingCommandDeviceBase {
+    command: DeviceCommand.startLivestream;
+}
+
+export interface IncomingCommandDeviceStopLivestream extends IncomingCommandDeviceBase {
+    command: DeviceCommand.stopLivestream;
+}
+
+export interface IncomingCommandDeviceIsLiveStreaming extends IncomingCommandDeviceBase {
+    command: DeviceCommand.isLiveStreaming;
+}
+
 export type IncomingMessageDevice =
   | IncomingCommandDeviceSetStatusLed
   | IncomingCommandDeviceSetAutoNightVision
@@ -82,4 +94,7 @@ export type IncomingMessageDevice =
   | IncomingCommandDeviceLockDevice
   | IncomingCommandDeviceGetPropertiesMetadata
   | IncomingCommandDeviceGetProperties
-  | IncomingCommandDeviceSetProperty;
+  | IncomingCommandDeviceSetProperty
+  | IncomingCommandDeviceStartLivestream
+  | IncomingCommandDeviceStopLivestream
+  | IncomingCommandDeviceIsLiveStreaming;

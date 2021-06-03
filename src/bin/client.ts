@@ -40,6 +40,9 @@ const cmdHelp = (cmd: string): void => {
             break;
         case DeviceCommand.getPropertiesMetadata:
         case DeviceCommand.getProperties:
+        case DeviceCommand.startLivestream:
+        case DeviceCommand.stopLivestream:
+        case DeviceCommand.isLiveStreaming:
             console.log(`${cmd} <device_sn>`);
             break;
         case DeviceCommand.setProperty:
@@ -409,6 +412,39 @@ process.on("SIGTERM", handleShutdown);
                         serialNumber: args[1],
                         name: args[2],
                         value: args[3],
+                    }));
+                } else {
+                    cmdHelp(args[0]);
+                }
+                break;
+            case DeviceCommand.startLivestream:
+                if (args.length === 2) {
+                    socket.send(JSON.stringify({
+                        messageId: DeviceCommand.startLivestream.split(".")[1],
+                        command: DeviceCommand.startLivestream,
+                        serialNumber: args[1],
+                    }));
+                } else {
+                    cmdHelp(args[0]);
+                }
+                break;
+            case DeviceCommand.stopLivestream:
+                if (args.length === 2) {
+                    socket.send(JSON.stringify({
+                        messageId: DeviceCommand.stopLivestream.split(".")[1],
+                        command: DeviceCommand.stopLivestream,
+                        serialNumber: args[1],
+                    }));
+                } else {
+                    cmdHelp(args[0]);
+                }
+                break;
+            case DeviceCommand.isLiveStreaming:
+                if (args.length === 2) {
+                    socket.send(JSON.stringify({
+                        messageId: DeviceCommand.isLiveStreaming.split(".")[1],
+                        command: DeviceCommand.isLiveStreaming,
+                        serialNumber: args[1],
                     }));
                 } else {
                     cmdHelp(args[0]);

@@ -25,6 +25,9 @@ export class Client {
     public receiveEvents = false;
     private _outstandingPing = false;
     public schemaVersion = minSchemaVersion;
+    public receiveLivestream: {
+        [index: string]: boolean;
+    } = {};
 
     private instanceHandlers: Record<Instance, (message: IncomingMessage) => Promise<OutgoingMessages.OutgoingResultMessageSuccess["result"]>> = {
         [Instance.station]: (message) =>
@@ -239,7 +242,32 @@ export class ClientsController {
 
     private cleanupClients() {
         this.cleanupScheduled = false;
+        const disconnectedClients = this.clients.filter((cl) => cl.isConnected === false);
         this.clients = this.clients.filter((cl) => cl.isConnected);
+
+        const activelyStreaming: Array<string> = [];
+        this.clients.forEach(client => {
+            Object.keys(client.receiveLivestream).forEach(serialNumber => {
+                if (client.receiveLivestream[serialNumber] === true && !activelyStreaming.includes(serialNumber)) {
+                    activelyStreaming.push(serialNumber);
+                }
+            });
+        });
+
+        disconnectedClients.forEach(client => {
+            Object.keys(client.receiveLivestream).forEach(serialNumber => {
+                if (client.receiveLivestream[serialNumber] === true && !activelyStreaming.includes(serialNumber)) {
+                    try {
+                        const device = this.driver.getDevice(serialNumber);
+                        const station = this.driver.getStation(device.getStationSerial());
+                        if (station.isLiveStreaming(device))
+                            station.stopLivestream(device);
+                    } catch(error) {
+                        this.logger.error(`Error doing cleanup of client`, error);
+                    }
+                }
+            });
+        });
     }
 
     disconnect(): void {

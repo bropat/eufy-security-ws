@@ -122,19 +122,6 @@ interface {
 
 After that, the client will be notified of each state change that happens inside eufy-security-client.
 
-Event keys follow the names/types as used by eufy-security-client.
-
-```ts
-interface {
-    type: "event",
-    event: {
-        source: "driver" | "station" | "device";
-        event: string;
-        [key: string]: unknown;
-    }
-}
-```
-
 ## Client commands
 
 ### Server level commands
@@ -575,6 +562,664 @@ interface {
   command: "device.lock_device";
   serialNumber: string;
   value: boolean;
+}
+```
+
+#### Start live stream
+
+[compatible with schema version: 2+]
+
+```ts
+interface {
+  messageId: string;
+  command: "device.start_livestream";
+  serialNumber: string;
+}
+```
+
+#### Stop live stream
+
+[compatible with schema version: 2+]
+
+```ts
+interface {
+  messageId: string;
+  command: "device.stop_livestream";
+  serialNumber: string;
+}
+```
+
+#### Get live stream status
+
+[compatible with schema version: 2+]
+
+```ts
+interface {
+  messageId: string;
+  command: "device.is_livestreaming";
+  serialNumber: string;
+}
+```
+
+Returns:
+
+```ts
+interface {
+    livestreaming: boolean;
+}
+```
+
+## Events
+
+### Driver level events
+
+#### `verify code`
+
+[compatible with schema version: 0+]
+
+This event is sent whenever the Eufy Cloud asks for a 2FA token during the login process.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "driver";
+    event: "verify code";
+  }
+}
+```
+
+#### `connected`
+
+[compatible with schema version: 0+]
+
+This event is sent whenever the connection to the Eufy Cloud is successfully established.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "driver";
+    event: "connected";
+  }
+}
+```
+
+#### `disconnected`
+
+[compatible with schema version: 0+]
+
+This event is sent whenever the connection to the Eufy Cloud connection is lost.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "driver";
+    event: "disconnected";
+  }
+}
+```
+
+#### `push connected`
+
+[compatible with schema version: 0+]
+
+This event is sent whenever the connection to the Eufy Cloud Push notification is successfully established.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "driver";
+    event: "push connected";
+  }
+}
+```
+
+#### `push disconnected`
+
+[compatible with schema version: 0+]
+
+This event is sent whenever the connection to the Eufy Cloud Push notification is lost.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "driver";
+    event: "push disconnected";
+  }
+}
+```
+
+### Station level events
+
+#### `station added`
+
+[compatible with schema version: 0+]
+
+This event is sent when a new station is found.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "station";
+    event: "station added";
+    station: {
+      name: string;
+      model: string;
+      serialNumber: string;
+      hardwareVersion: string;
+      softwareVersion: string;
+      lanIpAddress: string;
+      macAddress: string;
+      currentMode: number;
+      guardMode: number;
+      connected: boolean;
+      type: number;
+    }
+  }
+}
+```
+
+#### `station removed`
+
+[compatible with schema version: 0+]
+
+This event is sent when a station is removed.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "station";
+    event: "station removed";
+    station: {
+      name: string;
+      model: string;
+      serialNumber: string;
+      hardwareVersion: string;
+      softwareVersion: string;
+      lanIpAddress: string;
+      macAddress: string;
+      currentMode: number;
+      guardMode: number;
+      connected: boolean;
+      type: number;
+    }
+  }
+}
+```
+
+#### `guard mode changed`
+
+[compatible with schema version: 0+]
+
+This event is sent whenever the guard mode of a station is changed.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "station";
+    event: "guard mode changed";
+    serialNumber: string;
+    macAddress: string;
+    currentMode: number;
+    guardMode: number;
+  }
+}
+```
+
+#### `command result`
+
+[compatible with schema version: 0+]
+
+This event is sent after each execution of a p2p command and reflects the result of the command.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "station";
+    event: "command result";
+    serialNumber: string;
+    command: string;
+    returnCode: number;
+    returnCodeName: string;
+  }
+}
+```
+
+#### `connected`
+
+[compatible with schema version: 0+]
+
+This event is sent when the connection to the station is successfully established.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "station";
+    event: "connected";
+    serialNumber: string;
+  }
+}
+```
+
+#### `disconnected`
+
+[compatible with schema version: 0+]
+
+This event is sent whenever the connection to the station is lost.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "station";
+    event: "disconnected";
+    serialNumber: string;
+  }
+}
+```
+
+#### `property changed`
+
+[compatible with schema version: 0+]
+
+This event is sent whenever a property of a station is changed.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "station";
+    event: "property changed";
+    serialNumber: string;
+    name: string;
+    value: JSONValue;
+    timestamp: number;
+  }
+}
+```
+
+### Device level events
+
+#### `device added`
+
+[compatible with schema version: 0+]
+
+This event is sent when a new device is found.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "device";
+    event: "device added";
+    device: {
+      name: string;
+      model: string;
+      serialNumber: string;
+      hardwareVersion: string;
+      softwareVersion: string;
+      stationSerialNumber: device.getPropertyValue(PropertyName.DeviceStationSN)?.value as string,
+      enabled: boolean;
+      state: number;
+      battery: number;
+      batteryTemperature: number;
+      batteryLow: boolean;
+      lastChargingDays: number;
+      lastChargingTotalEvents: number;
+      lastChargingRecordedEvents: number;
+      lastChargingFalseEvents: number;
+      batteryUsageLastWeek: number;
+      motionDetected: boolean;
+      personDetected: boolean;
+      personName: string;
+      soundDetected: boolean;
+      petDetected: boolean;
+      cryingDetected: boolean;
+      ringing: boolean;
+      locked: boolean;
+      antitheftDetection: boolean;
+      autoNightvision: boolean;
+      ledStatus: boolean;
+      motionDetection: boolean;
+      soundDetection: boolean;
+      petDetection: boolean;
+      rtspStream: boolean;
+      watermark: number;
+      lockStatus: number;
+      motionSensorPIREvent: number;
+      wifiRSSI: number;
+      pictureUrl: string;
+      type: number;
+    }
+  }
+}
+```
+
+#### `device removed`
+
+[compatible with schema version: 0+]
+
+This event is sent when a device is removed.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "device";
+    event: "device removed";
+    device: {
+      name: string;
+      model: string;
+      serialNumber: string;
+      hardwareVersion: string;
+      softwareVersion: string;
+      stationSerialNumber: device.getPropertyValue(PropertyName.DeviceStationSN)?.value as string,
+      enabled: boolean;
+      state: number;
+      battery: number;
+      batteryTemperature: number;
+      batteryLow: boolean;
+      lastChargingDays: number;
+      lastChargingTotalEvents: number;
+      lastChargingRecordedEvents: number;
+      lastChargingFalseEvents: number;
+      batteryUsageLastWeek: number;
+      motionDetected: boolean;
+      personDetected: boolean;
+      personName: string;
+      soundDetected: boolean;
+      petDetected: boolean;
+      cryingDetected: boolean;
+      ringing: boolean;
+      locked: boolean;
+      antitheftDetection: boolean;
+      autoNightvision: boolean;
+      ledStatus: boolean;
+      motionDetection: boolean;
+      soundDetection: boolean;
+      petDetection: boolean;
+      rtspStream: boolean;
+      watermark: number;
+      lockStatus: number;
+      motionSensorPIREvent: number;
+      wifiRSSI: number;
+      pictureUrl: string;
+      type: number;
+    }
+  }
+}
+```
+
+#### `motion detected`
+
+[compatible with schema version: 0+]
+
+This event is sent whenever a motion is detected on the device (the cooldown is determined by the `eventDurationSeconds` param).
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "device";
+    event: "motion detected";
+    serialNumber: string;
+    state: boolean;
+  }
+}
+```
+
+#### `person detected`
+
+[compatible with schema version: 0+]
+
+This event is sent whenever a person is detected on the device (the cooldown is determined by the `eventDurationSeconds` param).
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "device";
+    event: "person detected";
+    serialNumber: string;
+    state: boolean;
+    person: string;
+  }
+}
+```
+
+#### `crying detected`
+
+[compatible with schema version: 0+]
+
+This event is sent whenever a crying is detected on the device (the cooldown is determined by the `eventDurationSeconds` param).
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "device";
+    event: "crying detected";
+    serialNumber: string;
+    state: boolean;
+  }
+}
+```
+
+#### `sound detected`
+
+[compatible with schema version: 0+]
+
+This event is sent whenever sound is detected on the device (the cooldown is determined by the `eventDurationSeconds` param).
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "device";
+    event: "sound detected";
+    serialNumber: string;
+    state: boolean;
+  }
+}
+```
+
+#### `pet detected`
+
+[compatible with schema version: 0+]
+
+This event is sent whenever a pet is detected on the device (the cooldown is determined by the `eventDurationSeconds` param).
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "device";
+    event: "pet detected";
+    serialNumber: string;
+    state: boolean;
+  }
+}
+```
+
+#### `rings`
+
+[compatible with schema version: 0+]
+
+This event is sent whenever the device is ringing (the cooldown is determined by the `eventDurationSeconds` param).
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "device";
+    event: "rings";
+    serialNumber: string;
+    state: boolean;
+  }
+}
+```
+
+#### `sensor open`
+
+[compatible with schema version: 0+]
+
+This event is sent whenever the device is opened/closed (the cooldown is determined by the `eventDurationSeconds` param).
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "device";
+    event: "sensor open";
+    serialNumber: string;
+    state: boolean;
+  }
+}
+```
+
+#### `command result`
+
+[compatible with schema version: 0+]
+
+This event is sent after each execution of a p2p command and reflects the result of the command.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "device";
+    event: "command result";
+    serialNumber: string;
+    command: string;
+    returnCode: number;
+    returnCodeName: string;
+  }
+}
+```
+
+#### `got rtsp url`
+
+[compatible with schema version: 0+]
+
+This event is sent after RTSP is enabled on the supported device.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "device";
+    event: "got rtsp url";
+    serialNumber: string;
+    rtspUrl: string;
+  }
+}
+```
+
+#### `property changed`
+
+[compatible with schema version: 0+]
+
+This event is sent whenever a property of a device is changed.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "device";
+    event: "property changed";
+    serialNumber: string;
+    name: string;
+    value: JSONValue;
+    timestamp: number;
+  }
+}
+```
+
+#### `livestream started`
+
+[compatible with schema version: 2+]
+
+This event is sent whenever the live stream of a device is started.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "device";
+    event: "livestream started";
+    serialNumber: string;
+  }
+}
+```
+
+#### `livestream stopped`
+
+[compatible with schema version: 2+]
+
+This event is sent whenever the live stream of a device is stopped.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "device";
+    event: "livestream stopped";
+    serialNumber: string;
+  }
+}
+```
+
+#### `livestream video data`
+
+[compatible with schema version: 2+]
+
+This event is sent when video data is received during an active live stream of a device. It contains the metadata information and the video chunck.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "device";
+    event: "livestream video data";
+    serialNumber: string;
+    buffer: JSONValue,
+    metadata: { 
+      videoCodec: string;
+      videoFPS: number;
+      videoHeight: number;
+      videoWidth: number;
+    }
+  }
+}
+```
+
+#### `livestream audio data`
+
+[compatible with schema version: 2+]
+
+This event is sent when audio data is received during an active live stream of a device. It contains the metadata information and the video chunck.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "device";
+    event: "livestream audio data";
+    serialNumber: string;
+    buffer: JSONValue,
+    metadata: { 
+      audioCodec: string;
+    }
+  }
 }
 ```
 

@@ -1,7 +1,8 @@
 import { EufySecurity } from "eufy-security-client";
-import { UnknownCommandError } from "../error";
+import { LivestreamAlreadyRunningError, LivestreamNotRunningError, UnknownCommandError } from "../error";
 import { Client } from "../server";
 import { DeviceCommand } from "./command";
+import { DeviceEvent } from "./event";
 import { IncomingCommandDeviceEnableDevice, IncomingCommandDeviceLockDevice, IncomingCommandDeviceSetAntiTheftDetection, IncomingCommandDeviceSetAutoNightVision, IncomingCommandDeviceSetMotionDetection, IncomingCommandDeviceSetPetDetection, IncomingCommandDeviceSetProperty, IncomingCommandDeviceSetRTSPStream, IncomingCommandDeviceSetSoundDetection, IncomingCommandDeviceSetStatusLed, IncomingCommandDeviceSetWatermark, IncomingMessageDevice } from "./incoming_message";
 import { DeviceResultTypes } from "./outgoing_message";
 
@@ -58,6 +59,32 @@ export class DeviceMessageHandler {
             case DeviceCommand.setProperty:
                 driver.setDeviceProperty(serialNumber, (message as IncomingCommandDeviceSetProperty).name, (message as IncomingCommandDeviceSetProperty).value);
                 return { };
+            case DeviceCommand.startLivestream:
+                if (!station.isLiveStreaming(device)) {
+                    await station.startLivestream(device);
+                    client.receiveLivestream[device.getSerial()] = true;
+                } else if (client.receiveLivestream[device.getSerial()] !== true) {
+                    client.sendEvent({
+                        source: "device",
+                        event: DeviceEvent.livestreamStarted,
+                        serialNumber: serialNumber,
+                    })
+                    client.receiveLivestream[device.getSerial()] = true;
+                } else {
+                    throw new LivestreamAlreadyRunningError(`Livestream for device ${device.getSerial()} is already running`);
+                }
+                return { };
+            case DeviceCommand.stopLivestream:
+                if (client.receiveLivestream[device.getSerial()] !== true) {
+                    throw new LivestreamNotRunningError(`Start of livestream for device ${device.getSerial()} was not also requested by this client`);
+                }
+                await station.stopLivestream(device);
+                return { };
+            case DeviceCommand.isLiveStreaming:
+            {
+                const result = station.isLiveStreaming(device);
+                return { livestreaming: result };
+            }
             default:
                 throw new UnknownCommandError(command);
         }

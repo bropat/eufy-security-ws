@@ -2,12 +2,28 @@ import { StationResultTypes } from "./station/outgoing_message";
 import { DeviceResultTypes } from "./device/outgoing_message";
 import { ServerCommand } from "./command";
 import { DriverResultTypes } from "./driver/outgoing_message";
+import { DeviceEvent, OutgoingEventDevice } from "./device/event";
+import { OutgoingEventStation, StationEvent } from "./station/event";
+import { DriverEvent } from "./driver/event";
 
-export interface OutgoingEvent {
+// https://github.com/microsoft/TypeScript/issues/1897#issuecomment-822032151
+export type JSONValue =
+  | string
+  | number
+  | boolean
+  | null
+  | JSONValue[]
+  | { [key: string]: JSONValue };
+
+export interface OutgoingBaseEvent {
     source: "driver" | "station" | "device";
-    event: string;
-    [key: string]: unknown;
+    event: DeviceEvent | StationEvent | DriverEvent;
 }
+
+export type OutgoingEvent = 
+  | OutgoingBaseEvent
+  | OutgoingEventDevice
+  | OutgoingEventStation;
 
 export interface OutgoingVersionMessage {
     type: "version";

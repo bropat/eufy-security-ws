@@ -12,9 +12,10 @@ export enum DeviceCommand {
     getPropertiesMetadata = "device.get_properties_metadata",
     getProperties = "device.get_properties",
     setProperty = "device.set_property",
+    startLivestream = "device.start_livestream",
+    stopLivestream = "device.stop_livestream",
+    isLiveStreaming = "device.is_livestreaming",
     //quickResponse = "device.quick_response",
     //startDownload = "device.start_download",
     //cancelDownload = "device.cancel_download",
-    //startLivestream = "device.start_livestream",
-    //stopLivestream = "device.stop_livestream",
 }
