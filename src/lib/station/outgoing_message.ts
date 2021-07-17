@@ -9,6 +9,8 @@ export interface StationResultTypes {
     [StationCommand.getPropertiesMetadata]: { properties: Record<string, unknown>; };
     [StationCommand.getProperties]: { properties: Record<string, unknown>; };
     [StationCommand.setProperty]: Record<string, never>;
+    [StationCommand.triggerAlarm]: Record<string, never>;
+    [StationCommand.resetAlarm]: Record<string, never>;
     /*[StationCommand.getCameraInfo]: Record<string, never>;
     [StationCommand.getStorageInfo]: Record<string, never>;*/
 }

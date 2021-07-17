@@ -47,6 +47,7 @@ export interface EufySecurityConfig {
     p2pConnectionSetup: number;             // P2P connection setup (default: 0 ; Prefers local connection over cloud)
     pollingIntervalMinutes: number;         // Polling intervall for data refresh from Eufy Cloud (default: 10 min.)
     eventDurationSeconds: number;           // Duration in seconds before an event is reset E.g. motion event (default: 10 sec.)
+    acceptInvitations?: booleam;            // Automatically accept device invitations (default: false)
 }
 ```
 
@@ -187,7 +188,7 @@ interface {
 ```ts
 interface {
     messageId: string;
-    command: "driver.isConnected";
+    command: "driver.is_connected";
 }
 ```
 
@@ -206,7 +207,7 @@ interface {
 ```ts
 interface {
     messageId: string;
-    command: "driver.isPushConnected";
+    command: "driver.is_push_connected";
 }
 ```
 
@@ -245,6 +246,75 @@ interface {
 interface {
     messageId: string;
     command: "driver.disconnect";
+}
+```
+
+#### Get Video Events
+
+[compatible with schema version: 3+]
+
+```ts
+interface {
+    messageId: string;
+    command: "driver.get_video_events";
+    startTimestampMs?: number;
+    endTimestampMs?: number;
+    filter?: EventFilterType;
+    maxResults?: number;
+}
+```
+
+Returns:
+
+```ts
+interface {
+    events: Array<EventRecordResponse>
+}
+```
+
+#### Get Alarm Events
+
+[compatible with schema version: 3+]
+
+```ts
+interface {
+    messageId: string;
+    command: "driver.get_alarm_events";
+    startTimestampMs?: number;
+    endTimestampMs?: number;
+    filter?: EventFilterType;
+    maxResults?: number;
+}
+```
+
+Returns:
+
+```ts
+interface {
+    events: Array<EventRecordResponse>
+}
+```
+
+#### Get History Events
+
+[compatible with schema version: 3+]
+
+```ts
+interface {
+    messageId: string;
+    command: "driver.get_history_events";
+    startTimestampMs?: number;
+    endTimestampMs?: number;
+    filter?: EventFilterType;
+    maxResults?: number;
+}
+```
+
+Returns:
+
+```ts
+interface {
+    events: Array<EventRecordResponse>
 }
 ```
 
@@ -372,6 +442,31 @@ interface {
     serialNumber: string;
     name: string;
     value: unknown;
+}
+```
+
+#### Trigger alarm sound
+
+[compatible with schema version: 3+]
+
+```ts
+interface {
+    messageId: string;
+    command: "station.trigger_alarm";
+    serialNumber: string;
+    seconds: number;
+}
+```
+
+#### Reset alarm sound
+
+[compatible with schema version: 3+]
+
+```ts
+interface {
+    messageId: string;
+    command: "station.reset_alarm";
+    serialNumber: string;
 }
 ```
 
@@ -609,6 +704,103 @@ interface {
 }
 ```
 
+#### Trigger alarm sound
+
+[compatible with schema version: 3+]
+
+```ts
+interface {
+    messageId: string;
+    command: "device.trigger_alarm";
+    serialNumber: string;
+    seconds: number;
+}
+```
+
+#### Reset alarm sound
+
+[compatible with schema version: 3+]
+
+```ts
+interface {
+    messageId: string;
+    command: "device.reset_alarm";
+    serialNumber: string;
+}
+```
+
+#### Start video download
+
+[compatible with schema version: 3+]
+
+```ts
+interface {
+  messageId: string;
+  command: "device.start_download";
+  serialNumber: string;
+  path: string;
+  cipherId: number;
+}
+```
+
+#### Cancel video download
+
+[compatible with schema version: 3+]
+
+```ts
+interface {
+  messageId: string;
+  command: "device.cancel_download";
+  serialNumber: string;
+}
+```
+
+#### Pan and tilt camera
+
+[compatible with schema version: 3+]
+
+```ts
+interface {
+  messageId: string;
+  command: "device.pan_and_tilt";
+  serialNumber: string;
+  direction: PanTiltDirection;
+}
+```
+
+#### Doorbell quick response
+
+[compatible with schema version: 3+]
+
+```ts
+interface {
+  messageId: string;
+  command: "device.quick_response";
+  serialNumber: string;
+  voiceId: number;
+}
+```
+
+#### Get doorbell quick response voices
+
+[compatible with schema version: 3+]
+
+```ts
+interface {
+  messageId: string;
+  command: "device.get_voices";
+  serialNumber: string;
+}
+```
+
+Returns:
+
+```ts
+interface {
+  voices: Voices
+}
+```
+
 ## Events
 
 ### Driver level events
@@ -766,9 +958,26 @@ interface {
     source: "station";
     event: "guard mode changed";
     serialNumber: string;
-    macAddress: string;
-    currentMode: number;
+    currentMode: number;      //Removed in schema version 3+
     guardMode: number;
+  }
+}
+```
+
+#### `current mode changed`
+
+[compatible with schema version: 3+]
+
+This event is sent whenever the current mode of a station is changed.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "station";
+    event: "current mode changed";
+    serialNumber: string;
+    currentMode: number;
   }
 }
 ```
@@ -843,6 +1052,24 @@ interface {
     name: string;
     value: JSONValue;
     timestamp: number;
+  }
+}
+```
+
+#### `alarm event`
+
+[compatible with schema version: 3+]
+
+This event is sent whenever an alarm event occurred.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "station";
+    event: "alarm event";
+    serialNumber: string;
+    alarmEvent: AlarmEvent;
   }
 }
 ```
@@ -1223,6 +1450,85 @@ interface {
 }
 ```
 
+#### `download started`
+
+[compatible with schema version: 3+]
+
+This event is sent whenever a video download is started.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "device";
+    event: "download started";
+    serialNumber: string;
+  }
+}
+```
+
+#### `download finished`
+
+[compatible with schema version: 3+]
+
+This event is sent whenever a video download is finished.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "device";
+    event: "download finished";
+    serialNumber: string;
+  }
+}
+```
+
+#### `download video data`
+
+[compatible with schema version: 3+]
+
+This event is sent when video data is received during a video download. It contains the metadata information and the video chunck.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "device";
+    event: "download video data";
+    serialNumber: string;
+    buffer: JSONValue,
+    metadata: { 
+      videoCodec: string;
+      videoFPS: number;
+      videoHeight: number;
+      videoWidth: number;
+    }
+  }
+}
+```
+
+#### `download audio data`
+
+[compatible with schema version: 3+]
+
+This event is sent when audio data is received during a video download. It contains the metadata information and the video chunck.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "device";
+    event: "download audio data";
+    serialNumber: string;
+    buffer: JSONValue,
+    metadata: { 
+      audioCodec: string;
+    }
+  }
+}
+```
+
 ## Schema Version
 
 In an attempt to keep compatibility between different server and client versions, we've introduced a (basic) API Schema Version.
@@ -1286,6 +1592,7 @@ eufy-security-ws is available via a Docker image
 * `EVENT_DURATION_SECONDS:` Duration in seconds before an event is reset E.g. motion event (default: 10 sec.)
 * `P2P_CONNECTION_SETUP:` P2P connection setup (default: 0 ; Prefers local connection over cloud)
 * `POLLING_INTERVAL_MINUTES:` Polling intervall for data refresh from Eufy Cloud (default: 10 min.)
+* `ACCEPT_INVITATIONS:` Automatically accept device invitations (default: false)
 
 The image also exposes a `/data` volume that corresponds to the `persistentDir`.
 

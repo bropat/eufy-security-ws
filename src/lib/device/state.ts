@@ -47,9 +47,55 @@ DeviceStateSchema0,
 { type: DeviceType }
 >;
 
+type DeviceStateSchema3 = Modify<
+DeviceStateSchema1,
+{
+    motionDetectionType?: number;
+    motionDetectionSensivity?: number;
+    motionTracking?: boolean;
+    soundDetectionType?: number;
+    soundDetectionSensivity?: number;
+    light?: boolean;
+    microphone?: boolean;
+    speaker?: boolean;
+    speakerVolume?: number;
+    ringtoneVolume?: number;
+    audioRecording?: boolean;
+    powerSource?: number;
+    powerWorkingMode?: number;
+    recordingEndClipMotionStops?: boolean;
+    recordingClipLength?: number;
+    recordingRetriggerInterval?: number;
+    videoStreamingQuality?: number;
+    videoRecordingQuality?: number;
+    videoWDR?: boolean;
+    lightSettingsEnable?: boolean;
+    lightSettingsBrightnessManual?: number;
+    lightSettingsBrightnessMotion?: number;
+    lightSettingsBrightnessSchedule?: number;
+    lightSettingsMotionTriggered?: boolean;
+    lightSettingsMotionTriggeredDistance?: number;
+    lightSettingsMotionTriggeredTimer?: number;
+    chimeIndoor?: boolean;
+    chimeHomebase?: boolean;
+    chimeHomebaseRingtoneVolume?: number;
+    chimeHomebaseRingtoneType?: number;
+    notificationType?: number;
+    rotationSpeed?: number;
+    notificationPerson?: boolean;
+    notificationPet?: boolean;
+    notificationAllOtherMotion?: boolean;
+    notificationCrying?: boolean;
+    notificationAllSound?: boolean;
+    notificationIntervalTime?: boolean;
+    notificationRing?: boolean;
+    notificationMotion?:boolean;
+}>;
+
 export type DeviceState = 
   | DeviceStateSchema0
-  | DeviceStateSchema1;
+  | DeviceStateSchema1
+  | DeviceStateSchema3;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const dumpDevice = (device: Device, schemaVersion: number): DeviceState => {
@@ -96,10 +142,55 @@ export const dumpDevice = (device: Device, schemaVersion: number): DeviceState =
         return base as DeviceStateSchema0;
     }
 
-    // All schemas >= 1
-    const device1 = base as DeviceStateSchema1;
-    device1.type = device.getPropertyValue(PropertyName.Type).value as number;
+    if (schemaVersion <= 2) {
+        const device1 = base as DeviceStateSchema1;
+        device1.type = device.getPropertyValue(PropertyName.Type).value as number;
+        return device1;
+    }
 
-    return device1;
+    // All schemas >= 3
+    const device3 = base as DeviceStateSchema3;
+    device3.motionDetectionType = device.getPropertyValue(PropertyName.DeviceMotionDetectionType)?.value as number;
+    device3.motionDetectionSensivity = device.getPropertyValue(PropertyName.DeviceMotionDetectionSensivity)?.value as number;
+    device3.motionTracking = device.getPropertyValue(PropertyName.DeviceMotionTracking)?.value as boolean;
+    device3.soundDetectionType = device.getPropertyValue(PropertyName.DeviceSoundDetectionType)?.value as number;
+    device3.soundDetectionSensivity = device.getPropertyValue(PropertyName.DeviceSoundDetectionSensivity)?.value as number;
+    device3.light = device.getPropertyValue(PropertyName.DeviceLight)?.value as boolean;
+    device3.microphone = device.getPropertyValue(PropertyName.DeviceMicrophone)?.value as boolean;
+    device3.speaker = device.getPropertyValue(PropertyName.DeviceSpeaker)?.value as boolean;
+    device3.speakerVolume = device.getPropertyValue(PropertyName.DeviceSpeakerVolume)?.value as number;
+    device3.ringtoneVolume = device.getPropertyValue(PropertyName.DeviceRingtoneVolume)?.value as number;
+    device3.audioRecording = device.getPropertyValue(PropertyName.DeviceAudioRecording)?.value as boolean;
+    device3.powerSource = device.getPropertyValue(PropertyName.DevicePowerSource)?.value as number;
+    device3.powerWorkingMode = device.getPropertyValue(PropertyName.DevicePowerWorkingMode)?.value as number;
+    device3.recordingEndClipMotionStops = device.getPropertyValue(PropertyName.DeviceRecordingEndClipMotionStops)?.value as boolean;
+    device3.recordingClipLength = device.getPropertyValue(PropertyName.DeviceRecordingClipLength)?.value as number;
+    device3.recordingRetriggerInterval = device.getPropertyValue(PropertyName.DeviceRecordingRetriggerInterval)?.value as number;
+    device3.videoStreamingQuality = device.getPropertyValue(PropertyName.DeviceVideoStreamingQuality)?.value as number;
+    device3.videoRecordingQuality = device.getPropertyValue(PropertyName.DeviceVideoRecordingQuality)?.value as number;
+    device3.videoWDR = device.getPropertyValue(PropertyName.DeviceVideoWDR)?.value as boolean;
+    device3.lightSettingsEnable = device.getPropertyValue(PropertyName.DeviceLightSettingsEnable)?.value as boolean;
+    device3.lightSettingsBrightnessManual = device.getPropertyValue(PropertyName.DeviceLightSettingsBrightnessManual)?.value as number;
+    device3.lightSettingsBrightnessMotion = device.getPropertyValue(PropertyName.DeviceLightSettingsBrightnessMotion)?.value as number;
+    device3.lightSettingsBrightnessSchedule = device.getPropertyValue(PropertyName.DeviceLightSettingsBrightnessSchedule)?.value as number;
+    device3.lightSettingsMotionTriggered = device.getPropertyValue(PropertyName.DeviceLightSettingsMotionTriggered)?.value as boolean;
+    device3.lightSettingsMotionTriggeredDistance = device.getPropertyValue(PropertyName.DeviceLightSettingsMotionTriggeredDistance)?.value as number;
+    device3.lightSettingsMotionTriggeredTimer = device.getPropertyValue(PropertyName.DeviceLightSettingsMotionTriggeredTimer)?.value as number;
+    device3.chimeIndoor = device.getPropertyValue(PropertyName.DeviceChimeIndoor)?.value as boolean;
+    device3.chimeHomebase = device.getPropertyValue(PropertyName.DeviceChimeHomebase)?.value as boolean;
+    device3.chimeHomebaseRingtoneVolume = device.getPropertyValue(PropertyName.DeviceChimeHomebaseRingtoneVolume)?.value as number;
+    device3.chimeHomebaseRingtoneType = device.getPropertyValue(PropertyName.DeviceChimeHomebaseRingtoneType)?.value as number;
+    device3.notificationType = device.getPropertyValue(PropertyName.DeviceNotificationType)?.value as number;
+    device3.rotationSpeed = device.getPropertyValue(PropertyName.DeviceRotationSpeed)?.value as number;
+    device3.notificationPerson = device.getPropertyValue(PropertyName.DeviceNotificationPerson)?.value as boolean;
+    device3.notificationPet = device.getPropertyValue(PropertyName.DeviceNotificationPet)?.value as boolean;
+    device3.notificationAllOtherMotion = device.getPropertyValue(PropertyName.DeviceNotificationAllOtherMotion)?.value as boolean;
+    device3.notificationCrying = device.getPropertyValue(PropertyName.DeviceNotificationCrying)?.value as boolean;
+    device3.notificationAllSound = device.getPropertyValue(PropertyName.DeviceNotificationAllSound)?.value as boolean;
+    device3.notificationIntervalTime = device.getPropertyValue(PropertyName.DeviceNotificationIntervalTime)?.value as boolean;
+    device3.notificationRing = device.getPropertyValue(PropertyName.DeviceNotificationRing)?.value as boolean;
+    device3.notificationMotion = device.getPropertyValue(PropertyName.DeviceNotificationMotion)?.value as boolean;
+
+    return device3;
     
 };

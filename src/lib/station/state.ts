@@ -19,9 +19,24 @@ StationStateSchema0,
 { type: DeviceType }
 >;
 
+type StationStateSchema3 = Modify<
+StationStateSchema1,
+{
+    timeFormat?: number;
+    alarmVolume?: number;
+    alarmTone?: number;
+    promptVolume?: number;
+    notificationSwitchModeSchedule?: boolean;
+    notificationSwitchModeGeofence?: boolean;
+    notificationSwitchModeApp?: boolean;
+    notificationSwitchModeKeypad?: boolean;
+    notificationStartAlarmDelay?: boolean;
+}>;
+
 export type StationState = 
  | StationStateSchema0
- | StationStateSchema1;
+ | StationStateSchema1
+ | StationStateSchema3;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const dumpStation = (station: Station, schemaVersion: number): StationState => {
@@ -42,9 +57,23 @@ export const dumpStation = (station: Station, schemaVersion: number): StationSta
         return base as StationStateSchema0;
     }
 
-    // All schemas >= 1
-    const station1 = base as StationStateSchema1;
-    station1.type = station.getPropertyValue(PropertyName.Type).value as number;
+    if (schemaVersion <= 2) {
+        const station1 = base as StationStateSchema1;
+        station1.type = station.getPropertyValue(PropertyName.Type).value as number;
+        return station1;
+    }
+    
+    // All schemas >= 3
+    const station3 = base as StationStateSchema3;
+    station3.timeFormat = station.getPropertyValue(PropertyName.StationTimeFormat)?.value as number;
+    station3.alarmVolume = station.getPropertyValue(PropertyName.StationAlarmVolume)?.value as number;
+    station3.alarmTone = station.getPropertyValue(PropertyName.StationAlarmTone)?.value as number;
+    station3.promptVolume = station.getPropertyValue(PropertyName.StationPromptVolume)?.value as number;
+    station3.notificationSwitchModeSchedule = station.getPropertyValue(PropertyName.StationNotificationSwitchModeSchedule)?.value as boolean;
+    station3.notificationSwitchModeGeofence = station.getPropertyValue(PropertyName.StationNotificationSwitchModeGeofence)?.value as boolean;
+    station3.notificationSwitchModeApp = station.getPropertyValue(PropertyName.StationNotificationSwitchModeApp)?.value as boolean;
+    station3.notificationSwitchModeKeypad = station.getPropertyValue(PropertyName.StationNotificationSwitchModeKeypad)?.value as boolean;
+    station3.notificationStartAlarmDelay = station.getPropertyValue(PropertyName.StationNotificationStartAlarmDelay)?.value as boolean;
 
-    return station1;
+    return station3;
 };

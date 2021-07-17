@@ -11,6 +11,7 @@ LANGUAGE="${LANGUAGE:-en}"
 P2P_CONNECTION_SETUP="${P2P_CONNECTION_SETUP:-0}"
 POLLING_INTERVAL_MINUTES="${POLLING_INTERVAL_MINUTES:-10}"
 TRUSTED_DEVICE_NAME="${TRUSTED_DEVICE_NAME:-eufyclient}"
+ACCEPT_INVITATIONS="${ACCEPT_INVITATIONS:-false}"
 
 JSON_STRING="$( jq -n \
   --arg username "$USERNAME" \
@@ -21,6 +22,7 @@ JSON_STRING="$( jq -n \
   --arg p2p_connection_setup "$P2P_CONNECTION_SETUP"  \
   --arg polling_interval_minutes "$POLLING_INTERVAL_MINUTES"  \
   --arg trusted_device_name "$TRUSTED_DEVICE_NAME"  \
+  --arg accept_invitations "$ACCEPT_INVITATIONS"  \
     '{
       country: $country,
       eventDurationSeconds: $event_duration_seconds,
@@ -31,6 +33,7 @@ JSON_STRING="$( jq -n \
       pollingIntervalMinutes: $polling_interval_minutes,
       trustedDeviceName: $trusted_device_name,
       username: $username,
+      acceptInvitations: $accept_invitations
     }'
   )"
 

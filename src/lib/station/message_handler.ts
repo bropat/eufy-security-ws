@@ -2,7 +2,7 @@ import { EufySecurity } from "eufy-security-client";
 import { UnknownCommandError } from "../error";
 import { Client } from "../server";
 import { StationCommand } from "./command";
-import { IncomingCommandDeviceSetProperty, IncomingCommandSetGuardMode, IncomingMessageStation } from "./incoming_message";
+import { IncomingCommandDeviceSetProperty, IncomingCommandDeviceTriggerAlarm, IncomingCommandSetGuardMode, IncomingMessageStation } from "./incoming_message";
 import { StationResultTypes } from "./outgoing_message";
 
 export class StationMessageHandler {
@@ -14,25 +14,35 @@ export class StationMessageHandler {
         const station = driver.getStation(serialNumber);
         switch (command) {
             case StationCommand.reboot:
-                await station.rebootHUB();
+                await station.rebootHUB().catch((error) => {
+                    throw error;
+                });
                 return { };
             case StationCommand.setGuardMode:
-                await station.setGuardMode((message as IncomingCommandSetGuardMode).mode);
+                await station.setGuardMode((message as IncomingCommandSetGuardMode).mode).catch((error) => {
+                    throw error;
+                });
                 return { };
             case StationCommand.isConnected:
-                const result = await station.isConnected();
+                const result = station.isConnected();
                 return { connected: result };
             /*case StationCommand.getCameraInfo:
-                await station.getCameraInfo();
+                await station.getCameraInfo().catch((error) => {
+                    throw error;
+                });
                 return { };
             case StationCommand.getStorageInfo:
-                await station.getStorageInfo();
+                await station.getStorageInfo().catch((error) => {
+                    throw error;
+                });
                 return { };*/
             case StationCommand.connect:
-                await station.connect(driver.getConfig().p2pConnectionSetup, true);
+                await station.connect().catch((error) => {
+                    throw error;
+                });
                 return { };
             case StationCommand.disconnect:
-                await station.close();
+                station.close();
                 return { };
             case StationCommand.getPropertiesMetadata:
             {
@@ -45,7 +55,19 @@ export class StationMessageHandler {
                 return { properties: properties };
             }
             case StationCommand.setProperty:
-                driver.setStationProperty(serialNumber, (message as IncomingCommandDeviceSetProperty).name, (message as IncomingCommandDeviceSetProperty).value);
+                await driver.setStationProperty(serialNumber, (message as IncomingCommandDeviceSetProperty).name, (message as IncomingCommandDeviceSetProperty).value).catch((error) => {
+                    throw error;
+                });
+                return { };
+            case StationCommand.triggerAlarm:
+                await station.triggerStationAlarmSound((message as IncomingCommandDeviceTriggerAlarm).seconds).catch((error) => {
+                    throw error;
+                });
+                return { };
+            case StationCommand.resetAlarm:
+                await station.resetStationAlarmSound().catch((error) => {
+                    throw error;
+                });
                 return { };
             default:
                 throw new UnknownCommandError(command);

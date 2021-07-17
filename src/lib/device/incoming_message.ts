@@ -1,3 +1,4 @@
+import { PanTiltDirection } from "eufy-security-client/build/p2p/types";
 import { IncomingCommandBase } from "../incoming_message_base";
 import { DeviceCommand } from "./command";
 
@@ -81,6 +82,40 @@ export interface IncomingCommandDeviceIsLiveStreaming extends IncomingCommandDev
     command: DeviceCommand.isLiveStreaming;
 }
 
+export interface IncomingCommandDeviceTriggerAlarm extends IncomingCommandDeviceBase {
+    command: DeviceCommand.triggerAlarm;
+    seconds: number;
+}
+
+export interface IncomingCommandDeviceResetAlarm extends IncomingCommandDeviceBase {
+    command: DeviceCommand.resetAlarm;
+}
+
+export interface IncomingCommandDevicePanAndTilt extends IncomingCommandDeviceBase {
+    command: DeviceCommand.panAndTilt;
+    direction: PanTiltDirection;
+}
+
+export interface IncomingCommandDeviceQuickResponse extends IncomingCommandDeviceBase {
+    command: DeviceCommand.quickResponse;
+    voiceId: number;
+}
+
+export interface IncomingCommandDeviceStartDownload extends IncomingCommandDeviceBase {
+    command: DeviceCommand.startDownload;
+    path: string;
+    cipherId: number;
+}
+
+export interface IncomingCommandDeviceCancelDownload extends IncomingCommandDeviceBase {
+    command: DeviceCommand.cancelDownload;
+    voiceId: number;
+}
+
+export interface IncomingCommandDeviceGetVoices extends IncomingCommandDeviceBase {
+    command: DeviceCommand.getVoices;
+}
+
 export type IncomingMessageDevice =
   | IncomingCommandDeviceSetStatusLed
   | IncomingCommandDeviceSetAutoNightVision
@@ -97,4 +132,11 @@ export type IncomingMessageDevice =
   | IncomingCommandDeviceSetProperty
   | IncomingCommandDeviceStartLivestream
   | IncomingCommandDeviceStopLivestream
-  | IncomingCommandDeviceIsLiveStreaming;
+  | IncomingCommandDeviceIsLiveStreaming
+  | IncomingCommandDeviceTriggerAlarm
+  | IncomingCommandDeviceResetAlarm
+  | IncomingCommandDevicePanAndTilt
+  | IncomingCommandDeviceQuickResponse
+  | IncomingCommandDeviceStartDownload
+  | IncomingCommandDeviceCancelDownload
+  | IncomingCommandDeviceGetVoices;

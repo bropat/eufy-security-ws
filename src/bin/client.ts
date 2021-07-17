@@ -22,6 +22,9 @@ const cmdHelp = (cmd: string): void => {
         case DriverCommand.isPushConnected:
         case DriverCommand.connect:
         case DriverCommand.disconnect:
+        case DriverCommand.getVideoEvents:
+        case DriverCommand.getAlarmEvents:
+        case DriverCommand.getHistoryEvents:
             console.log(`${cmd}`);
             break;
         case DeviceCommand.setStatusLed:
@@ -42,11 +45,26 @@ const cmdHelp = (cmd: string): void => {
         case DeviceCommand.getProperties:
         case DeviceCommand.startLivestream:
         case DeviceCommand.stopLivestream:
+        case DeviceCommand.resetAlarm:
+        case DeviceCommand.getVoices:
+        case DeviceCommand.cancelDownload:
         case DeviceCommand.isLiveStreaming:
             console.log(`${cmd} <device_sn>`);
             break;
         case DeviceCommand.setProperty:
             console.log(`${cmd} <device_sn> <name> <value>`);
+            break;
+        case DeviceCommand.triggerAlarm:
+            console.log(`${cmd} <device_sn> <seconds>`);
+            break;
+        case DeviceCommand.panAndTilt:
+            console.log(`${cmd} <device_sn> <direction>`);
+            break;
+        case DeviceCommand.quickResponse:
+            console.log(`${cmd} <device_sn> <voiceId>`);
+            break;
+        case DeviceCommand.startDownload:
+            console.log(`${cmd} <device_sn> <path> <cipherId>`);
             break;
         case StationCommand.setGuardMode:
             console.log(`${cmd} <station_sn> <numeric_code>`);
@@ -54,6 +72,7 @@ const cmdHelp = (cmd: string): void => {
         case StationCommand.isConnected:
         case StationCommand.connect:
         case StationCommand.disconnect:
+        case StationCommand.resetAlarm:
         case StationCommand.reboot:
             console.log(`${cmd} <station_sn>`);
             break;
@@ -63,6 +82,9 @@ const cmdHelp = (cmd: string): void => {
             break;
         case StationCommand.setProperty:
             console.log(`${cmd} <station_sn> <name> <value>`);
+            break;
+        case StationCommand.triggerAlarm:
+            console.log(`${cmd} <station_sn> <seconds>`);
             break;
         /*case StationCommand.getCameraInfo:
         case StationCommand.getStorageInfo:
@@ -262,6 +284,36 @@ process.on("SIGTERM", handleShutdown);
                     cmdHelp(args[0]);
                 }
                 break;
+            case DriverCommand.getVideoEvents:
+                if (args.length === 1) {
+                    socket.send(JSON.stringify({
+                        messageId: DriverCommand.getVideoEvents.split(".")[1],
+                        command: DriverCommand.getVideoEvents
+                    }));
+                } else {
+                    cmdHelp(args[0]);
+                }
+                break;
+            case DriverCommand.getAlarmEvents:
+                if (args.length === 1) {
+                    socket.send(JSON.stringify({
+                        messageId: DriverCommand.getVideoEvents.split(".")[1],
+                        command: DriverCommand.getVideoEvents
+                    }));
+                } else {
+                    cmdHelp(args[0]);
+                }
+                break;
+            case DriverCommand.getHistoryEvents:
+                if (args.length === 1) {
+                    socket.send(JSON.stringify({
+                        messageId: DriverCommand.getVideoEvents.split(".")[1],
+                        command: DriverCommand.getVideoEvents
+                    }));
+                } else {
+                    cmdHelp(args[0]);
+                }
+                break;
             case DeviceCommand.setStatusLed:
                 if (args.length === 3 && isTrueFalse(args[2])) {
                     socket.send(JSON.stringify({
@@ -450,6 +502,88 @@ process.on("SIGTERM", handleShutdown);
                     cmdHelp(args[0]);
                 }
                 break;
+            case DeviceCommand.triggerAlarm:
+                if (args.length === 3) {
+                    socket.send(JSON.stringify({
+                        messageId: DeviceCommand.triggerAlarm.split(".")[1],
+                        command: DeviceCommand.triggerAlarm,
+                        serialNumber: args[1],
+                        seconds: Number.parseInt(args[2]),
+                    }));
+                } else {
+                    cmdHelp(args[0]);
+                }
+                break;
+            case DeviceCommand.panAndTilt:
+                if (args.length === 3) {
+                    socket.send(JSON.stringify({
+                        messageId: DeviceCommand.panAndTilt.split(".")[1],
+                        command: DeviceCommand.panAndTilt,
+                        serialNumber: args[1],
+                        direction: Number.parseInt(args[2]),
+                    }));
+                } else {
+                    cmdHelp(args[0]);
+                }
+                break;
+            case DeviceCommand.quickResponse:
+                if (args.length === 3) {
+                    socket.send(JSON.stringify({
+                        messageId: DeviceCommand.quickResponse.split(".")[1],
+                        command: DeviceCommand.quickResponse,
+                        serialNumber: args[1],
+                        voiceId: Number.parseInt(args[2]),
+                    }));
+                } else {
+                    cmdHelp(args[0]);
+                }
+                break;
+            case DeviceCommand.resetAlarm:
+                if (args.length === 2) {
+                    socket.send(JSON.stringify({
+                        messageId: DeviceCommand.resetAlarm.split(".")[1],
+                        command: DeviceCommand.resetAlarm,
+                        serialNumber: args[1],
+                    }));
+                } else {
+                    cmdHelp(args[0]);
+                }
+                break;
+            case DeviceCommand.getVoices:
+                if (args.length === 2) {
+                    socket.send(JSON.stringify({
+                        messageId: DeviceCommand.getVoices.split(".")[1],
+                        command: DeviceCommand.getVoices,
+                        serialNumber: args[1],
+                    }));
+                } else {
+                    cmdHelp(args[0]);
+                }
+                break;
+            case DeviceCommand.startDownload:
+                if (args.length === 4) {
+                    socket.send(JSON.stringify({
+                        messageId: DeviceCommand.startDownload.split(".")[1],
+                        command: DeviceCommand.startDownload,
+                        serialNumber: args[1],
+                        path: args[2],
+                        cipherId: Number.parseInt(args[3]),
+                    }));
+                } else {
+                    cmdHelp(args[0]);
+                }
+                break;
+            case DeviceCommand.cancelDownload:
+                if (args.length === 2) {
+                    socket.send(JSON.stringify({
+                        messageId: DeviceCommand.cancelDownload.split(".")[1],
+                        command: DeviceCommand.cancelDownload,
+                        serialNumber: args[1],
+                    }));
+                } else {
+                    cmdHelp(args[0]);
+                }
+                break;
             case StationCommand.setGuardMode:
                 if (args.length === 3 && isNumber(args[2])) {
                     socket.send(JSON.stringify({
@@ -536,6 +670,29 @@ process.on("SIGTERM", handleShutdown);
                         serialNumber: args[1],
                         name: args[2],
                         value: args[3],
+                    }));
+                } else {
+                    cmdHelp(args[0]);
+                }
+                break;
+            case StationCommand.triggerAlarm:
+                if (args.length === 3) {
+                    socket.send(JSON.stringify({
+                        messageId: StationCommand.triggerAlarm.split(".")[1],
+                        command: StationCommand.triggerAlarm,
+                        serialNumber: args[1],
+                        seconds: Number.parseInt(args[2]),
+                    }));
+                } else {
+                    cmdHelp(args[0]);
+                }
+                break;
+            case StationCommand.resetAlarm:
+                if (args.length === 2) {
+                    socket.send(JSON.stringify({
+                        messageId: StationCommand.resetAlarm.split(".")[1],
+                        command: StationCommand.resetAlarm,
+                        serialNumber: args[1],
                     }));
                 } else {
                     cmdHelp(args[0]);

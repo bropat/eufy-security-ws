@@ -3,7 +3,7 @@ import type WebSocket from "ws";
 import { Logger } from "tslog";
 import { EventEmitter, once } from "events";
 import { Server as HttpServer, createServer, IncomingMessage as HttpIncomingMessage } from "http";
-import { DeviceNotFoundError, EufySecurity, libVersion, NotConnectedError, NotSupportedFeatureError, NotSupportedGuardModeError, StationNotFoundError, WrongStationError } from "eufy-security-client";
+import { DeviceNotFoundError, EufySecurity, InvalidCountryCodeError, InvalidLanguageCodeError, InvalidPropertyValueError, libVersion, NotConnectedError, NotSupportedError, ReadOnlyPropertyError, StationNotFoundError, WrongStationError, PropertyNotSupportedError, InvalidPropertyError, InvalidCommandValueError } from "eufy-security-client";
 
 import { EventForwarder } from "./forward";
 import type * as OutgoingMessages from "./outgoing_message";
@@ -12,7 +12,7 @@ import { version, minSchemaVersion, maxSchemaVersion } from "./const";
 import { DeviceMessageHandler } from "./device/message_handler";
 import { StationMessageHandler } from "./station/message_handler";
 import { IncomingMessageStation } from "./station/incoming_message";
-import { BaseError, ErrorCode, SchemaIncompatibleError, UnknownCommandError } from "./error";
+import { BaseError, ErrorCode, LivestreamAlreadyRunningError, LivestreamNotRunningError, SchemaIncompatibleError, UnknownCommandError } from "./error";
 import { Instance } from "./instance";
 import { IncomingMessageDevice } from "./device/incoming_message";
 import { ServerCommand } from "./command";
@@ -117,17 +117,49 @@ export class Client {
                 this.logger.error("Message error", error);
                 return this.sendResultError(msg.messageId, ErrorCode.stationNotConnected);
             }
-            if (error instanceof NotSupportedFeatureError) {
+            if (error instanceof NotSupportedError) {
                 this.logger.error("Message error", error);
-                return this.sendResultError(msg.messageId, ErrorCode.deviceNotSupportedFeature);
-            }
-            if (error instanceof NotSupportedGuardModeError) {
-                this.logger.error("Message error", error);
-                return this.sendResultError(msg.messageId, ErrorCode.stationNotSupportedGuardMode);
+                return this.sendResultError(msg.messageId, ErrorCode.deviceNotSupported);
             }
             if (error instanceof WrongStationError) {
                 this.logger.error("Message error", error);
                 return this.sendResultError(msg.messageId, ErrorCode.deviceWrongStation);
+            }
+            if (error instanceof InvalidPropertyValueError) {
+                this.logger.error("Message error", error);
+                return this.sendResultError(msg.messageId, ErrorCode.deviceInvalidPropertyValue);
+            }
+            if (error instanceof ReadOnlyPropertyError) {
+                this.logger.error("Message error", error);
+                return this.sendResultError(msg.messageId, ErrorCode.deviceReadOnlyProperty);
+            }
+            if (error instanceof InvalidCountryCodeError) {
+                this.logger.error("Message error", error);
+                return this.sendResultError(msg.messageId, ErrorCode.invalidCountryCode);
+            }
+            if (error instanceof InvalidLanguageCodeError) {
+                this.logger.error("Message error", error);
+                return this.sendResultError(msg.messageId, ErrorCode.invalidLanguageCode);
+            }
+            if (error instanceof InvalidPropertyError) {
+                this.logger.error("Message error", error);
+                return this.sendResultError(msg.messageId, ErrorCode.deviceInvalidProperty);
+            }
+            if (error instanceof LivestreamAlreadyRunningError) {
+                this.logger.error("Message error", error);
+                return this.sendResultError(msg.messageId, ErrorCode.deviceLivestreamAlreadyRunning);
+            }
+            if (error instanceof LivestreamNotRunningError) {
+                this.logger.error("Message error", error);
+                return this.sendResultError(msg.messageId, ErrorCode.deviceLivestreamNotRunning);
+            }
+            if (error instanceof PropertyNotSupportedError) {
+                this.logger.error("Message error", error);
+                return this.sendResultError(msg.messageId, ErrorCode.devicePropertyNotSupported);
+            }
+            if (error instanceof InvalidCommandValueError) {
+                this.logger.error("Message error", error);
+                return this.sendResultError(msg.messageId, ErrorCode.deviceInvalidCommandValue);
             }
 
             this.logger.error("Unexpected error", error as Error);
@@ -245,26 +277,21 @@ export class ClientsController {
         const disconnectedClients = this.clients.filter((cl) => cl.isConnected === false);
         this.clients = this.clients.filter((cl) => cl.isConnected);
 
-        const activelyStreaming: Array<string> = [];
-        this.clients.forEach(client => {
-            Object.keys(client.receiveLivestream).forEach(serialNumber => {
-                if (client.receiveLivestream[serialNumber] === true && !activelyStreaming.includes(serialNumber)) {
-                    activelyStreaming.push(serialNumber);
-                }
-            });
-        });
-
         disconnectedClients.forEach(client => {
             Object.keys(client.receiveLivestream).forEach(serialNumber => {
-                if (client.receiveLivestream[serialNumber] === true && !activelyStreaming.includes(serialNumber)) {
-                    try {
-                        const device = this.driver.getDevice(serialNumber);
-                        const station = this.driver.getStation(device.getStationSerial());
+                try {
+                    const device = this.driver.getDevice(serialNumber);
+                    const station = this.driver.getStation(device.getStationSerial());
+                    const streamingDevices = DeviceMessageHandler.getStreamingDevices(station.getSerial());
+
+                    if (client.receiveLivestream[serialNumber] === true && streamingDevices.length === 1 && streamingDevices.includes(client)) {
                         if (station.isLiveStreaming(device))
                             station.stopLivestream(device);
-                    } catch(error) {
-                        this.logger.error(`Error doing cleanup of client`, error);
                     }
+
+                    DeviceMessageHandler.removeStreamingDevice(station.getSerial(), client);
+                } catch(error) {
+                    this.logger.error(`Error doing cleanup of client`, error);
                 }
             });
         });

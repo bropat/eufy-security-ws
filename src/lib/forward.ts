@@ -1,4 +1,4 @@
-import { AudioCodec, Camera, CommandResult, CommandType, Device, DoorbellCamera, EntrySensor, ErrorCode, IndoorCamera, MotionSensor, ParamType, PropertyValue, Station, StreamMetadata, VideoCodec } from "eufy-security-client";
+import { AudioCodec, Camera, CommandResult, CommandType, Device, DoorbellCamera, EntrySensor, ErrorCode, IndoorCamera, MotionSensor, ParamType, PropertyValue, Station, StreamMetadata, VideoCodec, AlarmEvent } from "eufy-security-client";
 
 import { JSONValue, OutgoingEvent } from "./outgoing_message";
 import { dumpStation } from "./station/state";
@@ -166,6 +166,62 @@ export class EventForwarder {
                 });
         });
 
+        this.clients.driver.on("station download start", (station: Station, device: Device, metadata: StreamMetadata, videostream: Readable, audiostream: Readable) => {
+            const serialNumber = device.getSerial();
+            this.clients.clients.filter((cl) => cl.receiveLivestream[serialNumber] === true && cl.isConnected)
+                .forEach((client) =>
+                    client.sendEvent({
+                        source: "device",
+                        event: DeviceEvent.downloadStarted,
+                        serialNumber: serialNumber
+                    })
+                );
+            videostream.on("data", (chunk: Buffer) => {
+                this.clients.clients.filter((cl) => cl.receiveLivestream[serialNumber] === true && cl.isConnected)
+                    .forEach((client) =>
+                        client.sendEvent({
+                            source: "device",
+                            event: DeviceEvent.downloadVideoData,
+                            serialNumber: serialNumber,
+                            buffer: chunk as unknown as JSONValue,
+                            metadata: { 
+                                videoCodec: VideoCodec[metadata.videoCodec],
+                                videoFPS: metadata.videoFPS,
+                                videoHeight: metadata.videoHeight,
+                                videoWidth: metadata.videoWidth,
+                            }
+                        })
+                    );
+            });
+            audiostream.on("data", (chunk: Buffer) => {
+                this.clients.clients.filter((cl) => cl.receiveLivestream[serialNumber] === true && cl.isConnected)
+                    .forEach((client) =>
+                        client.sendEvent({
+                            source: "device",
+                            event: DeviceEvent.downloadAudioData,
+                            serialNumber: serialNumber,
+                            buffer: chunk as unknown as JSONValue,
+                            metadata: { 
+                                audioCodec: AudioCodec[metadata.audioCodec],
+                            }
+                        })
+                    );
+            });
+        });
+
+        this.clients.driver.on("station download finish", (station: Station, device: Device) => {
+            const serialNumber = device.getSerial();
+            this.clients.clients.filter((cl) => cl.receiveLivestream[serialNumber] === true && cl.isConnected)
+                .forEach((client) => {
+                    client.sendEvent({
+                        source: "device",
+                        event: DeviceEvent.downloadFinished,
+                        serialNumber: serialNumber,
+                    });
+                    client.receiveLivestream[serialNumber] = false;
+                });
+        });
+
     }
 
     private forwardEvent(data: OutgoingEvent): void {
@@ -197,13 +253,30 @@ export class EventForwarder {
             });
         });
 
-        station.on("guard mode", (station: Station, guardMode: number, currentMode: number) => {
+        station.on("guard mode", (station: Station, guardMode: number) => {
             this.forwardEvent({
                 source: "station",
                 event: StationEvent.guardModeChanged,
                 serialNumber: station.getSerial(),
                 guardMode: guardMode,
+            });
+        });
+
+        station.on("current mode", (station: Station, currentMode: number) => {
+            this.forwardEvent({
+                source: "station",
+                event: StationEvent.currentModeChanged,
+                serialNumber: station.getSerial(),
                 currentMode: currentMode,
+            });
+        });
+
+        station.on("alarm event", (station: Station, alarmEvent: AlarmEvent) => {
+            this.forwardEvent({
+                source: "station",
+                event: StationEvent.alarmEvent,
+                serialNumber: station.getSerial(),
+                alarmEvent: alarmEvent,
             });
         });
 
@@ -228,6 +301,9 @@ export class EventForwarder {
                         break;
                     case CommandType.CMD_SET_ARMING:
                         command = StationCommand.setGuardMode;
+                        break;
+                    case CommandType.CMD_SET_TONE_FILE:
+                        command = StationCommand.triggerAlarm;
                         break;
                 }
                 if (command !== undefined) {
@@ -275,8 +351,25 @@ export class EventForwarder {
                     case CommandType.CMD_BAT_DOORBELL_SET_LED_ENABLE:
                     case ParamType.COMMAND_LED_NIGHT_OPEN:
                         command = DeviceCommand.setStatusLed;
+                        break;
                     case CommandType.CMD_SET_DEVS_OSD:
                         command = DeviceCommand.setWatermark;
+                        break;
+                    case CommandType.CMD_INDOOR_ROTATE:
+                        command = DeviceCommand.panAndTilt;
+                        break;
+                    case CommandType.CMD_SET_DEVS_TONE_FILE:
+                        command = DeviceCommand.triggerAlarm;
+                        break;
+                    case CommandType.CMD_DOWNLOAD_VIDEO:
+                        command = DeviceCommand.startDownload;
+                        break;
+                    case CommandType.CMD_DOWNLOAD_CANCEL:
+                        command = DeviceCommand.cancelDownload;
+                        break;
+                    case CommandType.CMD_BAT_DOORBELL_QUICK_RESPONSE:
+                    case 1004:
+                        command = DeviceCommand.quickResponse;
                         break;
                 }
                 if (command !== undefined) {

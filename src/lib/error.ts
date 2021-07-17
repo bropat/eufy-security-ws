@@ -1,12 +1,20 @@
 export enum ErrorCode {
     unknownError = "unknown_error",
     unknownCommand = "unknown_command",
+    invalidCountryCode = "invalid_country_code",
+    invalidLanguageCode = "invalid_language_code",
     stationNotFound = "station_not_found",
     stationNotConnected = "station_not_connected",
     deviceNotFound = "device_not_found",
-    deviceNotSupportedFeature = "device_not_supported_feature",
     deviceWrongStation = "device_wrong_station",
-    stationNotSupportedGuardMode = "station_not_supported_guardmode",
+    deviceInvalidProperty = "device_invalid_property",
+    deviceInvalidPropertyValue = "device_invalid_property_value",
+    devicePropertyNotSupported = "device_property_not_supported",
+    deviceReadOnlyProperty = "device_property_readonly",
+    deviceNotSupported = "device_not_supported",
+    deviceInvalidCommandValue = "device_invalid_command_value",
+    deviceLivestreamAlreadyRunning = "device_livestream_already_running",
+    deviceLivestreamNotRunning = "device_livestream_not_running",
     schemaIncompatible = "schema_incompatible",
 }
 

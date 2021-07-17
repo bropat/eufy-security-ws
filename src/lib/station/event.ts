@@ -1,13 +1,17 @@
+import { AlarmEvent } from "eufy-security-client";
+
 import { JSONValue, OutgoingBaseEvent } from "../outgoing_message";
 
 export enum StationEvent {
     stationAdded = "station added",
     stationRemoved = "station removed",
     guardModeChanged = "guard mode changed",
+    currentModeChanged = "current mode changed",
     commandResult = "command result",
     connected = "connected",
     disconnected = "disconnected",
     propertyChanged = "property changed",
+    alarmEvent = "alarm event",
 }
 
 export interface OutgoingEventStationBase extends OutgoingBaseEvent {
@@ -33,6 +37,12 @@ export interface OutgoingEventStationGuardModeChanged extends OutgoingEventStati
     event: StationEvent.guardModeChanged;
     serialNumber: string;
     guardMode: number;
+}
+
+export interface OutgoingEventStationCurrentModeChanged extends OutgoingEventStationBase {
+    source: "station";
+    event: StationEvent.currentModeChanged;
+    serialNumber: string;
     currentMode: number;
 }
 
@@ -66,11 +76,20 @@ export interface OutgoingEventStationPropertyChanged extends OutgoingEventStatio
     timestamp: number;
 }
 
+export interface OutgoingEventStationAlarmEvent extends OutgoingEventStationBase {
+    source: "station";
+    event: StationEvent.alarmEvent;
+    serialNumber: string;
+    alarmEvent: AlarmEvent;
+}
+
 export type OutgoingEventStation =
   | OutgoingEventStationAdded
   | OutgoingEventStationRemoved
   | OutgoingEventStationGuardModeChanged
+  | OutgoingEventStationCurrentModeChanged
   | OutgoingEventStationCommandResult
   | OutgoingEventStationConnected
   | OutgoingEventStationDisconnected
-  | OutgoingEventStationPropertyChanged;
+  | OutgoingEventStationPropertyChanged
+  | OutgoingEventStationAlarmEvent;

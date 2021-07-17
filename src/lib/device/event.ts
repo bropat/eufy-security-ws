@@ -17,6 +17,10 @@ export enum DeviceEvent {
     livestreamStopped = "livestream stopped",
     livestreamVideoData = "livestream video data",
     livestreamAudioData = "livestream audio data",
+    downloadStarted = "download started",
+    downloadFinished = "download finished",
+    downloadVideoData = "download video data",
+    downloadAudioData = "download audio data",
 }
 
 export interface OutgoingEventDeviceBase extends OutgoingBaseEvent {
@@ -147,6 +151,41 @@ export interface OutgoingEventDeviceLivestreamAudioData extends OutgoingEventDev
     }
 }
 
+export interface OutgoingEventDeviceDownloadStarted extends OutgoingEventDeviceBase {
+    source: "device";
+    event: DeviceEvent.downloadStarted;
+    serialNumber: string;
+}
+
+export interface OutgoingEventDeviceDownloadFinished extends OutgoingEventDeviceBase {
+    source: "device";
+    event: DeviceEvent.downloadFinished;
+    serialNumber: string;
+}
+
+export interface OutgoingEventDeviceDownloadVideoData extends OutgoingEventDeviceBase {
+    source: "device";
+    event: DeviceEvent.downloadVideoData;
+    serialNumber: string;
+    buffer: JSONValue,
+    metadata: { 
+        videoCodec: string;
+        videoFPS: number;
+        videoHeight: number;
+        videoWidth: number;
+    }
+}
+
+export interface OutgoingEventDeviceDownloadAudioData extends OutgoingEventDeviceBase {
+    source: "device";
+    event: DeviceEvent.downloadAudioData;
+    serialNumber: string;
+    buffer: JSONValue,
+    metadata: { 
+        audioCodec: string;
+    }
+}
+
 export type OutgoingEventDevice =
   | OutgoingEventDeviceAdded
   | OutgoingEventDeviceRemoved
@@ -163,4 +202,8 @@ export type OutgoingEventDevice =
   | OutgoingEventDeviceLivestreamStarted
   | OutgoingEventDeviceLivestreamStopped
   | OutgoingEventDeviceLivestreamVideoData
-  | OutgoingEventDeviceLivestreamAudioData;
+  | OutgoingEventDeviceLivestreamAudioData
+  | OutgoingEventDeviceDownloadStarted
+  | OutgoingEventDeviceDownloadFinished
+  | OutgoingEventDeviceDownloadVideoData
+  | OutgoingEventDeviceDownloadAudioData;

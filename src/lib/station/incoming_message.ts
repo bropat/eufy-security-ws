@@ -40,6 +40,15 @@ export interface IncomingCommandDeviceSetProperty extends IncomingCommandStation
     value: unknown;
 }
 
+export interface IncomingCommandDeviceTriggerAlarm extends IncomingCommandStationBase {
+    command: StationCommand.triggerAlarm;
+    seconds: number;
+}
+
+export interface IncomingCommandDeviceResetAlarm extends IncomingCommandStationBase {
+    command: StationCommand.resetAlarm;
+}
+
 /*export interface IncomingCommandGetCameraInfo extends IncomingCommandStationBase {
     command: StationCommand.getCameraInfo;
 }
@@ -56,6 +65,8 @@ export type IncomingMessageStation =
   | IncomingCommandDisconnect
   | IncomingCommandGetPropertiesMetadata
   | IncomingCommandDeviceGetProperties
-  | IncomingCommandDeviceSetProperty;
+  | IncomingCommandDeviceSetProperty
+  | IncomingCommandDeviceTriggerAlarm
+  | IncomingCommandDeviceResetAlarm;
 /*  | IncomingCommandGetCameraInfo
   | IncomingCommandGetStorageInfo;*/

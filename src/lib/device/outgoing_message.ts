@@ -1,3 +1,4 @@
+import { Voices } from "eufy-security-client";
 import { DeviceCommand } from "./command";
 
 export interface DeviceResultTypes {
@@ -17,4 +18,11 @@ export interface DeviceResultTypes {
     [DeviceCommand.startLivestream]: Record<string, never>;
     [DeviceCommand.stopLivestream]: Record<string, never>;
     [DeviceCommand.isLiveStreaming]: { livestreaming: boolean };
+    [DeviceCommand.triggerAlarm]: Record<string, never>;
+    [DeviceCommand.resetAlarm]: Record<string, never>;
+    [DeviceCommand.panAndTilt]: Record<string, never>;
+    [DeviceCommand.quickResponse]: Record<string, never>;
+    [DeviceCommand.startDownload]: Record<string, never>;
+    [DeviceCommand.cancelDownload]: Record<string, never>;
+    [DeviceCommand.getVoices]: { voices: Voices };
 }
