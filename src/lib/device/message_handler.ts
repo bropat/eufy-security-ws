@@ -3,7 +3,7 @@ import { LivestreamAlreadyRunningError, LivestreamNotRunningError, UnknownComman
 import { Client } from "../server";
 import { DeviceCommand } from "./command";
 import { DeviceEvent } from "./event";
-import { IncomingCommandDeviceEnableDevice, IncomingCommandDeviceLockDevice, IncomingCommandDeviceSetAntiTheftDetection, IncomingCommandDeviceSetAutoNightVision, IncomingCommandDeviceSetMotionDetection, IncomingCommandDeviceSetPetDetection, IncomingCommandDeviceSetProperty, IncomingCommandDeviceSetRTSPStream, IncomingCommandDeviceSetSoundDetection, IncomingCommandDeviceSetStatusLed, IncomingCommandDeviceSetWatermark, IncomingMessageDevice, IncomingCommandDeviceTriggerAlarm, IncomingCommandDevicePanAndTilt, IncomingCommandDeviceQuickResponse, IncomingCommandDeviceStartDownload } from "./incoming_message";
+import { IncomingCommandDeviceEnableDevice, IncomingCommandDeviceLockDevice, IncomingCommandDeviceSetAntiTheftDetection, IncomingCommandDeviceSetAutoNightVision, IncomingCommandDeviceSetMotionDetection, IncomingCommandDeviceSetPetDetection, IncomingCommandDeviceSetProperty, IncomingCommandDeviceSetRTSPStream, IncomingCommandDeviceSetSoundDetection, IncomingCommandDeviceSetStatusLed, IncomingCommandDeviceSetWatermark, IncomingMessageDevice, IncomingCommandDeviceTriggerAlarm, IncomingCommandDevicePanAndTilt, IncomingCommandDeviceQuickResponse, IncomingCommandDeviceStartDownload, IncomingCommandDeviceHasProperty, IncomingCommandDeviceHasCommand } from "./incoming_message";
 import { DeviceResultTypes } from "./outgoing_message";
 
 export class DeviceMessageHandler {
@@ -95,88 +95,129 @@ export class DeviceMessageHandler {
                 });
                 return { };
             case DeviceCommand.startLivestream:
-                if (!station.isLiveStreaming(device)) {
-                    await station.startLivestream(device).catch((error) => {
-                        throw error;
-                    });
-                    client.receiveLivestream[serialNumber] = true;
-                    DeviceMessageHandler.streamingDevices[station.getSerial()] = [ client ];
-                } else if (client.receiveLivestream[serialNumber] !== true) {
-                    //TODO: Cache last received I-Frame and send that with the rest to the new client
-                    client.sendEvent({
-                        source: "device",
-                        event: DeviceEvent.livestreamStarted,
-                        serialNumber: serialNumber,
-                    })
-                    client.receiveLivestream[serialNumber] = true;
-                    if (DeviceMessageHandler.streamingDevices[station.getSerial()] !== undefined)
-                        DeviceMessageHandler.streamingDevices[station.getSerial()].push(client);
-                } else {
-                    throw new LivestreamAlreadyRunningError(`Livestream for device ${serialNumber} is already running`);
-                }
-                return { };
-            case DeviceCommand.stopLivestream:
-                if (client.receiveLivestream[serialNumber] !== true) {
-                    throw new LivestreamNotRunningError(`Start of livestream for device ${serialNumber} was not also requested by this client`);
-                }
-                if (DeviceMessageHandler.streamingDevices[station.getSerial()] !== undefined && DeviceMessageHandler.streamingDevices[station.getSerial()].includes(client)) {
-                    if (DeviceMessageHandler.streamingDevices[station.getSerial()].length === 1) {
-                        await station.stopLivestream(device).catch((error) => {
+                if (client.schemaVersion >= 2) {
+                    if (!station.isLiveStreaming(device)) {
+                        await station.startLivestream(device).catch((error) => {
                             throw error;
                         });
-                        delete DeviceMessageHandler.streamingDevices[station.getSerial()];
-                    } else {
-                        client.receiveLivestream[serialNumber] = false;
-                        DeviceMessageHandler.streamingDevices[station.getSerial()] = DeviceMessageHandler.streamingDevices[station.getSerial()].filter((cl) => cl !== client);
+                        client.receiveLivestream[serialNumber] = true;
+                        DeviceMessageHandler.streamingDevices[station.getSerial()] = [ client ];
+                    } else if (client.receiveLivestream[serialNumber] !== true) {
+                        //TODO: Cache last received I-Frame and send that with the rest to the new client
                         client.sendEvent({
                             source: "device",
-                            event: DeviceEvent.livestreamStopped,
+                            event: DeviceEvent.livestreamStarted,
                             serialNumber: serialNumber,
-                        });
+                        })
+                        client.receiveLivestream[serialNumber] = true;
+                        if (DeviceMessageHandler.streamingDevices[station.getSerial()] !== undefined)
+                            DeviceMessageHandler.streamingDevices[station.getSerial()].push(client);
+                    } else {
+                        throw new LivestreamAlreadyRunningError(`Livestream for device ${serialNumber} is already running`);
                     }
+                    return { };
                 }
-                
-                return { };
+            case DeviceCommand.stopLivestream:
+                if (client.schemaVersion >= 2) {
+                    if (client.receiveLivestream[serialNumber] !== true) {
+                        throw new LivestreamNotRunningError(`Start of livestream for device ${serialNumber} was not also requested by this client`);
+                    }
+                    if (DeviceMessageHandler.streamingDevices[station.getSerial()] !== undefined && DeviceMessageHandler.streamingDevices[station.getSerial()].includes(client)) {
+                        if (DeviceMessageHandler.streamingDevices[station.getSerial()].length === 1) {
+                            await station.stopLivestream(device).catch((error) => {
+                                throw error;
+                            });
+                            delete DeviceMessageHandler.streamingDevices[station.getSerial()];
+                        } else {
+                            client.receiveLivestream[serialNumber] = false;
+                            DeviceMessageHandler.streamingDevices[station.getSerial()] = DeviceMessageHandler.streamingDevices[station.getSerial()].filter((cl) => cl !== client);
+                            client.sendEvent({
+                                source: "device",
+                                event: DeviceEvent.livestreamStopped,
+                                serialNumber: serialNumber,
+                            });
+                        }
+                    }
+                    
+                    return { };
+                }
             case DeviceCommand.isLiveStreaming:
             {
-                const result = station.isLiveStreaming(device);
-                return { livestreaming: result };
+                if (client.schemaVersion >= 2) {
+                    const result = station.isLiveStreaming(device);
+                    return { livestreaming: result };
+                }
             }
             case DeviceCommand.triggerAlarm:
-                await station.triggerDeviceAlarmSound(device, (message as IncomingCommandDeviceTriggerAlarm).seconds).catch((error) => {
-                    throw error;
-                });
-                return { };
+                if (client.schemaVersion >= 3) {
+                    await station.triggerDeviceAlarmSound(device, (message as IncomingCommandDeviceTriggerAlarm).seconds).catch((error) => {
+                        throw error;
+                    });
+                    return { };
+                }
             case DeviceCommand.resetAlarm:
-                await station.resetDeviceAlarmSound(device).catch((error) => {
-                    throw error;
-                });
-                return { };
+                if (client.schemaVersion >= 3) {
+                    await station.resetDeviceAlarmSound(device).catch((error) => {
+                        throw error;
+                    });
+                    return { };
+                }
             case DeviceCommand.panAndTilt:
-                await station.panAndTilt(device, (message as IncomingCommandDevicePanAndTilt).direction).catch((error) => {
-                    throw error;
-                });
-                return { };
+                if (client.schemaVersion >= 3) {
+                    await station.panAndTilt(device, (message as IncomingCommandDevicePanAndTilt).direction).catch((error) => {
+                        throw error;
+                    });
+                    return { };
+                }
             case DeviceCommand.quickResponse:
-                await station.quickResponse(device, (message as IncomingCommandDeviceQuickResponse).voiceId).catch((error) => {
-                    throw error;
-                });
-                return { };
+                if (client.schemaVersion >= 3) {
+                    await station.quickResponse(device, (message as IncomingCommandDeviceQuickResponse).voiceId).catch((error) => {
+                        throw error;
+                    });
+                    return { };
+                }
             case DeviceCommand.startDownload:
-                await station.startDownload(device, (message as IncomingCommandDeviceStartDownload).path, (message as IncomingCommandDeviceStartDownload).cipherId).catch((error) => {
-                    throw error;
-                });
-                return { };
+                if (client.schemaVersion >= 3) {
+                    await station.startDownload(device, (message as IncomingCommandDeviceStartDownload).path, (message as IncomingCommandDeviceStartDownload).cipherId).catch((error) => {
+                        throw error;
+                    });
+                    return { };
+                }
             case DeviceCommand.cancelDownload:
-                await station.cancelDownload(device).catch((error) => {
-                    throw error;
-                });
-                return { };
+                if (client.schemaVersion >= 3) {
+                    await station.cancelDownload(device).catch((error) => {
+                        throw error;
+                    });
+                    return { };
+                }
             case DeviceCommand.getVoices:
-                const voices = await driver.getApi().getVoices(device.getSerial()).catch((error) => {
-                    throw error;
-                });
-                return { voices: voices };
+                if (client.schemaVersion >= 3) {
+                    const voices = await driver.getApi().getVoices(device.getSerial()).catch((error) => {
+                        throw error;
+                    });
+                    return { voices: voices };
+                }
+            case DeviceCommand.hasProperty:
+            {
+                if (client.schemaVersion >= 3) {
+                    const result = device.hasProperty((message as IncomingCommandDeviceHasProperty).propertyName);
+                    return { exists: result };
+                }
+            }
+            case DeviceCommand.hasCommand:
+            {
+                if (client.schemaVersion >= 3) {
+                    const result = device.hasCommand((message as IncomingCommandDeviceHasCommand).commandName);
+                    return { exists: result };
+                }
+            }
+            case DeviceCommand.getCommands:
+            {
+                if (client.schemaVersion >= 3) {
+                    const result = device.getCommands();
+                    return { commands: result };
+                }
+            }
             default:
                 throw new UnknownCommandError(command);
         }

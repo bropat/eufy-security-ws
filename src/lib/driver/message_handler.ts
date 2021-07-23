@@ -24,11 +24,13 @@ export class DriverMessageHandler {
                 });
                 return { };
             case DriverCommand.isConnected:
+            case DriverCommand.isConnectedLegacy:
             {
                 const result = driver.isConnected();
                 return { connected: result };
             }
             case DriverCommand.isPushConnected:
+            case DriverCommand.isPushConnectedLegacy:
             {
                 const result = driver.isPushConnected();
                 return { connected: result };
@@ -45,48 +47,54 @@ export class DriverMessageHandler {
                 return { };
             case DriverCommand.getVideoEvents:
             {
-                const fifthyYearsInMilliseconds = 15 * 365 * 24 * 60 * 60 * 1000;
-                const videoMessage = message as IncomingCommandGetVideoEvents;
-                let startTime = new Date(new Date().getTime() - fifthyYearsInMilliseconds);
-                let endTime = new Date();
-                if (videoMessage.startTimestampMs !== undefined) {
-                    startTime = new Date(videoMessage.startTimestampMs);
+                if (client.schemaVersion >= 3) {
+                    const fifthyYearsInMilliseconds = 15 * 365 * 24 * 60 * 60 * 1000;
+                    const videoMessage = message as IncomingCommandGetVideoEvents;
+                    let startTime = new Date(new Date().getTime() - fifthyYearsInMilliseconds);
+                    let endTime = new Date();
+                    if (videoMessage.startTimestampMs !== undefined) {
+                        startTime = new Date(videoMessage.startTimestampMs);
+                    }
+                    if (videoMessage.endTimestampMs !== undefined) {
+                        endTime = new Date(videoMessage.endTimestampMs);
+                    }
+                    const events = await driver.getApi().getVideoEvents(startTime, endTime, videoMessage.filter, videoMessage.maxResults);
+                    return { events: events };
                 }
-                if (videoMessage.endTimestampMs !== undefined) {
-                    endTime = new Date(videoMessage.endTimestampMs);
-                }
-                const events = await driver.getApi().getVideoEvents(startTime, endTime, videoMessage.filter, videoMessage.maxResults);
-                return { events: events };
             }
             case DriverCommand.getAlarmEvents:
             {
-                const fifthyYearsInMilliseconds = 15 * 365 * 24 * 60 * 60 * 1000;
-                const alarmMessage = message as IncomingCommandGetVideoEvents;
-                let startTime = new Date(new Date().getTime() - fifthyYearsInMilliseconds);
-                let endTime = new Date();
-                if (alarmMessage.startTimestampMs !== undefined) {
-                    startTime = new Date(alarmMessage.startTimestampMs);
+                if (client.schemaVersion >= 3) {
+                    const fifthyYearsInMilliseconds = 15 * 365 * 24 * 60 * 60 * 1000;
+                    const alarmMessage = message as IncomingCommandGetVideoEvents;
+                    let startTime = new Date(new Date().getTime() - fifthyYearsInMilliseconds);
+                    let endTime = new Date();
+                    if (alarmMessage.startTimestampMs !== undefined) {
+                        startTime = new Date(alarmMessage.startTimestampMs);
+                    }
+                    if (alarmMessage.endTimestampMs !== undefined) {
+                        endTime = new Date(alarmMessage.endTimestampMs);
+                    }
+                    const events = await driver.getApi().getAlarmEvents(startTime, endTime, alarmMessage.filter, alarmMessage.maxResults);
+                    return { events: events };
                 }
-                if (alarmMessage.endTimestampMs !== undefined) {
-                    endTime = new Date(alarmMessage.endTimestampMs);
-                }
-                const events = await driver.getApi().getAlarmEvents(startTime, endTime, alarmMessage.filter, alarmMessage.maxResults);
-                return { events: events };
             }
             case DriverCommand.getHistoryEvents:
             {
-                const fifthyYearsInMilliseconds = 15 * 365 * 24 * 60 * 60 * 1000;
-                const historyMessage = message as IncomingCommandGetVideoEvents;
-                let startTime = new Date(new Date().getTime() - fifthyYearsInMilliseconds);
-                let endTime = new Date();
-                if (historyMessage.startTimestampMs !== undefined) {
-                    startTime = new Date(historyMessage.startTimestampMs);
+                if (client.schemaVersion >= 3) {
+                    const fifthyYearsInMilliseconds = 15 * 365 * 24 * 60 * 60 * 1000;
+                    const historyMessage = message as IncomingCommandGetVideoEvents;
+                    let startTime = new Date(new Date().getTime() - fifthyYearsInMilliseconds);
+                    let endTime = new Date();
+                    if (historyMessage.startTimestampMs !== undefined) {
+                        startTime = new Date(historyMessage.startTimestampMs);
+                    }
+                    if (historyMessage.endTimestampMs !== undefined) {
+                        endTime = new Date(historyMessage.endTimestampMs);
+                    }
+                    const events = await driver.getApi().getHistoryEvents(startTime, endTime, historyMessage.filter, historyMessage.maxResults);
+                    return { events: events };
                 }
-                if (historyMessage.endTimestampMs !== undefined) {
-                    endTime = new Date(historyMessage.endTimestampMs);
-                }
-                const events = await driver.getApi().getHistoryEvents(startTime, endTime, historyMessage.filter, historyMessage.maxResults);
-                return { events: events };
             }
             default:
                 throw new UnknownCommandError(command);

@@ -1,3 +1,5 @@
+import { CommandName } from "eufy-security-client";
+
 import { StationCommand } from "./command";
 
 export interface StationResultTypes {
@@ -11,6 +13,12 @@ export interface StationResultTypes {
     [StationCommand.setProperty]: Record<string, never>;
     [StationCommand.triggerAlarm]: Record<string, never>;
     [StationCommand.resetAlarm]: Record<string, never>;
+    [StationCommand.hasProperty]: { exists: boolean };
+    [StationCommand.hasCommand]: { exists: boolean };
+    [StationCommand.getCommands]: { commands: Array<CommandName>; };
     /*[StationCommand.getCameraInfo]: Record<string, never>;
     [StationCommand.getStorageInfo]: Record<string, never>;*/
+
+    //Legacy
+    [StationCommand.isConnectedLegacy]: { connected: boolean };
 }

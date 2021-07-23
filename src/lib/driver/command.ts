@@ -8,4 +8,8 @@ export enum DriverCommand {
     getAlarmEvents = "driver.get_alarm_events",
     getVideoEvents = "driver.get_video_events",
     getHistoryEvents = "driver.get_history_events",
+
+    //Legacy commands
+    isConnectedLegacy = "driver.isConnected",
+    isPushConnectedLegacy = "driver.isPushConnected",
 }

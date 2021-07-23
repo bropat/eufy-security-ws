@@ -1,4 +1,4 @@
-import { Voices } from "eufy-security-client";
+import { Voices, CommandName } from "eufy-security-client";
 import { DeviceCommand } from "./command";
 
 export interface DeviceResultTypes {
@@ -25,4 +25,8 @@ export interface DeviceResultTypes {
     [DeviceCommand.startDownload]: Record<string, never>;
     [DeviceCommand.cancelDownload]: Record<string, never>;
     [DeviceCommand.getVoices]: { voices: Voices };
+    [DeviceCommand.hasProperty]: { exists: boolean };
+    [DeviceCommand.hasCommand]: { exists: boolean };
+    [DeviceCommand.getCommands]: { commands: Array<CommandName>; };
+
 }

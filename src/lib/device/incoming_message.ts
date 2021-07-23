@@ -1,3 +1,4 @@
+import { CommandName, PropertyName } from "eufy-security-client";
 import { PanTiltDirection } from "eufy-security-client/build/p2p/types";
 import { IncomingCommandBase } from "../incoming_message_base";
 import { DeviceCommand } from "./command";
@@ -116,6 +117,20 @@ export interface IncomingCommandDeviceGetVoices extends IncomingCommandDeviceBas
     command: DeviceCommand.getVoices;
 }
 
+export interface IncomingCommandDeviceHasProperty extends IncomingCommandDeviceBase {
+    command: DeviceCommand.hasProperty;
+    propertyName: PropertyName;
+}
+
+export interface IncomingCommandDeviceHasCommand extends IncomingCommandDeviceBase {
+    command: DeviceCommand.hasCommand;
+    commandName: CommandName;
+}
+
+export interface IncomingCommandDeviceGetCommands extends IncomingCommandDeviceBase {
+    command: DeviceCommand.getCommands;
+}
+
 export type IncomingMessageDevice =
   | IncomingCommandDeviceSetStatusLed
   | IncomingCommandDeviceSetAutoNightVision
@@ -139,4 +154,7 @@ export type IncomingMessageDevice =
   | IncomingCommandDeviceQuickResponse
   | IncomingCommandDeviceStartDownload
   | IncomingCommandDeviceCancelDownload
-  | IncomingCommandDeviceGetVoices;
+  | IncomingCommandDeviceGetVoices
+  | IncomingCommandDeviceHasProperty
+  | IncomingCommandDeviceHasCommand
+  | IncomingCommandDeviceGetCommands;

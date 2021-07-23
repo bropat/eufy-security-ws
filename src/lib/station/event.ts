@@ -37,6 +37,7 @@ export interface OutgoingEventStationGuardModeChanged extends OutgoingEventStati
     event: StationEvent.guardModeChanged;
     serialNumber: string;
     guardMode: number;
+    currentMode?: number; // for backward compatibility schemaVersion <= 2
 }
 
 export interface OutgoingEventStationCurrentModeChanged extends OutgoingEventStationBase {

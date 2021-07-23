@@ -1,4 +1,5 @@
 import { AudioCodec, Camera, CommandResult, CommandType, Device, DoorbellCamera, EntrySensor, ErrorCode, IndoorCamera, MotionSensor, ParamType, PropertyValue, Station, StreamMetadata, VideoCodec, AlarmEvent } from "eufy-security-client";
+import { Readable } from "stream";
 
 import { JSONValue, OutgoingEvent } from "./outgoing_message";
 import { dumpStation } from "./station/state";
@@ -9,7 +10,7 @@ import { DriverEvent } from "./driver/event";
 import { Client, ClientsController } from "./server";
 import { StationCommand } from "./station/command";
 import { DeviceCommand } from "./device/command";
-import { Readable } from "stream";
+import { maxSchemaVersion as internalSchemaVersion } from "./const";
 
 export class EventForwarder {
 
@@ -21,7 +22,7 @@ export class EventForwarder {
             this.forwardEvent({
                 source: "driver",
                 event: DriverEvent.verifyCode,
-            });
+            }, 0);
         });
 
         this.clients.driver.on("connect", () => {
@@ -113,43 +114,49 @@ export class EventForwarder {
         this.clients.driver.on("station livestream start", (station: Station, device: Device, metadata: StreamMetadata, videostream: Readable, audiostream: Readable) => {
             const serialNumber = device.getSerial();
             this.clients.clients.filter((cl) => cl.receiveLivestream[serialNumber] === true && cl.isConnected)
-                .forEach((client) =>
-                    client.sendEvent({
-                        source: "device",
-                        event: DeviceEvent.livestreamStarted,
-                        serialNumber: serialNumber
-                    })
-                );
-            videostream.on("data", (chunk: Buffer) => {
-                this.clients.clients.filter((cl) => cl.receiveLivestream[serialNumber] === true && cl.isConnected)
-                    .forEach((client) =>
+                .forEach((client) => {
+                    if (client.schemaVersion >= 2) {
                         client.sendEvent({
                             source: "device",
-                            event: DeviceEvent.livestreamVideoData,
-                            serialNumber: serialNumber,
-                            buffer: chunk as unknown as JSONValue,
-                            metadata: { 
-                                videoCodec: VideoCodec[metadata.videoCodec],
-                                videoFPS: metadata.videoFPS,
-                                videoHeight: metadata.videoHeight,
-                                videoWidth: metadata.videoWidth,
-                            }
-                        })
-                    );
+                            event: DeviceEvent.livestreamStarted,
+                            serialNumber: serialNumber
+                        });
+                    }
+                });
+            videostream.on("data", (chunk: Buffer) => {
+                this.clients.clients.filter((cl) => cl.receiveLivestream[serialNumber] === true && cl.isConnected)
+                    .forEach((client) => {
+                        if (client.schemaVersion >= 2) {
+                            client.sendEvent({
+                                source: "device",
+                                event: DeviceEvent.livestreamVideoData,
+                                serialNumber: serialNumber,
+                                buffer: chunk as unknown as JSONValue,
+                                metadata: { 
+                                    videoCodec: VideoCodec[metadata.videoCodec],
+                                    videoFPS: metadata.videoFPS,
+                                    videoHeight: metadata.videoHeight,
+                                    videoWidth: metadata.videoWidth,
+                                }
+                            });
+                        }
+                    });
             });
             audiostream.on("data", (chunk: Buffer) => {
                 this.clients.clients.filter((cl) => cl.receiveLivestream[serialNumber] === true && cl.isConnected)
-                    .forEach((client) =>
-                        client.sendEvent({
-                            source: "device",
-                            event: DeviceEvent.livestreamAudioData,
-                            serialNumber: serialNumber,
-                            buffer: chunk as unknown as JSONValue,
-                            metadata: { 
-                                audioCodec: AudioCodec[metadata.audioCodec],
-                            }
-                        })
-                    );
+                    .forEach((client) => {
+                        if (client.schemaVersion >= 2) {
+                            client.sendEvent({
+                                source: "device",
+                                event: DeviceEvent.livestreamAudioData,
+                                serialNumber: serialNumber,
+                                buffer: chunk as unknown as JSONValue,
+                                metadata: { 
+                                    audioCodec: AudioCodec[metadata.audioCodec],
+                                }
+                            });
+                        }
+                    });
             });
         });
 
@@ -157,11 +164,13 @@ export class EventForwarder {
             const serialNumber = device.getSerial();
             this.clients.clients.filter((cl) => cl.receiveLivestream[serialNumber] === true && cl.isConnected)
                 .forEach((client) => {
-                    client.sendEvent({
-                        source: "device",
-                        event: DeviceEvent.livestreamStopped,
-                        serialNumber: serialNumber,
-                    });
+                    if (client.schemaVersion >= 2) {
+                        client.sendEvent({
+                            source: "device",
+                            event: DeviceEvent.livestreamStopped,
+                            serialNumber: serialNumber,
+                        });
+                    }
                     client.receiveLivestream[serialNumber] = false;
                 });
         });
@@ -169,43 +178,49 @@ export class EventForwarder {
         this.clients.driver.on("station download start", (station: Station, device: Device, metadata: StreamMetadata, videostream: Readable, audiostream: Readable) => {
             const serialNumber = device.getSerial();
             this.clients.clients.filter((cl) => cl.receiveLivestream[serialNumber] === true && cl.isConnected)
-                .forEach((client) =>
-                    client.sendEvent({
-                        source: "device",
-                        event: DeviceEvent.downloadStarted,
-                        serialNumber: serialNumber
-                    })
-                );
-            videostream.on("data", (chunk: Buffer) => {
-                this.clients.clients.filter((cl) => cl.receiveLivestream[serialNumber] === true && cl.isConnected)
-                    .forEach((client) =>
+                .forEach((client) => {
+                    if (client.schemaVersion >= 3) {
                         client.sendEvent({
                             source: "device",
-                            event: DeviceEvent.downloadVideoData,
-                            serialNumber: serialNumber,
-                            buffer: chunk as unknown as JSONValue,
-                            metadata: { 
-                                videoCodec: VideoCodec[metadata.videoCodec],
-                                videoFPS: metadata.videoFPS,
-                                videoHeight: metadata.videoHeight,
-                                videoWidth: metadata.videoWidth,
-                            }
-                        })
-                    );
+                            event: DeviceEvent.downloadStarted,
+                            serialNumber: serialNumber
+                        });
+                    }
+                });
+            videostream.on("data", (chunk: Buffer) => {
+                this.clients.clients.filter((cl) => cl.receiveLivestream[serialNumber] === true && cl.isConnected)
+                    .forEach((client) => {
+                        if (client.schemaVersion >= 3) {
+                            client.sendEvent({
+                                source: "device",
+                                event: DeviceEvent.downloadVideoData,
+                                serialNumber: serialNumber,
+                                buffer: chunk as unknown as JSONValue,
+                                metadata: { 
+                                    videoCodec: VideoCodec[metadata.videoCodec],
+                                    videoFPS: metadata.videoFPS,
+                                    videoHeight: metadata.videoHeight,
+                                    videoWidth: metadata.videoWidth,
+                                }
+                            });
+                        }
+                    });
             });
             audiostream.on("data", (chunk: Buffer) => {
                 this.clients.clients.filter((cl) => cl.receiveLivestream[serialNumber] === true && cl.isConnected)
-                    .forEach((client) =>
-                        client.sendEvent({
-                            source: "device",
-                            event: DeviceEvent.downloadAudioData,
-                            serialNumber: serialNumber,
-                            buffer: chunk as unknown as JSONValue,
-                            metadata: { 
-                                audioCodec: AudioCodec[metadata.audioCodec],
-                            }
-                        })
-                    );
+                    .forEach((client) => {
+                        if (client.schemaVersion >= 3) {
+                            client.sendEvent({
+                                source: "device",
+                                event: DeviceEvent.downloadAudioData,
+                                serialNumber: serialNumber,
+                                buffer: chunk as unknown as JSONValue,
+                                metadata: { 
+                                    audioCodec: AudioCodec[metadata.audioCodec],
+                                }
+                            });
+                        }
+                    });
             });
         });
 
@@ -213,20 +228,26 @@ export class EventForwarder {
             const serialNumber = device.getSerial();
             this.clients.clients.filter((cl) => cl.receiveLivestream[serialNumber] === true && cl.isConnected)
                 .forEach((client) => {
-                    client.sendEvent({
-                        source: "device",
-                        event: DeviceEvent.downloadFinished,
-                        serialNumber: serialNumber,
-                    });
+                    if (client.schemaVersion >= 3) {
+                        client.sendEvent({
+                            source: "device",
+                            event: DeviceEvent.downloadFinished,
+                            serialNumber: serialNumber,
+                        });
+                    }
                     client.receiveLivestream[serialNumber] = false;
                 });
         });
 
     }
 
-    private forwardEvent(data: OutgoingEvent): void {
+    private forwardEvent(data: OutgoingEvent, minSchemaVersion: number, maxSchemaVersion: number = internalSchemaVersion): void {
         // Forward event to all connected clients
-        this.clients.clients.forEach((client) => this.sendEvent(client, data));
+        this.clients.clients.forEach((client) => {
+            if (client.schemaVersion >= minSchemaVersion && client.schemaVersion <= maxSchemaVersion) {
+                this.sendEvent(client, data)
+            }
+        });
     }
 
     private sendEvent(client: Client, data: OutgoingEvent): void {
@@ -242,7 +263,7 @@ export class EventForwarder {
                 source: "station",
                 event: StationEvent.connected,
                 serialNumber: station.getSerial()
-            });
+            }, 0);
         });
 
         station.on("close", () => {
@@ -250,25 +271,43 @@ export class EventForwarder {
                 source: "station",
                 event: StationEvent.disconnected,
                 serialNumber: station.getSerial()
-            });
+            }, 0);
         });
 
         station.on("guard mode", (station: Station, guardMode: number) => {
+            // Event for schemaVersion <= 2
             this.forwardEvent({
                 source: "station",
                 event: StationEvent.guardModeChanged,
                 serialNumber: station.getSerial(),
                 guardMode: guardMode,
-            });
+                currentMode: station.getCurrentMode().value as number,
+            }, 0 , 2);
+            // Event for schemaVersion >= 3
+            this.forwardEvent({
+                source: "station",
+                event: StationEvent.guardModeChanged,
+                serialNumber: station.getSerial(),
+                guardMode: guardMode,
+            }, 3);
         });
 
         station.on("current mode", (station: Station, currentMode: number) => {
+            // Event for schemaVersion <= 2
+            this.forwardEvent({
+                source: "station",
+                event: StationEvent.guardModeChanged,
+                serialNumber: station.getSerial(),
+                guardMode: station.getGuardMode().value as number,
+                currentMode: currentMode,
+            }, 0, 2);
+            //Event for schemaVersion >= 3
             this.forwardEvent({
                 source: "station",
                 event: StationEvent.currentModeChanged,
                 serialNumber: station.getSerial(),
                 currentMode: currentMode,
-            });
+            }, 3);
         });
 
         station.on("alarm event", (station: Station, alarmEvent: AlarmEvent) => {
@@ -277,7 +316,7 @@ export class EventForwarder {
                 event: StationEvent.alarmEvent,
                 serialNumber: station.getSerial(),
                 alarmEvent: alarmEvent,
-            });
+            }, 3);
         });
 
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -288,7 +327,7 @@ export class EventForwarder {
                 event: DeviceEvent.gotRtspUrl,
                 serialNumber: device.getSerial(),
                 rtspUrl: value,
-            });
+            }, 0);
         });
 
         station.on("command result", (station: Station, result: CommandResult) => {
@@ -314,7 +353,7 @@ export class EventForwarder {
                         command: command.split(".")[1],
                         returnCode: result.return_code,
                         returnCodeName: ErrorCode[result.return_code] !== undefined ? ErrorCode[result.return_code] : "UNKNOWN",
-                    });
+                    }, 0);
                 }
             } else {
                 // Device command result
@@ -381,7 +420,7 @@ export class EventForwarder {
                         command: command.split(".")[1],
                         returnCode: result.return_code,
                         returnCodeName: ErrorCode[result.return_code] !== undefined ? ErrorCode[result.return_code] : "UNKNOWN",
-                    });
+                    }, 0);
                 }
             }
         });
@@ -394,7 +433,7 @@ export class EventForwarder {
                 name: name,
                 value: value.value as JSONValue,
                 timestamp: value.timestamp
-            });
+            }, 0);
         });
 
     }
@@ -499,7 +538,7 @@ export class EventForwarder {
                 name: name,
                 value: value.value as JSONValue,
                 timestamp: value.timestamp
-            });
+            }, 0);
         });
     }
 

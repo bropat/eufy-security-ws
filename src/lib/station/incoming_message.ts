@@ -1,3 +1,4 @@
+import { CommandName, PropertyName } from "eufy-security-client";
 import { IncomingCommandBase } from "../incoming_message_base";
 import { StationCommand } from "./command";
 
@@ -15,7 +16,7 @@ export interface IncomingCommandSetGuardMode extends IncomingCommandStationBase 
 }
 
 export interface IncomingCommandIsConnected extends IncomingCommandStationBase {
-    command: StationCommand.isConnected;
+    command: StationCommand.isConnected | StationCommand.isConnectedLegacy;
 }
 
 export interface IncomingCommandConnect extends IncomingCommandStationBase {
@@ -30,23 +31,37 @@ export interface IncomingCommandGetPropertiesMetadata extends IncomingCommandSta
     command: StationCommand.getPropertiesMetadata;
 }
 
-export interface IncomingCommandDeviceGetProperties extends IncomingCommandStationBase {
+export interface IncomingCommandGetProperties extends IncomingCommandStationBase {
     command: StationCommand.getProperties;
 }
 
-export interface IncomingCommandDeviceSetProperty extends IncomingCommandStationBase {
+export interface IncomingCommandSetProperty extends IncomingCommandStationBase {
     command: StationCommand.setProperty;
     name: string;
     value: unknown;
 }
 
-export interface IncomingCommandDeviceTriggerAlarm extends IncomingCommandStationBase {
+export interface IncomingCommandTriggerAlarm extends IncomingCommandStationBase {
     command: StationCommand.triggerAlarm;
     seconds: number;
 }
 
-export interface IncomingCommandDeviceResetAlarm extends IncomingCommandStationBase {
+export interface IncomingCommandResetAlarm extends IncomingCommandStationBase {
     command: StationCommand.resetAlarm;
+}
+
+export interface IncomingCommandHasProperty extends IncomingCommandStationBase {
+    command: StationCommand.hasProperty;
+    propertyName: PropertyName;
+}
+
+export interface IncomingCommandHasCommand extends IncomingCommandStationBase {
+    command: StationCommand.hasCommand;
+    commandName: CommandName;
+}
+
+export interface IncomingCommandGetCommands extends IncomingCommandStationBase {
+    command: StationCommand.getCommands;
 }
 
 /*export interface IncomingCommandGetCameraInfo extends IncomingCommandStationBase {
@@ -64,9 +79,12 @@ export type IncomingMessageStation =
   | IncomingCommandConnect
   | IncomingCommandDisconnect
   | IncomingCommandGetPropertiesMetadata
-  | IncomingCommandDeviceGetProperties
-  | IncomingCommandDeviceSetProperty
-  | IncomingCommandDeviceTriggerAlarm
-  | IncomingCommandDeviceResetAlarm;
+  | IncomingCommandGetProperties
+  | IncomingCommandSetProperty
+  | IncomingCommandTriggerAlarm
+  | IncomingCommandResetAlarm
+  | IncomingCommandHasProperty
+  | IncomingCommandHasCommand
+  | IncomingCommandGetCommands;
 /*  | IncomingCommandGetCameraInfo
   | IncomingCommandGetStorageInfo;*/

@@ -2,7 +2,7 @@ import { EufySecurity } from "eufy-security-client";
 import { UnknownCommandError } from "../error";
 import { Client } from "../server";
 import { StationCommand } from "./command";
-import { IncomingCommandDeviceSetProperty, IncomingCommandDeviceTriggerAlarm, IncomingCommandSetGuardMode, IncomingMessageStation } from "./incoming_message";
+import { IncomingCommandSetProperty, IncomingCommandTriggerAlarm, IncomingCommandSetGuardMode, IncomingMessageStation, IncomingCommandHasCommand, IncomingCommandHasProperty } from "./incoming_message";
 import { StationResultTypes } from "./outgoing_message";
 
 export class StationMessageHandler {
@@ -24,6 +24,7 @@ export class StationMessageHandler {
                 });
                 return { };
             case StationCommand.isConnected:
+            case StationCommand.isConnectedLegacy:
                 const result = station.isConnected();
                 return { connected: result };
             /*case StationCommand.getCameraInfo:
@@ -55,20 +56,45 @@ export class StationMessageHandler {
                 return { properties: properties };
             }
             case StationCommand.setProperty:
-                await driver.setStationProperty(serialNumber, (message as IncomingCommandDeviceSetProperty).name, (message as IncomingCommandDeviceSetProperty).value).catch((error) => {
+                await driver.setStationProperty(serialNumber, (message as IncomingCommandSetProperty).name, (message as IncomingCommandSetProperty).value).catch((error) => {
                     throw error;
                 });
                 return { };
             case StationCommand.triggerAlarm:
-                await station.triggerStationAlarmSound((message as IncomingCommandDeviceTriggerAlarm).seconds).catch((error) => {
-                    throw error;
-                });
-                return { };
+                if (client.schemaVersion >= 3) {
+                    await station.triggerStationAlarmSound((message as IncomingCommandTriggerAlarm).seconds).catch((error) => {
+                        throw error;
+                    });
+                    return { };
+                }
             case StationCommand.resetAlarm:
-                await station.resetStationAlarmSound().catch((error) => {
-                    throw error;
-                });
-                return { };
+                if (client.schemaVersion >= 3) {
+                    await station.resetStationAlarmSound().catch((error) => {
+                        throw error;
+                    });
+                    return { };
+                }
+            case StationCommand.hasProperty:
+            {
+                if (client.schemaVersion >= 3) {
+                    const result = station.hasProperty((message as IncomingCommandHasProperty).propertyName);
+                    return { exists: result };
+                }
+            }
+            case StationCommand.hasCommand:
+            {
+                if (client.schemaVersion >= 3) {
+                    const result = station.hasCommand((message as IncomingCommandHasCommand).commandName);
+                    return { exists: result };
+                }
+            }
+            case StationCommand.getCommands:
+            {
+                if (client.schemaVersion >= 3) {
+                    const result = station.getCommands();
+                    return { commands: result };
+                }
+            }
             default:
                 throw new UnknownCommandError(command);
         }

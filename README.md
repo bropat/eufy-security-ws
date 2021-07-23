@@ -470,6 +470,68 @@ interface {
 }
 ```
 
+#### Get supported commands
+
+[compatible with schema version: 3+]
+
+```ts
+interface {
+    messageId: string;
+    command: "station.get_commands";
+    serialNumber: string;
+}
+```
+
+Returns:
+
+```ts
+interface {
+    commands: Array<CommandName>;
+}
+```
+
+#### Check command name
+
+[compatible with schema version: 3+]
+
+```ts
+interface {
+    messageId: string;
+    command: "station.has_command";
+    serialNumber: string;
+    commandName: string;
+}
+```
+
+Returns:
+
+```ts
+interface {
+    exists: boolean;
+}
+```
+
+#### Check property name
+
+[compatible with schema version: 3+]
+
+```ts
+interface {
+    messageId: string;
+    command: "station.has_property";
+    serialNumber: string;
+    propertyName: string;
+}
+```
+
+Returns:
+
+```ts
+interface {
+    exists: boolean;
+}
+```
+
 ### Device level commands
 
 #### Get properties metadata
@@ -801,6 +863,68 @@ interface {
 }
 ```
 
+#### Get supported commands
+
+[compatible with schema version: 3+]
+
+```ts
+interface {
+    messageId: string;
+    command: "device.get_commands";
+    serialNumber: string;
+}
+```
+
+Returns:
+
+```ts
+interface {
+    commands: Array<CommandName>;
+}
+```
+
+#### Check command name
+
+[compatible with schema version: 3+]
+
+```ts
+interface {
+    messageId: string;
+    command: "device.has_command";
+    serialNumber: string;
+    commandName: string;
+}
+```
+
+Returns:
+
+```ts
+interface {
+    exists: boolean;
+}
+```
+
+#### Check property name
+
+[compatible with schema version: 3+]
+
+```ts
+interface {
+    messageId: string;
+    command: "device.has_property";
+    serialNumber: string;
+    propertyName: string;
+}
+```
+
+Returns:
+
+```ts
+interface {
+    exists: boolean;
+}
+```
+
 ## Events
 
 ### Driver level events
@@ -958,7 +1082,7 @@ interface {
     source: "station";
     event: "guard mode changed";
     serialNumber: string;
-    currentMode: number;      //Removed in schema version 3+
+    currentMode: number;      // Removed in schema version 3+, as there is now a separate event
     guardMode: number;
   }
 }

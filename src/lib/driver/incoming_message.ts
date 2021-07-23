@@ -12,11 +12,11 @@ export interface IncomingCommandPollRefresh extends IncomingCommandBase {
 }
 
 export interface IncomingCommandIsConnected extends IncomingCommandBase {
-    command: DriverCommand.isConnected;
+    command: DriverCommand.isConnected | DriverCommand.isConnectedLegacy;
 }
 
 export interface IncomingCommandIsPushConnected extends IncomingCommandBase {
-    command: DriverCommand.isPushConnected;
+    command: DriverCommand.isPushConnected | DriverCommand.isPushConnectedLegacy;
 }
 
 export interface IncomingCommandConnect extends IncomingCommandBase {

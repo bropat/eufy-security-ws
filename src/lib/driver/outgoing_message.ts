@@ -11,4 +11,8 @@ export interface DriverResultTypes {
     [DriverCommand.getVideoEvents]: { events: Array<EventRecordResponse> };
     [DriverCommand.getAlarmEvents]: { events: Array<EventRecordResponse> };
     [DriverCommand.getHistoryEvents]: { events: Array<EventRecordResponse> };
+
+    //Legacy
+    [DriverCommand.isConnectedLegacy]: { connected: boolean };
+    [DriverCommand.isPushConnectedLegacy]: { connected: boolean };
 }
