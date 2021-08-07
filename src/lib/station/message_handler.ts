@@ -24,9 +24,23 @@ export class StationMessageHandler {
                 });
                 return { };
             case StationCommand.isConnected:
+            {
+                const result = station.isConnected();
+
+                if (client.schemaVersion <= 3) {
+                    return { connected: result };
+                } else if (client.schemaVersion >= 4) {
+                    return {
+                        serialNumber: station.getSerial(),
+                        connected: result
+                    };
+                }
+            }
             case StationCommand.isConnectedLegacy:
+            {
                 const result = station.isConnected();
                 return { connected: result };
+            }
             /*case StationCommand.getCameraInfo:
                 await station.getCameraInfo().catch((error) => {
                     throw error;
@@ -48,12 +62,28 @@ export class StationMessageHandler {
             case StationCommand.getPropertiesMetadata:
             {
                 const properties = station.getPropertiesMetadata();
-                return { properties: properties };
+
+                if (client.schemaVersion <= 3) {
+                    return { properties: properties };
+                } else if (client.schemaVersion >= 4) {
+                    return {
+                        serialNumber: station.getSerial(),
+                        properties: properties
+                    };
+                }
             }
             case StationCommand.getProperties:
             {
                 const properties = station.getProperties();
-                return { properties: properties };
+
+                if (client.schemaVersion <= 3) {
+                    return { properties: properties };
+                } else if (client.schemaVersion >= 4) {
+                    return {
+                        serialNumber: station.getSerial(),
+                        properties: properties
+                    };
+                }
             }
             case StationCommand.setProperty:
                 await driver.setStationProperty(serialNumber, (message as IncomingCommandSetProperty).name, (message as IncomingCommandSetProperty).value).catch((error) => {
@@ -78,21 +108,45 @@ export class StationMessageHandler {
             {
                 if (client.schemaVersion >= 3) {
                     const result = station.hasProperty((message as IncomingCommandHasProperty).propertyName);
-                    return { exists: result };
+
+                    if (client.schemaVersion === 3) {
+                        return { exists: result };
+                    } else if (client.schemaVersion >= 4) {
+                        return {
+                            serialNumber: station.getSerial(),
+                            exists: result
+                        };
+                    }
                 }
             }
             case StationCommand.hasCommand:
             {
                 if (client.schemaVersion >= 3) {
                     const result = station.hasCommand((message as IncomingCommandHasCommand).commandName);
-                    return { exists: result };
+                    
+                    if (client.schemaVersion === 3) {
+                        return { exists: result };
+                    } else if (client.schemaVersion >= 4) {
+                        return {
+                            serialNumber: station.getSerial(),
+                            exists: result
+                        };
+                    }
                 }
             }
             case StationCommand.getCommands:
             {
                 if (client.schemaVersion >= 3) {
                     const result = station.getCommands();
-                    return { commands: result };
+
+                    if (client.schemaVersion === 3) {
+                        return { commands: result };
+                    } else if (client.schemaVersion >= 4) {
+                        return {
+                            serialNumber: station.getSerial(),
+                            commands: result
+                        };
+                    }
                 }
             }
             default:

@@ -331,6 +331,7 @@ export class EventForwarder {
         });
 
         station.on("command result", (station: Station, result: CommandResult) => {
+            //TODO: Implement this event differently or remove the commands already implemented as properties
             if (result.channel === Station.CHANNEL) {
                 //Station command result
                 let command: string | undefined = undefined;
@@ -406,8 +407,15 @@ export class EventForwarder {
                     case CommandType.CMD_DOWNLOAD_CANCEL:
                         command = DeviceCommand.cancelDownload;
                         break;
+                    case CommandType.CMD_START_REALTIME_MEDIA:
+                    case ParamType.COMMAND_START_LIVESTREAM:
+                        command = DeviceCommand.startLivestream;
+                        break;
+                    case CommandType.CMD_STOP_REALTIME_MEDIA:
+                        command = DeviceCommand.stopLivestream;
+                        break;
                     case CommandType.CMD_BAT_DOORBELL_QUICK_RESPONSE:
-                    case 1004:
+                    //case 1004: //TODO: CMD_STOP_REALTIME_MEDIA has the same number
                         command = DeviceCommand.quickResponse;
                         break;
                 }

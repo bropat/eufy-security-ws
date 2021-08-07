@@ -26,3 +26,8 @@ Base schema.
 * Added new commands `triggerAlarm`, `resetAlarm`, `hasProperty`, `hasCommand` and `getCommands` to Station
 * Added new properties `timeFormat`, `alarmVolume`, `alarmTone`, `promptVolume`, `notificationSwitchModeSchedule`, `notificationSwitchModeGeofence`, `notificationSwitchModeApp`, `notificationSwitchModeKeypad` and `notificationStartAlarmDelay` to Station
 * Added new error codes `deviceInvalidProperty`, `deviceInvalidPropertyValue`, `devicePropertyNotSupported`, `deviceReadOnlyProperty`, `deviceNotSupported`, `deviceInvalidCommandValue`, `deviceLivestreamAlreadyRunning`, `deviceLivestreamNotRunning`, `schemaIncompatible`, `invalidCountryCode` and `invalidLanguageCode`
+
+## Schema 4
+
+* Added new properties `chargingStatus`, `wifiSignalLevel`, `rtspStreamUrl`, `chirpVolume`, `chirpTone`, `videoHdr`, `videoDistortionCorrection` and `videoRingRecord` to Device
+* Renamed properties from `motionDetectionSensivity`, `soundDetectionSensivity` and `ledStatus` to `motionDetectionSensitivity`, `soundDetectionSensitivity` and `statusLed` for Device

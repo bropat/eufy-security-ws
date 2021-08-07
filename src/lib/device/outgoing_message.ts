@@ -12,21 +12,21 @@ export interface DeviceResultTypes {
     [DeviceCommand.setWatermark]: Record<string, never>;
     [DeviceCommand.enableDevice]: Record<string, never>;
     [DeviceCommand.lockDevice]: Record<string, never>;
-    [DeviceCommand.getPropertiesMetadata]: { properties: Record<string, unknown>; };
-    [DeviceCommand.getProperties]: { properties: Record<string, unknown>; };
+    [DeviceCommand.getPropertiesMetadata]: { serialNumber?: string; properties: Record<string, unknown>; };
+    [DeviceCommand.getProperties]: { serialNumber?: string; properties: Record<string, unknown>; };
     [DeviceCommand.setProperty]: Record<string, never>;
     [DeviceCommand.startLivestream]: Record<string, never>;
     [DeviceCommand.stopLivestream]: Record<string, never>;
-    [DeviceCommand.isLiveStreaming]: { livestreaming: boolean };
+    [DeviceCommand.isLiveStreaming]: { serialNumber?: string; livestreaming: boolean };
     [DeviceCommand.triggerAlarm]: Record<string, never>;
     [DeviceCommand.resetAlarm]: Record<string, never>;
     [DeviceCommand.panAndTilt]: Record<string, never>;
     [DeviceCommand.quickResponse]: Record<string, never>;
     [DeviceCommand.startDownload]: Record<string, never>;
     [DeviceCommand.cancelDownload]: Record<string, never>;
-    [DeviceCommand.getVoices]: { voices: Voices };
-    [DeviceCommand.hasProperty]: { exists: boolean };
-    [DeviceCommand.hasCommand]: { exists: boolean };
-    [DeviceCommand.getCommands]: { commands: Array<CommandName>; };
+    [DeviceCommand.getVoices]: { serialNumber?: string; voices: Voices };
+    [DeviceCommand.hasProperty]: { serialNumber?: string; exists: boolean };
+    [DeviceCommand.hasCommand]: { serialNumber?: string; exists: boolean };
+    [DeviceCommand.getCommands]: { serialNumber?: string; commands: Array<CommandName>; };
 
 }

@@ -82,12 +82,28 @@ export class DeviceMessageHandler {
             case DeviceCommand.getPropertiesMetadata:
             {
                 const properties = device.getPropertiesMetadata();
-                return { properties: properties };
+
+                if (client.schemaVersion <= 3) {
+                    return { properties: properties };
+                } else if (client.schemaVersion >= 4) {
+                    return {
+                        serialNumber: device.getSerial(),
+                        properties: properties
+                    };
+                }
             }
             case DeviceCommand.getProperties:
             {
                 const properties = device.getProperties();
-                return { properties: properties };
+
+                if (client.schemaVersion <= 3) {
+                    return { properties: properties };
+                } else if (client.schemaVersion >= 4) {
+                    return {
+                        serialNumber: device.getSerial(),
+                        properties: properties
+                    };
+                }
             }
             case DeviceCommand.setProperty:
                 await driver.setDeviceProperty(serialNumber, (message as IncomingCommandDeviceSetProperty).name, (message as IncomingCommandDeviceSetProperty).value).catch((error) => {
@@ -145,7 +161,15 @@ export class DeviceMessageHandler {
             {
                 if (client.schemaVersion >= 2) {
                     const result = station.isLiveStreaming(device);
-                    return { livestreaming: result };
+
+                    if (client.schemaVersion >= 2 && client.schemaVersion <= 3) {
+                        return { livestreaming: result };
+                    } else if (client.schemaVersion >= 4) {
+                        return {
+                            serialNumber: device.getSerial(),
+                            livestreaming: result
+                        };
+                    }
                 }
             }
             case DeviceCommand.triggerAlarm:
@@ -195,27 +219,62 @@ export class DeviceMessageHandler {
                     const voices = await driver.getApi().getVoices(device.getSerial()).catch((error) => {
                         throw error;
                     });
-                    return { voices: voices };
+
+                    if (client.schemaVersion === 3) {
+                        return {
+                            serialNumber: device.getSerial(),
+                            voices: voices
+                        };
+                    } else if (client.schemaVersion >= 4) {
+                        return {
+                            serialNumber: device.getSerial(),
+                            voices: voices
+                        };
+                    }
                 }
             case DeviceCommand.hasProperty:
             {
                 if (client.schemaVersion >= 3) {
                     const result = device.hasProperty((message as IncomingCommandDeviceHasProperty).propertyName);
-                    return { exists: result };
+
+                    if (client.schemaVersion === 3) {
+                        return { exists: result };
+                    } else if (client.schemaVersion >= 4) {
+                        return {
+                            serialNumber: device.getSerial(),
+                            exists: result
+                        };
+                    }
                 }
             }
             case DeviceCommand.hasCommand:
             {
                 if (client.schemaVersion >= 3) {
                     const result = device.hasCommand((message as IncomingCommandDeviceHasCommand).commandName);
-                    return { exists: result };
+
+                    if (client.schemaVersion === 3) {
+                        return { exists: result };
+                    } else if (client.schemaVersion >= 4) {
+                        return {
+                            serialNumber: device.getSerial(),
+                            exists: result
+                        };
+                    }
                 }
             }
             case DeviceCommand.getCommands:
             {
                 if (client.schemaVersion >= 3) {
                     const result = device.getCommands();
-                    return { commands: result };
+
+                    if (client.schemaVersion === 3) {
+                        return { commands: result };
+                    } else if (client.schemaVersion >= 4) {
+                        return {
+                            serialNumber: device.getSerial(),
+                            commands: result
+                        };
+                    }
                 }
             }
             default:

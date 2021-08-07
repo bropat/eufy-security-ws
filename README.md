@@ -361,6 +361,7 @@ Returns:
 
 ```ts
 interface {
+    serialNumber: string;  // [added with schema version: 4+]
     connected: boolean;
 }
 ```
@@ -425,6 +426,7 @@ Returns:
 
 ```ts
 interface {
+    serialNumber: string;  // [added with schema version: 4+]
     properties: {
         [index: string]: PropertyValue;
     }
@@ -486,6 +488,7 @@ Returns:
 
 ```ts
 interface {
+    serialNumber: string;  // [added with schema version: 4+]
     commands: Array<CommandName>;
 }
 ```
@@ -507,6 +510,7 @@ Returns:
 
 ```ts
 interface {
+    serialNumber: string;  // [added with schema version: 4+]
     exists: boolean;
 }
 ```
@@ -528,6 +532,7 @@ Returns:
 
 ```ts
 interface {
+    serialNumber: string;  // [added with schema version: 4+]
     exists: boolean;
 }
 ```
@@ -550,6 +555,7 @@ Returns:
 
 ```ts
 interface {
+    serialNumber: string;  // [added with schema version: 4+]
     properties: {
         [index: string]: PropertyMetadataAny;
     }
@@ -572,6 +578,7 @@ Returns:
 
 ```ts
 interface {
+    serialNumber: string;  // [added with schema version: 4+]
     properties: {
         [index: string]: PropertyValue;
     }
@@ -762,6 +769,7 @@ Returns:
 
 ```ts
 interface {
+    serialNumber: string;  // [added with schema version: 4+]
     livestreaming: boolean;
 }
 ```
@@ -859,7 +867,8 @@ Returns:
 
 ```ts
 interface {
-  voices: Voices
+    serialNumber: string;  // [added with schema version: 4+]
+    voices: Voices
 }
 ```
 
@@ -879,6 +888,7 @@ Returns:
 
 ```ts
 interface {
+    serialNumber: string;  // [added with schema version: 4+]
     commands: Array<CommandName>;
 }
 ```
@@ -900,6 +910,7 @@ Returns:
 
 ```ts
 interface {
+    serialNumber: string;  // [added with schema version: 4+]
     exists: boolean;
 }
 ```
@@ -921,6 +932,7 @@ Returns:
 
 ```ts
 interface {
+    serialNumber: string;  // [added with schema version: 4+]
     exists: boolean;
 }
 ```
@@ -1034,7 +1046,16 @@ interface {
       currentMode: number;
       guardMode: number;
       connected: boolean;
-      type: number;
+      type: number;                             // [added with schema version: 1+]
+      timeFormat: number;                       // [added with schema version: 3+]
+      alarmVolume: number;                      // [added with schema version: 3+]
+      alarmTone: number;                        // [added with schema version: 3+]
+      promptVolume: number;                     // [added with schema version: 3+]
+      notificationSwitchModeSchedule: boolean;  // [added with schema version: 3+]
+      notificationSwitchModeGeofence: boolean;  // [added with schema version: 3+]
+      notificationSwitchModeApp: boolean;       // [added with schema version: 3+]
+      notificationSwitchModeKeypad: boolean;    // [added with schema version: 3+]
+      notificationStartAlarmDelay: boolean;     // [added with schema version: 3+]
     }
   }
 }
@@ -1063,7 +1084,16 @@ interface {
       currentMode: number;
       guardMode: number;
       connected: boolean;
-      type: number;
+      type: number;                             // [added with schema version: 1+]
+      timeFormat: number;                       // [added with schema version: 3+]
+      alarmVolume: number;                      // [added with schema version: 3+]
+      alarmTone: number;                        // [added with schema version: 3+]
+      promptVolume: number;                     // [added with schema version: 3+]
+      notificationSwitchModeSchedule: boolean;  // [added with schema version: 3+]
+      notificationSwitchModeGeofence: boolean;  // [added with schema version: 3+]
+      notificationSwitchModeApp: boolean;       // [added with schema version: 3+]
+      notificationSwitchModeKeypad: boolean;    // [added with schema version: 3+]
+      notificationStartAlarmDelay: boolean;     // [added with schema version: 3+]
     }
   }
 }
@@ -1082,7 +1112,7 @@ interface {
     source: "station";
     event: "guard mode changed";
     serialNumber: string;
-    currentMode: number;      // Removed in schema version 3+, as there is now a separate event
+    currentMode: number;      // [removed with schema version: 3+ as there is now a separate event]
     guardMode: number;
   }
 }
@@ -1237,9 +1267,11 @@ interface {
       cryingDetected: boolean;
       ringing: boolean;
       locked: boolean;
+      sensorOpen: boolean;
+      sensorChangeTime: number;
       antitheftDetection: boolean;
       autoNightvision: boolean;
-      ledStatus: boolean;
+      ledStatus: boolean;                             // [added with schema version: 0+; removed with schema version: 4+]
       motionDetection: boolean;
       soundDetection: boolean;
       petDetection: boolean;
@@ -1249,7 +1281,58 @@ interface {
       motionSensorPIREvent: number;
       wifiRSSI: number;
       pictureUrl: string;
-      type: number;
+      type: number;                                   // [added with schema version: 1+]
+      motionDetectionType: number;                    // [added with schema version: 3+]
+      motionDetectionSensivity: number;               // [added with schema version: 3+; removed with schema version: 4+]
+      motionTracking: boolean;                        // [added with schema version: 3+]
+      soundDetectionType: number;                     // [added with schema version: 3+]
+      soundDetectionSensivity: number;                // [added with schema version: 3+; removed with schema version: 4+]
+      light: boolean;                                 // [added with schema version: 3+]
+      microphone: boolean;                            // [added with schema version: 3+]
+      speaker: boolean;                               // [added with schema version: 3+]
+      speakerVolume: number;                          // [added with schema version: 3+]
+      ringtoneVolume: number;                         // [added with schema version: 3+]
+      audioRecording: boolean;                        // [added with schema version: 3+]
+      powerSource: number;                            // [added with schema version: 3+]
+      powerWorkingMode: number;                       // [added with schema version: 3+]
+      recordingEndClipMotionStops: boolean;           // [added with schema version: 3+]
+      recordingClipLength: number;                    // [added with schema version: 3+]
+      recordingRetriggerInterval: number;             // [added with schema version: 3+]
+      videoStreamingQuality: number;                  // [added with schema version: 3+]
+      videoRecordingQuality: number;                  // [added with schema version: 3+]
+      videoWDR: boolean;                              // [added with schema version: 3+]
+      lightSettingsEnable: boolean;                   // [added with schema version: 3+]
+      lightSettingsBrightnessManual: number;          // [added with schema version: 3+]
+      lightSettingsBrightnessMotion: number;          // [added with schema version: 3+]
+      lightSettingsBrightnessSchedule: number;        // [added with schema version: 3+]
+      lightSettingsMotionTriggered: boolean;          // [added with schema version: 3+]
+      lightSettingsMotionTriggeredDistance: number;   // [added with schema version: 3+]
+      lightSettingsMotionTriggeredTimer: number;      // [added with schema version: 3+]
+      chimeIndoor: boolean;                           // [added with schema version: 3+]
+      chimeHomebase: boolean;                         // [added with schema version: 3+]
+      chimeHomebaseRingtoneVolume: number;            // [added with schema version: 3+]
+      chimeHomebaseRingtoneType: number;              // [added with schema version: 3+]
+      notificationType: number;                       // [added with schema version: 3+]
+      rotationSpeed: number;                          // [added with schema version: 3+]
+      notificationPerson: boolean;                    // [added with schema version: 3+]
+      notificationPet: boolean;                       // [added with schema version: 3+]
+      notificationAllOtherMotion: boolean;            // [added with schema version: 3+]
+      notificationCrying: boolean;                    // [added with schema version: 3+]
+      notificationAllSound: boolean;                  // [added with schema version: 3+]
+      notificationIntervalTime: boolean;              // [added with schema version: 3+]
+      notificationRing: boolean;                      // [added with schema version: 3+]
+      notificationMotion:boolean;                     // [added with schema version: 3+]
+      chirpVolume: number;                            // [added with schema version: 4+]
+      chirpTone: number;                              // [added with schema version: 4+]
+      motionDetectionSensitivity: number;             // [added with schema version: 4+]
+      soundDetectionSensitivity: number;              // [added with schema version: 4+]
+      videoHdr: boolean;                              // [added with schema version: 4+]
+      videoDistortionCorrection: boolean;             // [added with schema version: 4+]
+      videoRingRecord: number;                        // [added with schema version: 4+]
+      statusLed: boolean;                             // [added with schema version: 4+]
+      chargingStatus: number;                         // [added with schema version: 4+]
+      rtspStreamUrl: string;                          // [added with schema version: 4+]
+      wifiSignalLevel: number;                        // [added with schema version: 4+]
     }
   }
 }
@@ -1292,9 +1375,11 @@ interface {
       cryingDetected: boolean;
       ringing: boolean;
       locked: boolean;
+      sensorOpen: boolean;
+      sensorChangeTime: number;
       antitheftDetection: boolean;
       autoNightvision: boolean;
-      ledStatus: boolean;
+      ledStatus: boolean;                             // [added with schema version: 0+; removed with schema version: 4+]
       motionDetection: boolean;
       soundDetection: boolean;
       petDetection: boolean;
@@ -1304,7 +1389,58 @@ interface {
       motionSensorPIREvent: number;
       wifiRSSI: number;
       pictureUrl: string;
-      type: number;
+      type: number;                                   // [added with schema version: 1+]
+      motionDetectionType: number;                    // [added with schema version: 3+]
+      motionDetectionSensivity: number;               // [added with schema version: 3+; removed with schema version: 4+]
+      motionTracking: boolean;                        // [added with schema version: 3+]
+      soundDetectionType: number;                     // [added with schema version: 3+]
+      soundDetectionSensivity: number;                // [added with schema version: 3+; removed with schema version: 4+]
+      light: boolean;                                 // [added with schema version: 3+]
+      microphone: boolean;                            // [added with schema version: 3+]
+      speaker: boolean;                               // [added with schema version: 3+]
+      speakerVolume: number;                          // [added with schema version: 3+]
+      ringtoneVolume: number;                         // [added with schema version: 3+]
+      audioRecording: boolean;                        // [added with schema version: 3+]
+      powerSource: number;                            // [added with schema version: 3+]
+      powerWorkingMode: number;                       // [added with schema version: 3+]
+      recordingEndClipMotionStops: boolean;           // [added with schema version: 3+]
+      recordingClipLength: number;                    // [added with schema version: 3+]
+      recordingRetriggerInterval: number;             // [added with schema version: 3+]
+      videoStreamingQuality: number;                  // [added with schema version: 3+]
+      videoRecordingQuality: number;                  // [added with schema version: 3+]
+      videoWDR: boolean;                              // [added with schema version: 3+]
+      lightSettingsEnable: boolean;                   // [added with schema version: 3+]
+      lightSettingsBrightnessManual: number;          // [added with schema version: 3+]
+      lightSettingsBrightnessMotion: number;          // [added with schema version: 3+]
+      lightSettingsBrightnessSchedule: number;        // [added with schema version: 3+]
+      lightSettingsMotionTriggered: boolean;          // [added with schema version: 3+]
+      lightSettingsMotionTriggeredDistance: number;   // [added with schema version: 3+]
+      lightSettingsMotionTriggeredTimer: number;      // [added with schema version: 3+]
+      chimeIndoor: boolean;                           // [added with schema version: 3+]
+      chimeHomebase: boolean;                         // [added with schema version: 3+]
+      chimeHomebaseRingtoneVolume: number;            // [added with schema version: 3+]
+      chimeHomebaseRingtoneType: number;              // [added with schema version: 3+]
+      notificationType: number;                       // [added with schema version: 3+]
+      rotationSpeed: number;                          // [added with schema version: 3+]
+      notificationPerson: boolean;                    // [added with schema version: 3+]
+      notificationPet: boolean;                       // [added with schema version: 3+]
+      notificationAllOtherMotion: boolean;            // [added with schema version: 3+]
+      notificationCrying: boolean;                    // [added with schema version: 3+]
+      notificationAllSound: boolean;                  // [added with schema version: 3+]
+      notificationIntervalTime: boolean;              // [added with schema version: 3+]
+      notificationRing: boolean;                      // [added with schema version: 3+]
+      notificationMotion:boolean;                     // [added with schema version: 3+]
+      chirpVolume: number;                            // [added with schema version: 4+]
+      chirpTone: number;                              // [added with schema version: 4+]
+      motionDetectionSensitivity: number;             // [added with schema version: 4+]
+      soundDetectionSensitivity: number;              // [added with schema version: 4+]
+      videoHdr: boolean;                              // [added with schema version: 4+]
+      videoDistortionCorrection: boolean;             // [added with schema version: 4+]
+      videoRingRecord: number;                        // [added with schema version: 4+]
+      statusLed: boolean;                             // [added with schema version: 4+]
+      chargingStatus: number;                         // [added with schema version: 4+]
+      rtspStreamUrl: string;                          // [added with schema version: 4+]
+      wifiSignalLevel: number;                        // [added with schema version: 4+]
     }
   }
 }
@@ -1692,7 +1828,7 @@ In an attempt to keep compatibility between different server and client versions
    {
      "command": "set_api_schema",
      "messageId": 1,
-     "schemaVersion": 3
+     "schemaVersion": 4
    }
    {"type":"result","success":false,"messageId":1,"errorCode":"schema_incompatible"}
    ```
@@ -1717,6 +1853,7 @@ eufy-security-ws is available via a Docker image
 * `P2P_CONNECTION_SETUP:` P2P connection setup (default: 0 ; Prefers local connection over cloud)
 * `POLLING_INTERVAL_MINUTES:` Polling intervall for data refresh from Eufy Cloud (default: 10 min.)
 * `ACCEPT_INVITATIONS:` Automatically accept device invitations (default: false)
+* `DEBUG:` When the variable is set, debug mode is activated (default: unset)
 
 The image also exposes a `/data` volume that corresponds to the `persistentDir`.
 

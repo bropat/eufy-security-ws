@@ -92,10 +92,31 @@ DeviceStateSchema1,
     notificationMotion?:boolean;
 }>;
 
+type DeviceStateSchema4 = Omit<
+Modify<
+DeviceStateSchema3,
+{
+    chirpVolume?: number;
+    chirpTone?: number;
+    motionDetectionSensitivity?: number;
+    soundDetectionSensitivity?: number;
+    videoHdr?: boolean;
+    videoDistortionCorrection?: boolean;
+    videoRingRecord?: number;
+    statusLed?: boolean;
+    rtspStreamUrl?: string;
+    chargingStatus?: number;
+    wifiSignalLevel?: number;
+}>,
+"motionDetectionSensivity" | "soundDetectionSensivity" | "ledStatus"
+>;
+
+
 export type DeviceState = 
   | DeviceStateSchema0
   | DeviceStateSchema1
-  | DeviceStateSchema3;
+  | DeviceStateSchema3
+  | DeviceStateSchema4;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const dumpDevice = (device: Device, schemaVersion: number): DeviceState => {
@@ -126,7 +147,6 @@ export const dumpDevice = (device: Device, schemaVersion: number): DeviceState =
         locked: device.getPropertyValue(PropertyName.DeviceLocked)?.value as boolean,
         antitheftDetection: device.getPropertyValue(PropertyName.DeviceAntitheftDetection)?.value as boolean,
         autoNightvision: device.getPropertyValue(PropertyName.DeviceAutoNightvision)?.value as boolean,
-        ledStatus: device.getPropertyValue(PropertyName.DeviceStatusLed)?.value as boolean,
         motionDetection: device.getPropertyValue(PropertyName.DeviceMotionDetection)?.value as boolean,
         soundDetection: device.getPropertyValue(PropertyName.DeviceSoundDetection)?.value as boolean,
         petDetection: device.getPropertyValue(PropertyName.DevicePetDetection)?.value as boolean,
@@ -136,25 +156,25 @@ export const dumpDevice = (device: Device, schemaVersion: number): DeviceState =
         motionSensorPIREvent: device.getPropertyValue(PropertyName.DeviceMotionSensorPIREvent)?.value as number,
         wifiRSSI: device.getPropertyValue(PropertyName.DeviceWifiRSSI)?.value as number,
         pictureUrl: device.getPropertyValue(PropertyName.DevicePictureUrl)?.value as string,
+        sensorOpen: device.getPropertyValue(PropertyName.DeviceSensorOpen)?.value as boolean,
+        sensorChangeTime: device.getPropertyValue(PropertyName.DeviceSensorChangeTime)?.value as number,
     };
 
     if (schemaVersion == 0) {
+        base.ledStatus = device.getPropertyValue(PropertyName.DeviceStatusLed)?.value as boolean;
         return base as DeviceStateSchema0;
     }
 
+    const device1 = base as DeviceStateSchema1;
+    device1.type = device.getPropertyValue(PropertyName.Type).value as number;
     if (schemaVersion <= 2) {
-        const device1 = base as DeviceStateSchema1;
-        device1.type = device.getPropertyValue(PropertyName.Type).value as number;
         return device1;
     }
 
-    // All schemas >= 3
-    const device3 = base as DeviceStateSchema3;
+    const device3 = device1 as DeviceStateSchema3;
     device3.motionDetectionType = device.getPropertyValue(PropertyName.DeviceMotionDetectionType)?.value as number;
-    device3.motionDetectionSensivity = device.getPropertyValue(PropertyName.DeviceMotionDetectionSensivity)?.value as number;
     device3.motionTracking = device.getPropertyValue(PropertyName.DeviceMotionTracking)?.value as boolean;
     device3.soundDetectionType = device.getPropertyValue(PropertyName.DeviceSoundDetectionType)?.value as number;
-    device3.soundDetectionSensivity = device.getPropertyValue(PropertyName.DeviceSoundDetectionSensivity)?.value as number;
     device3.light = device.getPropertyValue(PropertyName.DeviceLight)?.value as boolean;
     device3.microphone = device.getPropertyValue(PropertyName.DeviceMicrophone)?.value as boolean;
     device3.speaker = device.getPropertyValue(PropertyName.DeviceSpeaker)?.value as boolean;
@@ -190,7 +210,26 @@ export const dumpDevice = (device: Device, schemaVersion: number): DeviceState =
     device3.notificationIntervalTime = device.getPropertyValue(PropertyName.DeviceNotificationIntervalTime)?.value as boolean;
     device3.notificationRing = device.getPropertyValue(PropertyName.DeviceNotificationRing)?.value as boolean;
     device3.notificationMotion = device.getPropertyValue(PropertyName.DeviceNotificationMotion)?.value as boolean;
+    if (schemaVersion === 3) {
+        device3.motionDetectionSensivity = device.getPropertyValue(PropertyName.DeviceMotionDetectionSensitivity)?.value as number;
+        device3.soundDetectionSensivity = device.getPropertyValue(PropertyName.DeviceSoundDetectionSensitivity)?.value as number;
+        return device3;
+    }
 
-    return device3;
+    // All schemas >= 4
+    const device4 = device3 as DeviceStateSchema4;
+    device4.chirpVolume = device.getPropertyValue(PropertyName.DeviceChirpVolume)?.value as number;
+    device4.chirpTone = device.getPropertyValue(PropertyName.DeviceChirpTone)?.value as number;
+    device4.motionDetectionSensitivity = device.getPropertyValue(PropertyName.DeviceMotionDetectionSensitivity)?.value as number;
+    device4.soundDetectionSensitivity = device.getPropertyValue(PropertyName.DeviceSoundDetectionSensitivity)?.value as number;
+    device4.videoHdr = device.getPropertyValue(PropertyName.DeviceVideoHDR)?.value as boolean;
+    device4.videoDistortionCorrection = device.getPropertyValue(PropertyName.DeviceVideoDistortionCorrection)?.value as boolean;
+    device4.videoRingRecord = device.getPropertyValue(PropertyName.DeviceVideoRingRecord)?.value as number;
+    device4.statusLed = device.getPropertyValue(PropertyName.DeviceStatusLed)?.value as boolean;
+    device4.rtspStreamUrl = device.getPropertyValue(PropertyName.DeviceRTSPStreamUrl)?.value as string;
+    device4.chargingStatus = device.getPropertyValue(PropertyName.DeviceChargingStatus)?.value as number;
+    device4.wifiSignalLevel = device.getPropertyValue(PropertyName.DeviceWifiSignalLevel)?.value as number;
+
+    return device4;
     
 };

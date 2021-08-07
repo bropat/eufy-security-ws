@@ -57,14 +57,14 @@ export const dumpStation = (station: Station, schemaVersion: number): StationSta
         return base as StationStateSchema0;
     }
 
+    const station1 = base as StationStateSchema1;
+    station1.type = station.getPropertyValue(PropertyName.Type).value as number;
     if (schemaVersion <= 2) {
-        const station1 = base as StationStateSchema1;
-        station1.type = station.getPropertyValue(PropertyName.Type).value as number;
         return station1;
     }
     
     // All schemas >= 3
-    const station3 = base as StationStateSchema3;
+    const station3 = station1 as StationStateSchema3;
     station3.timeFormat = station.getPropertyValue(PropertyName.StationTimeFormat)?.value as number;
     station3.alarmVolume = station.getPropertyValue(PropertyName.StationAlarmVolume)?.value as number;
     station3.alarmTone = station.getPropertyValue(PropertyName.StationAlarmTone)?.value as number;

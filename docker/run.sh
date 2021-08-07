@@ -13,6 +13,11 @@ POLLING_INTERVAL_MINUTES="${POLLING_INTERVAL_MINUTES:-10}"
 TRUSTED_DEVICE_NAME="${TRUSTED_DEVICE_NAME:-eufyclient}"
 ACCEPT_INVITATIONS="${ACCEPT_INVITATIONS:-false}"
 
+DEBUG_OPTION=""
+if [ -n "$DEBUG" ]; then
+    DEBUG_OPTION="-v"
+fi
+
 JSON_STRING="$( jq -n \
   --arg username "$USERNAME" \
   --arg password "$PASSWORD" \
@@ -38,4 +43,4 @@ JSON_STRING="$( jq -n \
   )"
 
 echo "$JSON_STRING" > /etc/eufy-security-ws-config.json
-/usr/local/bin/node /usr/src/app/dist/bin/server.js --config /etc/eufy-security-ws-config.json
+/usr/local/bin/node /usr/src/app/dist/bin/server.js --config /etc/eufy-security-ws-config.json $DEBUG_OPTION
