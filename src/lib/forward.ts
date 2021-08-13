@@ -11,6 +11,7 @@ import { Client, ClientsController } from "./server";
 import { StationCommand } from "./station/command";
 import { DeviceCommand } from "./device/command";
 import { maxSchemaVersion as internalSchemaVersion } from "./const";
+import { DeviceMessageHandler } from "./device/message_handler";
 
 export class EventForwarder {
 
@@ -172,6 +173,7 @@ export class EventForwarder {
                         });
                     }
                     client.receiveLivestream[serialNumber] = false;
+                    DeviceMessageHandler.removeStreamingDevice(station.getSerial(), client);
                 });
         });
 
@@ -188,7 +190,7 @@ export class EventForwarder {
                     }
                 });
             videostream.on("data", (chunk: Buffer) => {
-                this.clients.clients.filter((cl) => cl.receiveLivestream[serialNumber] === true && cl.isConnected)
+                this.clients.clients.filter((cl) => cl.isConnected)
                     .forEach((client) => {
                         if (client.schemaVersion >= 3) {
                             client.sendEvent({
@@ -226,7 +228,7 @@ export class EventForwarder {
 
         this.clients.driver.on("station download finish", (station: Station, device: Device) => {
             const serialNumber = device.getSerial();
-            this.clients.clients.filter((cl) => cl.receiveLivestream[serialNumber] === true && cl.isConnected)
+            this.clients.clients.filter((cl) => cl.isConnected)
                 .forEach((client) => {
                     if (client.schemaVersion >= 3) {
                         client.sendEvent({
@@ -235,7 +237,6 @@ export class EventForwarder {
                             serialNumber: serialNumber,
                         });
                     }
-                    client.receiveLivestream[serialNumber] = false;
                 });
         });
 

@@ -16,8 +16,9 @@ export interface StationStateSchema0 {
 
 type StationStateSchema1 = Modify<
 StationStateSchema0,
-{ type: DeviceType }
->;
+{
+    type: DeviceType 
+}>;
 
 type StationStateSchema3 = Modify<
 StationStateSchema1,
@@ -33,10 +34,19 @@ StationStateSchema1,
     notificationStartAlarmDelay?: boolean;
 }>;
 
+type StationStateSchema5 = Modify<
+StationStateSchema3,
+{
+    switchModeWithAccessCode?: boolean;
+    autoEndAlarm?: boolean;
+    turnOffAlarmWithButton?: boolean;
+}>;
+
 export type StationState = 
  | StationStateSchema0
  | StationStateSchema1
- | StationStateSchema3;
+ | StationStateSchema3
+ | StationStateSchema5;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const dumpStation = (station: Station, schemaVersion: number): StationState => {
@@ -63,7 +73,6 @@ export const dumpStation = (station: Station, schemaVersion: number): StationSta
         return station1;
     }
     
-    // All schemas >= 3
     const station3 = station1 as StationStateSchema3;
     station3.timeFormat = station.getPropertyValue(PropertyName.StationTimeFormat)?.value as number;
     station3.alarmVolume = station.getPropertyValue(PropertyName.StationAlarmVolume)?.value as number;
@@ -74,6 +83,15 @@ export const dumpStation = (station: Station, schemaVersion: number): StationSta
     station3.notificationSwitchModeApp = station.getPropertyValue(PropertyName.StationNotificationSwitchModeApp)?.value as boolean;
     station3.notificationSwitchModeKeypad = station.getPropertyValue(PropertyName.StationNotificationSwitchModeKeypad)?.value as boolean;
     station3.notificationStartAlarmDelay = station.getPropertyValue(PropertyName.StationNotificationStartAlarmDelay)?.value as boolean;
+    if (schemaVersion <= 4) {
+        return station3;
+    }
 
-    return station3;
+    // All schemas >= 5
+    const station5 = station3 as StationStateSchema5;
+    station5.switchModeWithAccessCode = station.getPropertyValue(PropertyName.StationSwitchModeWithAccessCode)?.value as boolean;
+    station5.autoEndAlarm = station.getPropertyValue(PropertyName.StationAutoEndAlarm)?.value as boolean;
+    station5.turnOffAlarmWithButton = station.getPropertyValue(PropertyName.StationTurnOffAlarmWithButton)?.value as boolean;
+
+    return station5;
 };

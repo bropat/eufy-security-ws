@@ -31,3 +31,8 @@ Base schema.
 
 * Added new properties `chargingStatus`, `wifiSignalLevel`, `rtspStreamUrl`, `chirpVolume`, `chirpTone`, `videoHdr`, `videoDistortionCorrection` and `videoRingRecord` to Device
 * Renamed properties from `motionDetectionSensivity`, `soundDetectionSensivity` and `ledStatus` to `motionDetectionSensitivity`, `soundDetectionSensitivity` and `statusLed` for Device
+
+## Schema 5
+
+* Added new properties `nightvision` and `batteryIsCharging` to Device
+* Added new properties `switchModeWithAccessCode`, `autoEndAlarm` and `turnOffAlarmWithButton` to Station

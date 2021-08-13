@@ -1056,6 +1056,9 @@ interface {
       notificationSwitchModeApp: boolean;       // [added with schema version: 3+]
       notificationSwitchModeKeypad: boolean;    // [added with schema version: 3+]
       notificationStartAlarmDelay: boolean;     // [added with schema version: 3+]
+      switchModeWithAccessCode: boolean;        // [added with schema version: 5+]
+      autoEndAlarm: boolean;                    // [added with schema version: 5+]
+      turnOffAlarmWithButton: boolean;          // [added with schema version: 5+]
     }
   }
 }
@@ -1094,6 +1097,9 @@ interface {
       notificationSwitchModeApp: boolean;       // [added with schema version: 3+]
       notificationSwitchModeKeypad: boolean;    // [added with schema version: 3+]
       notificationStartAlarmDelay: boolean;     // [added with schema version: 3+]
+      switchModeWithAccessCode: boolean;        // [added with schema version: 5+]
+      autoEndAlarm: boolean;                    // [added with schema version: 5+]
+      turnOffAlarmWithButton: boolean;          // [added with schema version: 5+]
     }
   }
 }
@@ -1333,6 +1339,8 @@ interface {
       chargingStatus: number;                         // [added with schema version: 4+]
       rtspStreamUrl: string;                          // [added with schema version: 4+]
       wifiSignalLevel: number;                        // [added with schema version: 4+]
+      nightvision: number;                            // [added with schema version: 5+]
+      batteryIsCharging: boolean;                     // [added with schema version: 5+]
     }
   }
 }
@@ -1441,6 +1449,8 @@ interface {
       chargingStatus: number;                         // [added with schema version: 4+]
       rtspStreamUrl: string;                          // [added with schema version: 4+]
       wifiSignalLevel: number;                        // [added with schema version: 4+]
+      nightvision: number;                            // [added with schema version: 5+]
+      batteryIsCharging: boolean;                     // [added with schema version: 5+]
     }
   }
 }

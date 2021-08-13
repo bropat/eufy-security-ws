@@ -111,12 +111,20 @@ DeviceStateSchema3,
 "motionDetectionSensivity" | "soundDetectionSensivity" | "ledStatus"
 >;
 
+type DeviceStateSchema5 = Modify<
+DeviceStateSchema4,
+{
+    batteryIsCharging?: boolean;
+    nightvision?: number;
+}>;
+
 
 export type DeviceState = 
   | DeviceStateSchema0
   | DeviceStateSchema1
   | DeviceStateSchema3
-  | DeviceStateSchema4;
+  | DeviceStateSchema4
+  | DeviceStateSchema5;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const dumpDevice = (device: Device, schemaVersion: number): DeviceState => {
@@ -216,7 +224,6 @@ export const dumpDevice = (device: Device, schemaVersion: number): DeviceState =
         return device3;
     }
 
-    // All schemas >= 4
     const device4 = device3 as DeviceStateSchema4;
     device4.chirpVolume = device.getPropertyValue(PropertyName.DeviceChirpVolume)?.value as number;
     device4.chirpTone = device.getPropertyValue(PropertyName.DeviceChirpTone)?.value as number;
@@ -229,7 +236,15 @@ export const dumpDevice = (device: Device, schemaVersion: number): DeviceState =
     device4.rtspStreamUrl = device.getPropertyValue(PropertyName.DeviceRTSPStreamUrl)?.value as string;
     device4.chargingStatus = device.getPropertyValue(PropertyName.DeviceChargingStatus)?.value as number;
     device4.wifiSignalLevel = device.getPropertyValue(PropertyName.DeviceWifiSignalLevel)?.value as number;
+    if (schemaVersion <= 4) {
+        return device4;
+    }
 
-    return device4;
+    // All schemas >= 5
+    const device5 = device4 as DeviceStateSchema5;
+    device5.nightvision = device.getPropertyValue(PropertyName.DeviceNightvision)?.value as number;
+    device5.batteryIsCharging = device.getPropertyValue(PropertyName.DeviceBatteryIsCharging)?.value as boolean;
+
+    return device5;
     
 };
