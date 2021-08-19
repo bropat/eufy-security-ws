@@ -21,6 +21,13 @@ export class DeviceMessageHandler {
             DeviceMessageHandler.streamingDevices[stationSN] = DeviceMessageHandler.streamingDevices[stationSN].filter((cl) => cl !== client);
     }
 
+    static addStreamingDevice(stationSN: string, client: Client): void {
+        if (DeviceMessageHandler.streamingDevices[stationSN] !== undefined && !DeviceMessageHandler.streamingDevices[stationSN].includes(client))
+            DeviceMessageHandler.streamingDevices[stationSN].push(client);
+        else if (DeviceMessageHandler.streamingDevices[stationSN] === undefined)
+            DeviceMessageHandler.streamingDevices[stationSN] = [ client ];
+    }
+
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     static async handle(message: IncomingMessageDevice, driver: EufySecurity, client: Client): Promise<DeviceResultTypes[DeviceCommand]> {
         const { serialNumber, command } = message;
@@ -117,7 +124,7 @@ export class DeviceMessageHandler {
                             throw error;
                         });
                         client.receiveLivestream[serialNumber] = true;
-                        DeviceMessageHandler.streamingDevices[station.getSerial()] = [ client ];
+                        DeviceMessageHandler.addStreamingDevice(station.getSerial(), client);
                     } else if (client.receiveLivestream[serialNumber] !== true) {
                         //TODO: Cache last received I-Frame and send that with the rest to the new client
                         client.sendEvent({
@@ -126,8 +133,7 @@ export class DeviceMessageHandler {
                             serialNumber: serialNumber,
                         })
                         client.receiveLivestream[serialNumber] = true;
-                        if (DeviceMessageHandler.streamingDevices[station.getSerial()] !== undefined)
-                            DeviceMessageHandler.streamingDevices[station.getSerial()].push(client);
+                        DeviceMessageHandler.addStreamingDevice(station.getSerial(), client);
                     } else {
                         throw new LivestreamAlreadyRunningError(`Livestream for device ${serialNumber} is already running`);
                     }
@@ -135,18 +141,22 @@ export class DeviceMessageHandler {
                 }
             case DeviceCommand.stopLivestream:
                 if (client.schemaVersion >= 2) {
+                    if (!station.isLiveStreaming(device)) {
+                        throw new LivestreamNotRunningError(`Livestream for device ${serialNumber} could not be stopped, because it is not running`);
+                    }
                     if (client.receiveLivestream[serialNumber] !== true) {
-                        throw new LivestreamNotRunningError(`Start of livestream for device ${serialNumber} was not also requested by this client`);
+                        throw new LivestreamNotRunningError(`This client has not requested the start of the live stream for the device ${serialNumber} and therefore cannot request its termination`);
                     }
                     if (DeviceMessageHandler.streamingDevices[station.getSerial()] !== undefined && DeviceMessageHandler.streamingDevices[station.getSerial()].includes(client)) {
                         if (DeviceMessageHandler.streamingDevices[station.getSerial()].length === 1) {
+                            client.receiveLivestream[serialNumber] = false;
+                            DeviceMessageHandler.removeStreamingDevice(station.getSerial(), client);
                             await station.stopLivestream(device).catch((error) => {
                                 throw error;
                             });
-                            delete DeviceMessageHandler.streamingDevices[station.getSerial()];
                         } else {
                             client.receiveLivestream[serialNumber] = false;
-                            DeviceMessageHandler.streamingDevices[station.getSerial()] = DeviceMessageHandler.streamingDevices[station.getSerial()].filter((cl) => cl !== client);
+                            DeviceMessageHandler.removeStreamingDevice(station.getSerial(), client);
                             client.sendEvent({
                                 source: "device",
                                 event: DeviceEvent.livestreamStopped,

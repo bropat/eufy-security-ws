@@ -289,6 +289,7 @@ export class ClientsController {
                             station.stopLivestream(device);
                     }
 
+                    client.receiveLivestream[device.getSerial()] = false;
                     DeviceMessageHandler.removeStreamingDevice(station.getSerial(), client);
                 } catch(error) {
                     this.logger.error(`Error doing cleanup of client`, error);
