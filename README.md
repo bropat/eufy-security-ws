@@ -937,6 +937,51 @@ interface {
 }
 ```
 
+#### Start RTSP live stream
+
+[compatible with schema version: 6+]
+
+```ts
+interface {
+  messageId: string;
+  command: "device.start_rtsp_livestream";
+  serialNumber: string;
+}
+```
+
+#### Stop RTSP live stream
+
+[compatible with schema version: 6+]
+
+```ts
+interface {
+  messageId: string;
+  command: "device.stop_rtsp_livestream";
+  serialNumber: string;
+}
+```
+
+#### Get RTSP live stream status
+
+[compatible with schema version: 6+]
+
+```ts
+interface {
+  messageId: string;
+  command: "device.is_rtsp_livestreaming";
+  serialNumber: string;
+}
+```
+
+Returns:
+
+```ts
+interface {
+    serialNumber: string;
+    livestreaming: boolean;
+}
+```
+
 ## Events
 
 ### Driver level events

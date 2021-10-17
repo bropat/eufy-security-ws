@@ -26,4 +26,7 @@ export enum DeviceCommand {
     getVoices = "device.get_voices",
     getCommands = "device.get_commands",
     hasCommand = "device.has_command",
+    startRTSPLivestream = "device.start_rtsp_livestream",
+    stopRTSPLivestream = "device.stop_rtsp_livestream",
+    isRTSPLiveStreaming = "device.is_rtsp_livestreaming",
 }

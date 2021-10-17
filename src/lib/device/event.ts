@@ -21,6 +21,8 @@ export enum DeviceEvent {
     downloadFinished = "download finished",
     downloadVideoData = "download video data",
     downloadAudioData = "download audio data",
+    rtspLivestreamStarted = "rtsp livestream started",
+    rtspLivestreamStopped = "rtsp livestream stopped",
 }
 
 export interface OutgoingEventDeviceBase extends OutgoingBaseEvent {
@@ -186,6 +188,18 @@ export interface OutgoingEventDeviceDownloadAudioData extends OutgoingEventDevic
     }
 }
 
+export interface OutgoingEventDeviceRTSPLivestreamStarted extends OutgoingEventDeviceBase {
+    source: "device";
+    event: DeviceEvent.rtspLivestreamStarted;
+    serialNumber: string;
+}
+
+export interface OutgoingEventDeviceRTSPLivestreamStopped extends OutgoingEventDeviceBase {
+    source: "device";
+    event: DeviceEvent.rtspLivestreamStopped;
+    serialNumber: string;
+}
+
 export type OutgoingEventDevice =
   | OutgoingEventDeviceAdded
   | OutgoingEventDeviceRemoved
@@ -206,4 +220,6 @@ export type OutgoingEventDevice =
   | OutgoingEventDeviceDownloadStarted
   | OutgoingEventDeviceDownloadFinished
   | OutgoingEventDeviceDownloadVideoData
-  | OutgoingEventDeviceDownloadAudioData;
+  | OutgoingEventDeviceDownloadAudioData
+  | OutgoingEventDeviceRTSPLivestreamStarted
+  | OutgoingEventDeviceRTSPLivestreamStopped;

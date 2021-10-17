@@ -131,6 +131,18 @@ export interface IncomingCommandDeviceGetCommands extends IncomingCommandDeviceB
     command: DeviceCommand.getCommands;
 }
 
+export interface IncomingCommandDeviceStartRTSPLivestream extends IncomingCommandDeviceBase {
+    command: DeviceCommand.startRTSPLivestream;
+}
+
+export interface IncomingCommandDeviceStopRTSPLivestream extends IncomingCommandDeviceBase {
+    command: DeviceCommand.stopRTSPLivestream;
+}
+
+export interface IncomingCommandDeviceIsRTSPLiveStreaming extends IncomingCommandDeviceBase {
+    command: DeviceCommand.isRTSPLiveStreaming;
+}
+
 export type IncomingMessageDevice =
   | IncomingCommandDeviceSetStatusLed
   | IncomingCommandDeviceSetAutoNightVision
@@ -157,4 +169,7 @@ export type IncomingMessageDevice =
   | IncomingCommandDeviceGetVoices
   | IncomingCommandDeviceHasProperty
   | IncomingCommandDeviceHasCommand
-  | IncomingCommandDeviceGetCommands;
+  | IncomingCommandDeviceGetCommands
+  | IncomingCommandDeviceStartRTSPLivestream
+  | IncomingCommandDeviceStopRTSPLivestream
+  | IncomingCommandDeviceIsRTSPLiveStreaming;

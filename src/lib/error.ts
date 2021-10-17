@@ -15,6 +15,8 @@ export enum ErrorCode {
     deviceInvalidCommandValue = "device_invalid_command_value",
     deviceLivestreamAlreadyRunning = "device_livestream_already_running",
     deviceLivestreamNotRunning = "device_livestream_not_running",
+    deviceRTSPLivestreamAlreadyRunning = "device_rtsp_livestream_already_running",
+    deviceRTSPLivestreamNotRunning = "device_rtsp_livestream_not_running",
     schemaIncompatible = "schema_incompatible",
 }
 
@@ -61,5 +63,21 @@ export class LivestreamNotRunningError extends Error {
         super(message);
         Object.setPrototypeOf(this, new.target.prototype);
         this.name = LivestreamNotRunningError.name;
+    }
+}
+
+export class RTSPLivestreamAlreadyRunningError extends Error {
+    constructor(message?: string) {
+        super(message);
+        Object.setPrototypeOf(this, new.target.prototype);
+        this.name = RTSPLivestreamAlreadyRunningError.name;
+    }
+}
+
+export class RTSPLivestreamNotRunningError extends Error {
+    constructor(message?: string) {
+        super(message);
+        Object.setPrototypeOf(this, new.target.prototype);
+        this.name = RTSPLivestreamNotRunningError.name;
     }
 }

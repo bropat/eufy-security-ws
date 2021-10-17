@@ -240,6 +240,34 @@ export class EventForwarder {
                 });
         });
 
+        this.clients.driver.on("station rtsp livestream start", (station: Station, device: Device) => {
+            const serialNumber = device.getSerial();
+            this.clients.clients.filter((cl) => cl.isConnected)
+                .forEach((client) => {
+                    if (client.schemaVersion >= 6) {
+                        client.sendEvent({
+                            source: "device",
+                            event: DeviceEvent.rtspLivestreamStarted,
+                            serialNumber: serialNumber,
+                        });
+                    }
+                });
+        });
+
+        this.clients.driver.on("station rtsp livestream stop", (station: Station, device: Device) => {
+            const serialNumber = device.getSerial();
+            this.clients.clients.filter((cl) => cl.isConnected)
+                .forEach((client) => {
+                    if (client.schemaVersion >= 6) {
+                        client.sendEvent({
+                            source: "device",
+                            event: DeviceEvent.rtspLivestreamStopped,
+                            serialNumber: serialNumber,
+                        });
+                    }
+                });
+        });
+
     }
 
     private forwardEvent(data: OutgoingEvent, minSchemaVersion: number, maxSchemaVersion: number = internalSchemaVersion): void {

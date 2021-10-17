@@ -36,3 +36,7 @@ Base schema.
 
 * Added new properties `nightvision` and `batteryIsCharging` to Device
 * Added new properties `switchModeWithAccessCode`, `autoEndAlarm` and `turnOffAlarmWithButton` to Station
+
+## Schema 6
+
+* Added new commands `startRTSPLivestream`, `stopRTSPLivestream` and `isRTSPLiveStreaming` to Station

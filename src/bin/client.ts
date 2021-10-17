@@ -50,6 +50,9 @@ const cmdHelp = (cmd: string): void => {
         case DeviceCommand.cancelDownload:
         case DeviceCommand.isLiveStreaming:
         case DeviceCommand.getCommands:
+        case DeviceCommand.startRTSPLivestream:
+        case DeviceCommand.stopRTSPLivestream:
+        case DeviceCommand.isRTSPLiveStreaming:
             console.log(`${cmd} <device_sn>`);
             break;
         case DeviceCommand.setProperty:
@@ -624,6 +627,39 @@ process.on("SIGTERM", handleShutdown);
                         command: DeviceCommand.hasCommand,
                         serialNumber: args[1],
                         commandName: args[2],
+                    }));
+                } else {
+                    cmdHelp(args[0]);
+                }
+                break;
+            case DeviceCommand.startRTSPLivestream:
+                if (args.length === 2) {
+                    socket.send(JSON.stringify({
+                        messageId: DeviceCommand.startRTSPLivestream.split(".")[1],
+                        command: DeviceCommand.startRTSPLivestream,
+                        serialNumber: args[1],
+                    }));
+                } else {
+                    cmdHelp(args[0]);
+                }
+                break;
+            case DeviceCommand.stopRTSPLivestream:
+                if (args.length === 2) {
+                    socket.send(JSON.stringify({
+                        messageId: DeviceCommand.stopRTSPLivestream.split(".")[1],
+                        command: DeviceCommand.stopRTSPLivestream,
+                        serialNumber: args[1],
+                    }));
+                } else {
+                    cmdHelp(args[0]);
+                }
+                break;
+            case DeviceCommand.isRTSPLiveStreaming:
+                if (args.length === 2) {
+                    socket.send(JSON.stringify({
+                        messageId: DeviceCommand.isRTSPLiveStreaming.split(".")[1],
+                        command: DeviceCommand.isRTSPLiveStreaming,
+                        serialNumber: args[1],
                     }));
                 } else {
                     cmdHelp(args[0]);

@@ -19,7 +19,7 @@ export class DriverMessageHandler {
                 return { result: result };
             }
             case DriverCommand.pollRefresh:
-                await driver.refreshData().catch((error) => {
+                await driver.refreshCloudData().catch((error) => {
                     throw error;
                 });
                 return { };

@@ -28,5 +28,8 @@ export interface DeviceResultTypes {
     [DeviceCommand.hasProperty]: { serialNumber?: string; exists: boolean };
     [DeviceCommand.hasCommand]: { serialNumber?: string; exists: boolean };
     [DeviceCommand.getCommands]: { serialNumber?: string; commands: Array<CommandName>; };
+    [DeviceCommand.startRTSPLivestream]: Record<string, never>;
+    [DeviceCommand.stopRTSPLivestream]: Record<string, never>;
+    [DeviceCommand.isRTSPLiveStreaming]: { serialNumber?: string; livestreaming: boolean };
 
 }
