@@ -149,7 +149,6 @@ export class DeviceMessageHandler {
                     }
                     if (DeviceMessageHandler.streamingDevices[station.getSerial()] !== undefined && DeviceMessageHandler.streamingDevices[station.getSerial()].includes(client)) {
                         if (DeviceMessageHandler.streamingDevices[station.getSerial()].length === 1) {
-                            client.receiveLivestream[serialNumber] = false;
                             DeviceMessageHandler.removeStreamingDevice(station.getSerial(), client);
                             await station.stopLivestream(device).catch((error) => {
                                 throw error;
