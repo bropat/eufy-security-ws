@@ -1,5 +1,5 @@
 import { EufySecurity } from "eufy-security-client";
-import { LivestreamAlreadyRunningError, LivestreamNotRunningError, RTSPLivestreamAlreadyRunningError, RTSPLivestreamNotRunningError, UnknownCommandError } from "../error";
+import { LivestreamAlreadyRunningError, LivestreamNotRunningError, UnknownCommandError } from "../error";
 import { Client } from "../server";
 import { DeviceCommand } from "./command";
 import { DeviceEvent } from "./event";
@@ -288,20 +288,13 @@ export class DeviceMessageHandler {
             }
             case DeviceCommand.startRTSPLivestream:
                 if (client.schemaVersion >= 6) {
-                    if (!station.isRTSPLiveStreaming(device)) {
-                        await station.startRTSPStream(device).catch((error) => {
-                            throw error;
-                        });
-                    } else {
-                        throw new RTSPLivestreamAlreadyRunningError(`RTSP livestream for device ${serialNumber} is already running`);
-                    }
+                    await station.startRTSPStream(device).catch((error) => {
+                        throw error;
+                    });
                     return { };
                 }
             case DeviceCommand.stopRTSPLivestream:
                 if (client.schemaVersion >= 6) {
-                    if (!station.isRTSPLiveStreaming(device)) {
-                        throw new RTSPLivestreamNotRunningError(`RTSP livestream for device ${serialNumber} could not be stopped, because it is not running`);
-                    }
                     await station.stopRTSPStream(device).catch((error) => {
                         throw error;
                     });

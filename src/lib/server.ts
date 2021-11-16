@@ -12,7 +12,7 @@ import { version, minSchemaVersion, maxSchemaVersion } from "./const";
 import { DeviceMessageHandler } from "./device/message_handler";
 import { StationMessageHandler } from "./station/message_handler";
 import { IncomingMessageStation } from "./station/incoming_message";
-import { BaseError, ErrorCode, LivestreamAlreadyRunningError, LivestreamNotRunningError, RTSPLivestreamAlreadyRunningError, RTSPLivestreamNotRunningError, SchemaIncompatibleError, UnknownCommandError } from "./error";
+import { BaseError, ErrorCode, LivestreamAlreadyRunningError, LivestreamNotRunningError, SchemaIncompatibleError, UnknownCommandError } from "./error";
 import { Instance } from "./instance";
 import { IncomingMessageDevice } from "./device/incoming_message";
 import { ServerCommand } from "./command";
@@ -156,14 +156,6 @@ export class Client {
             if (error instanceof InvalidCommandValueError) {
                 this.logger.error("Message error", error);
                 return this.sendResultError(msg.messageId, ErrorCode.deviceInvalidCommandValue);
-            }
-            if (error instanceof RTSPLivestreamAlreadyRunningError) {
-                this.logger.error("Message error", error);
-                return this.sendResultError(msg.messageId, ErrorCode.deviceRTSPLivestreamAlreadyRunning);
-            }
-            if (error instanceof RTSPLivestreamNotRunningError) {
-                this.logger.error("Message error", error);
-                return this.sendResultError(msg.messageId, ErrorCode.deviceRTSPLivestreamNotRunning);
             }
 
             this.logger.error("Unexpected error", error as Error);
