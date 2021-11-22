@@ -15,7 +15,6 @@
     "lint:fix": "eslint --fix --ext .ts . && prettier -w .",
     "test": "prettier --check src && tsc --noEmit && npm run lint && ts-node src/test/integration.ts",
     "build": "tsc -p .",
-    "prepare": "npm run build",
     "prepublishOnly": "rm -rf dist tsconfig.tsbuildinfo && npm run build",
     "build:ts": "tsc -p ."
   },
@@ -51,7 +50,6 @@
     "ws": "^8.2.3"
   },
   "devDependencies": {
-    "@types/ansi-colors": "3.2.2",
     "@types/node": "^16.11.9",
     "@types/node-rsa": "^1.1.1",
     "@types/promptly": "^3.0.2",
