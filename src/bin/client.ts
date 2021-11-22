@@ -7,7 +7,7 @@ import c from "ansi-colors";
 import { Logger } from "tslog";
 
 import { maxSchemaVersion } from "../lib/const";
-import { OutgoingEventMessage, OutgoingMessage } from "../lib/outgoing_message";
+import { OutgoingMessage } from "../lib/outgoing_message";
 import { DriverCommand } from "../lib/driver/command";
 import { DeviceCommand } from "../lib/device/command";
 import { StationCommand } from "../lib/station/command";
@@ -16,6 +16,9 @@ const cmdHelp = (cmd: string): void => {
     switch (cmd) {
         case DriverCommand.setVerifyCode:
             console.log(`${cmd} <numeric_code>`);
+            break;
+        case DriverCommand.setCaptcha:
+            console.log(`${cmd} <captcha> [<id>]`);
             break;
         case DriverCommand.pollRefresh:
         case DriverCommand.isConnected:
@@ -183,7 +186,7 @@ socket.on("open", function open() {
 socket.on("message", (data) => {
     const msg = JSON.parse(data.toString()) as OutgoingMessage;
 
-    if (msg.type === "event") {
+    /*if (msg.type === "event") {
         const event = msg as OutgoingEventMessage;
         if (event.event.source === "driver" && event.event.event === "verify code") {
             (async () => {
@@ -195,7 +198,7 @@ socket.on("message", (data) => {
                 }));
             })();
         }
-    }
+    }*/
 
     if (options.verbose) {
         //console.log(JSON.stringify(msg));
@@ -242,6 +245,18 @@ process.on("SIGTERM", handleShutdown);
                         messageId: DriverCommand.setVerifyCode.split(".")[1],
                         command: DriverCommand.setVerifyCode,
                         verifyCode: args[1]
+                    }));
+                } else {
+                    cmdHelp(args[0]);
+                }
+                break;
+            case DriverCommand.setCaptcha:
+                if (args.length === 2 || args.length === 3) {
+                    socket.send(JSON.stringify({
+                        messageId: DriverCommand.setCaptcha.split(".")[1],
+                        command: DriverCommand.setCaptcha,
+                        captchaId: args.length === 3 ? args[2] : undefined,
+                        captcha: args[1]
                     }));
                 } else {
                     cmdHelp(args[0]);

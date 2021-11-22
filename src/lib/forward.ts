@@ -12,6 +12,7 @@ import { StationCommand } from "./station/command";
 import { DeviceCommand } from "./device/command";
 import { maxSchemaVersion as internalSchemaVersion } from "./const";
 import { DeviceMessageHandler } from "./device/message_handler";
+import { DriverMessageHandler } from "./driver/message_handler";
 
 export class EventForwarder {
 
@@ -24,6 +25,16 @@ export class EventForwarder {
                 source: "driver",
                 event: DriverEvent.verifyCode,
             }, 0);
+        });
+
+        this.clients.driver.on("captcha request", (id: string, captcha: string) => {
+            DriverMessageHandler.captchaId = id;
+            this.forwardEvent({
+                source: "driver",
+                event: DriverEvent.captchaRequest,
+                captchaId: id,
+                captcha: captcha,
+            }, 7);
         });
 
         this.clients.driver.on("connect", () => {

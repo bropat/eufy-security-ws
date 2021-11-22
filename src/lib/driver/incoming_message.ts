@@ -7,6 +7,12 @@ export interface IncomingCommandSetVerifyCode extends IncomingCommandBase {
     verifyCode: string;
 }
 
+export interface IncomingCommandSetCaptcha extends IncomingCommandBase {
+    command: DriverCommand.setCaptcha;
+    captchaId?: string;
+    captcha: string;
+}
+
 export interface IncomingCommandPollRefresh extends IncomingCommandBase {
     command: DriverCommand.pollRefresh;
 }
@@ -53,6 +59,7 @@ export interface IncomingCommandGetHistoryEvents extends IncomingCommandBase {
 
 export type IncomingMessageDriver =
     | IncomingCommandSetVerifyCode
+    | IncomingCommandSetCaptcha
     | IncomingCommandPollRefresh
     | IncomingCommandIsConnected
     | IncomingCommandIsPushConnected

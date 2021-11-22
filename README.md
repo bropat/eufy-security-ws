@@ -150,7 +150,7 @@ interface {
 
 ### Driver level commands
 
-#### Get the config of the driver
+#### Set 2FA verify code
 
 [compatible with schema version: 0+]
 
@@ -159,6 +159,27 @@ interface {
     messageId: string;
     command: "driver.set_verify_code";
     verifyCode: string;
+}
+```
+
+Returns:
+
+```ts
+interface {
+    result: boolean;
+}
+```
+
+#### Set captcha
+
+[compatible with schema version: 7+]
+
+```ts
+interface {
+    messageId: string;
+    command: "driver.set_captcha";
+    captchaId?: string;
+    captcha: string;
 }
 ```
 
@@ -998,6 +1019,24 @@ interface {
   event: {
     source: "driver";
     event: "verify code";
+  }
+}
+```
+
+#### `captcha request`
+
+[compatible with schema version: 7+]
+
+This event is sent whenever the Eufy Cloud asks for a captcha during the login process.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "driver";
+    event: "captcha request";
+    captchaId: string;
+    captcha: string;
   }
 }
 ```

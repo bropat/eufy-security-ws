@@ -4,8 +4,6 @@ export interface DriverStateSchema0 {
     version: string;
     connected: boolean;
     pushConnected: boolean;
-    //TODO: Finish implementation
-
 }
 
 export type DriverState = 
@@ -17,7 +15,6 @@ export const dumpDriver = (driver: EufySecurity, schemaVersion: number): DriverS
         version: driver.getVersion(),
         connected: driver.isConnected(),
         pushConnected: driver.isPushConnected(),
-        //TODO: Finish Implementation
     };
 
     return base as DriverStateSchema0;

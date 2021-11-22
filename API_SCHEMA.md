@@ -40,3 +40,8 @@ Base schema.
 ## Schema 6
 
 * Added new commands `startRTSPLivestream`, `stopRTSPLivestream` and `isRTSPLiveStreaming` to Station
+
+## Schema 7
+
+* Added new command `setCaptcha` to Driver
+* Added new Driver event `captchaRequest`

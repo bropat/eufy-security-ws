@@ -2,10 +2,12 @@ import { EufySecurity } from "eufy-security-client";
 import { UnknownCommandError } from "../error";
 import { Client } from "../server";
 import { DriverCommand } from "./command";
-import { IncomingMessageDriver, IncomingCommandSetVerifyCode, IncomingCommandGetVideoEvents } from "./incoming_message";
+import { IncomingMessageDriver, IncomingCommandSetVerifyCode, IncomingCommandGetVideoEvents, IncomingCommandSetCaptcha } from "./incoming_message";
 import { DriverResultTypes } from "./outgoing_message";
 
 export class DriverMessageHandler {
+
+    static captchaId: string | null = null;
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     static async handle(message: IncomingMessageDriver, driver: EufySecurity, client: Client): Promise<DriverResultTypes[DriverCommand]> {
@@ -16,6 +18,19 @@ export class DriverMessageHandler {
                 const result = await driver.connect((message as IncomingCommandSetVerifyCode).verifyCode).catch((error) => {
                     throw error;
                 });
+                return { result: result };
+            }
+            case DriverCommand.setCaptcha:
+            {
+                let result = false;
+                const captchaId = (message as IncomingCommandSetCaptcha).captchaId ? (message as IncomingCommandSetCaptcha).captchaId : this.captchaId;
+                this.captchaId = null;
+                if (captchaId) {
+                    result = await driver.connect((message as IncomingCommandSetCaptcha).captcha, captchaId).catch((error) => {
+                        throw error;
+                    });
+                }
+                
                 return { result: result };
             }
             case DriverCommand.pollRefresh:

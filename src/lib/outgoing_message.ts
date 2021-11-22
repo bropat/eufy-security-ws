@@ -4,7 +4,7 @@ import { ServerCommand } from "./command";
 import { DriverResultTypes } from "./driver/outgoing_message";
 import { DeviceEvent, OutgoingEventDevice } from "./device/event";
 import { OutgoingEventStation, StationEvent } from "./station/event";
-import { DriverEvent } from "./driver/event";
+import { DriverEvent, OutgoingEventDriver } from "./driver/event";
 
 // https://github.com/microsoft/TypeScript/issues/1897#issuecomment-822032151
 export type JSONValue =
@@ -22,6 +22,7 @@ export interface OutgoingBaseEvent {
 
 export type OutgoingEvent = 
   | OutgoingBaseEvent
+  | OutgoingEventDriver
   | OutgoingEventDevice
   | OutgoingEventStation;
 

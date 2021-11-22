@@ -1,9 +1,9 @@
-FROM node:14-alpine as build
+FROM node:16-alpine as build
 WORKDIR /tmp
 COPY . .
 RUN npm ci && npm run build
 
-FROM node:14-alpine
+FROM node:16-alpine
 WORKDIR /usr/src/app
 COPY --from=build /tmp/dist ./dist
 COPY --from=build /tmp/docker/run.sh ./run.sh

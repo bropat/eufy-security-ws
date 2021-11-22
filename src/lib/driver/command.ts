@@ -1,5 +1,6 @@
 export enum DriverCommand {
     setVerifyCode = "driver.set_verify_code",
+    setCaptcha = "driver.set_captcha",
     pollRefresh = "driver.poll_refresh",
     isConnected = "driver.is_connected",
     isPushConnected = "driver.is_push_connected",
