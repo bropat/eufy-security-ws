@@ -5,7 +5,7 @@
 [![node](https://img.shields.io/node/v/eufy-security-ws.svg)](https://www.npmjs.com/package/eufy-security-ws)
 [![NPM version](http://img.shields.io/npm/v/eufy-security-ws.svg)](https://www.npmjs.com/package/eufy-security-ws)
 [![Downloads](https://img.shields.io/npm/dm/eufy-security-ws.svg)](https://www.npmjs.com/package/eufy-security-ws)
-[![Dependency Status](https://img.shields.io/david/bropat/eufy-security-ws.svg)](https://david-dm.org/bropat/eufy-security-ws)
+[![Dependency Status](https://img.shields.io/librariesio/release/npm/eufy-security-ws)](https://libraries.io/npm/eufy-security-ws)
 [![Known Vulnerabilities](https://snyk.io/test/github/bropat/eufy-security-ws/badge.svg)](https://snyk.io/test/github/bropat/eufy-security-ws)
 
 [![NPM](https://nodei.co/npm/eufy-security-ws.png?downloads=true)](https://nodei.co/npm/eufy-security-ws/)
@@ -21,6 +21,7 @@ Credits go to them as well.
 If you appreciate my work and progress and want to support me, you can do it here:
 
 [![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/E1E332Q6Z)
+[![Donate](https://img.shields.io/badge/Donate-PayPal-blue.svg)](https://www.paypal.me/pbroetto)
 
 ## Trying it out
 
