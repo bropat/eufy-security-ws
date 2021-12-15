@@ -5,6 +5,8 @@ export interface DeviceResultTypes {
     [DeviceCommand.setStatusLed]: Record<string, never>;
     [DeviceCommand.setAutoNightVision]: Record<string, never>;
     [DeviceCommand.setMotionDetection]: Record<string, never>;
+    [DeviceCommand.setMotionTracking]: Record<string, never>;
+    [DeviceCommand.setMotionDetectionSensitivity]: Record<string, never>;
     [DeviceCommand.setSoundDetection]: Record<string, never>;
     [DeviceCommand.setPetDetection]: Record<string, never>;
     [DeviceCommand.setRTSPStream]: Record<string, never>;
