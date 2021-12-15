@@ -27,6 +27,11 @@ export interface IncomingCommandDeviceSetMotionTracking extends IncomingCommandD
     value: boolean;
 }
 
+export interface IncomingCommandDeviceSetPanAndTiltSpeed extends IncomingCommandDeviceBase {
+    command: DeviceCommand.setPanAndTiltSpeed;
+    value: number;
+}
+
 export interface IncomingCommandDeviceSetMotionDetectionSensitivity extends IncomingCommandDeviceBase {
     command: DeviceCommand.setMotionDetectionSensitivity;
     value: number;
@@ -158,6 +163,7 @@ export type IncomingMessageDevice =
   | IncomingCommandDeviceSetAutoNightVision
   | IncomingCommandDeviceSetMotionDetection
   | IncomingCommandDeviceSetMotionTracking
+  | IncomingCommandDeviceSetPanAndTiltSpeed
   | IncomingCommandDeviceSetMotionDetectionSensitivity
   | IncomingCommandDeviceSetSoundDetection
   | IncomingCommandDeviceSetPetDetection

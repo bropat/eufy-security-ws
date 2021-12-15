@@ -3,7 +3,7 @@ import { LivestreamAlreadyRunningError, LivestreamNotRunningError, UnknownComman
 import { Client } from "../server";
 import { DeviceCommand } from "./command";
 import { DeviceEvent } from "./event";
-import { IncomingCommandDeviceEnableDevice, IncomingCommandDeviceLockDevice, IncomingCommandDeviceSetAntiTheftDetection, IncomingCommandDeviceSetAutoNightVision, IncomingCommandDeviceSetMotionDetection, IncomingCommandDeviceSetPetDetection, IncomingCommandDeviceSetProperty, IncomingCommandDeviceSetRTSPStream, IncomingCommandDeviceSetSoundDetection, IncomingCommandDeviceSetStatusLed, IncomingCommandDeviceSetWatermark, IncomingMessageDevice, IncomingCommandDeviceTriggerAlarm, IncomingCommandDevicePanAndTilt, IncomingCommandDeviceQuickResponse, IncomingCommandDeviceStartDownload, IncomingCommandDeviceHasProperty, IncomingCommandDeviceHasCommand, IncomingCommandDeviceSetMotionDetectionSensitivity, IncomingCommandDeviceSetMotionTracking } from "./incoming_message";
+import { IncomingCommandDeviceEnableDevice, IncomingCommandDeviceLockDevice, IncomingCommandDeviceSetAntiTheftDetection, IncomingCommandDeviceSetAutoNightVision, IncomingCommandDeviceSetMotionDetection, IncomingCommandDeviceSetPetDetection, IncomingCommandDeviceSetProperty, IncomingCommandDeviceSetRTSPStream, IncomingCommandDeviceSetSoundDetection, IncomingCommandDeviceSetStatusLed, IncomingCommandDeviceSetWatermark, IncomingMessageDevice, IncomingCommandDeviceTriggerAlarm, IncomingCommandDevicePanAndTilt, IncomingCommandDeviceQuickResponse, IncomingCommandDeviceStartDownload, IncomingCommandDeviceHasProperty, IncomingCommandDeviceHasCommand, IncomingCommandDeviceSetMotionDetectionSensitivity, IncomingCommandDeviceSetMotionTracking, IncomingCommandDeviceSetPanAndTiltSpeed } from "./incoming_message";
 import { DeviceResultTypes } from "./outgoing_message";
 
 export class DeviceMessageHandler {
@@ -53,6 +53,11 @@ export class DeviceMessageHandler {
                 return { };
             case DeviceCommand.setMotionTracking:
                 await station.setMotionTracking(device, (message as IncomingCommandDeviceSetMotionTracking).value).catch((error) => {
+                    throw error;
+                });
+                return { };
+            case DeviceCommand.setPanAndTiltSpeed:
+                await station.setPanAndTiltRotationSpeed(device, (message as IncomingCommandDeviceSetPanAndTiltSpeed).value).catch((error) => {
                     throw error;
                 });
                 return { };
