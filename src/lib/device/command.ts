@@ -2,6 +2,7 @@ export enum DeviceCommand {
     setStatusLed = "device.set_status_led",
     setAutoNightVision = "device.set_auto_night_vision",
     setMotionDetection = "device.set_motion_detection",
+    setMotionDetectionType = "device.set_motion_detection_type",
     setMotionTracking = "device.set_motion_tracking",
     setPanAndTiltSpeed = "device.set_pan_and_tilt_speed",
     setMotionDetectionSensitivity = "device.set_motion_detection_sensitivity",

@@ -3,7 +3,7 @@ import { LivestreamAlreadyRunningError, LivestreamNotRunningError, UnknownComman
 import { Client } from "../server";
 import { DeviceCommand } from "./command";
 import { DeviceEvent } from "./event";
-import { IncomingCommandDeviceEnableDevice, IncomingCommandDeviceLockDevice, IncomingCommandDeviceSetAntiTheftDetection, IncomingCommandDeviceSetAutoNightVision, IncomingCommandDeviceSetMotionDetection, IncomingCommandDeviceSetPetDetection, IncomingCommandDeviceSetProperty, IncomingCommandDeviceSetRTSPStream, IncomingCommandDeviceSetSoundDetection, IncomingCommandDeviceSetStatusLed, IncomingCommandDeviceSetWatermark, IncomingMessageDevice, IncomingCommandDeviceTriggerAlarm, IncomingCommandDevicePanAndTilt, IncomingCommandDeviceQuickResponse, IncomingCommandDeviceStartDownload, IncomingCommandDeviceHasProperty, IncomingCommandDeviceHasCommand, IncomingCommandDeviceSetMotionDetectionSensitivity, IncomingCommandDeviceSetMotionTracking, IncomingCommandDeviceSetPanAndTiltSpeed } from "./incoming_message";
+import { IncomingCommandDeviceEnableDevice, IncomingCommandDeviceLockDevice, IncomingCommandDeviceSetAntiTheftDetection, IncomingCommandDeviceSetAutoNightVision, IncomingCommandDeviceSetMotionDetection, IncomingCommandDeviceSetPetDetection, IncomingCommandDeviceSetProperty, IncomingCommandDeviceSetRTSPStream, IncomingCommandDeviceSetSoundDetection, IncomingCommandDeviceSetStatusLed, IncomingCommandDeviceSetWatermark, IncomingMessageDevice, IncomingCommandDeviceTriggerAlarm, IncomingCommandDevicePanAndTilt, IncomingCommandDeviceQuickResponse, IncomingCommandDeviceStartDownload, IncomingCommandDeviceHasProperty, IncomingCommandDeviceHasCommand, IncomingCommandDeviceSetMotionDetectionSensitivity, IncomingCommandDeviceSetMotionTracking, IncomingCommandDeviceSetPanAndTiltSpeed, IncomingCommandDeviceSetMotionDetectionType } from "./incoming_message";
 import { DeviceResultTypes } from "./outgoing_message";
 
 export class DeviceMessageHandler {
@@ -48,6 +48,11 @@ export class DeviceMessageHandler {
                 return { };
             case DeviceCommand.setMotionDetection:
                 await station.setMotionDetection(device, (message as IncomingCommandDeviceSetMotionDetection).value).catch((error) => {
+                    throw error;
+                });
+                return { };
+             case DeviceCommand.setMotionDetectionType:
+                await station.setMotionDetectionType(device, (message as IncomingCommandDeviceSetMotionDetectionType).value).catch((error) => {
                     throw error;
                 });
                 return { };

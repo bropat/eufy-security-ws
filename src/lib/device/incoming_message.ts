@@ -22,6 +22,11 @@ export interface IncomingCommandDeviceSetMotionDetection extends IncomingCommand
     value: boolean;
 }
 
+export interface IncomingCommandDeviceSetMotionDetectionType extends IncomingCommandDeviceBase {
+    command: DeviceCommand.setMotionDetectionType;
+    value: number;
+}
+
 export interface IncomingCommandDeviceSetMotionTracking extends IncomingCommandDeviceBase {
     command: DeviceCommand.setMotionTracking;
     value: boolean;
@@ -162,6 +167,7 @@ export type IncomingMessageDevice =
   | IncomingCommandDeviceSetStatusLed
   | IncomingCommandDeviceSetAutoNightVision
   | IncomingCommandDeviceSetMotionDetection
+  | IncomingCommandDeviceSetMotionDetectionType
   | IncomingCommandDeviceSetMotionTracking
   | IncomingCommandDeviceSetPanAndTiltSpeed
   | IncomingCommandDeviceSetMotionDetectionSensitivity
