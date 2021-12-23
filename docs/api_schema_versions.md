@@ -1,4 +1,4 @@
-# API Schema
+# API Schema versions
 
 This document describes the changes that are introduced with each schema version.
 
@@ -45,3 +45,7 @@ Base schema.
 
 * Added new command `setCaptcha` to Driver
 * Added new Driver event `captchaRequest`
+
+## Schema 8
+
+* Added new properties `motionDetectionRange`, `motionDetectionRangeStandardSensitivity`, `motionDetectionRangeAdvancedLeftSensitivity`, `motionDetectionRangeAdvancedMiddleSensitivity`, `motionDetectionRangeAdvancedRightSensitivity`, `motionDetectionTestMode`, `motionTrackingSensitivity`, `motionAutoCruise`, `motionOutOfViewDetection`, `lightSettingsColorTemperatureManual`, `lightSettingsColorTemperatureMotion`, `lightSettingsColorTemperatureSchedule`, `lightSettingsMotionActivationMode`, `videoNightvisionImageAdjustment`, `videoColorNightvision` and `autoCalibration` to Device

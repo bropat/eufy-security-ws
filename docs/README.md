@@ -1,6 +1,6 @@
-# eufy-security-ws
+![logo](_media/eufy-security.png)
 
-![Logo](docs/_media/eufy-security.png)
+# eufy-security-ws
 
 [![node](https://img.shields.io/node/v/eufy-security-ws.svg)](https://www.npmjs.com/package/eufy-security-ws)
 [![NPM version](http://img.shields.io/npm/v/eufy-security-ws.svg)](https://www.npmjs.com/package/eufy-security-ws)
@@ -22,7 +22,3 @@ If you appreciate my work and progress and want to support me, you can do it her
 
 [![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/E1E332Q6Z)
 [![Donate](https://img.shields.io/badge/Donate-PayPal-blue.svg)](https://www.paypal.me/pbroetto)
-
-## Get started
-
-To try it out or for more information, such as API documentation, Docker image, etc., please see [here](https://bropat.github.io/eufy-security-ws/).

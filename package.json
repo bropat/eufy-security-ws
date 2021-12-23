@@ -1,6 +1,6 @@
 {
   "name": "eufy-security-ws",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "description": "Node WebSocket server implementation to integrate Eufy Security devices",
   "main": "dist/lib/index.js",
   "bin": {
@@ -43,23 +43,23 @@
   "dependencies": {
     "ansi-colors": "^4.1.1",
     "commander": "^8.3.0",
-    "eufy-security-client": "^1.4.0",
+    "eufy-security-client": "^1.5.0",
     "fs-extra": "^10.0.0",
     "promptly": "^3.2.0",
-    "tslog": "^3.2.2",
-    "ws": "^8.2.3"
+    "tslog": "^3.3.0",
+    "ws": "^8.4.0"
   },
   "devDependencies": {
-    "@types/node": "^16.11.9",
+    "@types/node": "^16.11.14",
     "@types/node-rsa": "^1.1.1",
     "@types/promptly": "^3.0.2",
-    "@types/ws": "^8.2.0",
+    "@types/ws": "^8.2.2",
     "@typescript-eslint/eslint-plugin": "^4.33.0",
     "@typescript-eslint/parser": "^4.33.0",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
-    "prettier": "^2.4.1",
+    "prettier": "^2.5.1",
     "ts-node": "^10.4.0",
-    "typescript": "^4.5.2"
+    "typescript": "^4.5.4"
   }
 }

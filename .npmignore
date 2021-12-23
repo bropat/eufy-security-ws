@@ -34,3 +34,6 @@ config.json
 
 # docker
 docker/
+
+# Exclude documentation
+docs

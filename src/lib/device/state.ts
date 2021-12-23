@@ -118,13 +118,35 @@ DeviceStateSchema4,
     nightvision?: number;
 }>;
 
+type DeviceStateSchema6 = Modify<
+DeviceStateSchema5,
+{
+    motionDetectionRange?: boolean;
+    motionDetectionRangeStandardSensitivity?: number;
+    motionDetectionRangeAdvancedLeftSensitivity?: number;
+    motionDetectionRangeAdvancedMiddleSensitivity?: number;
+    motionDetectionRangeAdvancedRightSensitivity?: number;
+    motionDetectionTestMode?: boolean;
+    motionTrackingSensitivity?: number;
+    motionAutoCruise?: boolean;
+    motionOutOfViewDetection?: boolean;
+    lightSettingsColorTemperatureManual?: number;
+    lightSettingsColorTemperatureMotion?: number;
+    lightSettingsColorTemperatureSchedule?: number;
+    lightSettingsMotionActivationMode?: number;
+    videoNightvisionImageAdjustment?: boolean;
+    videoColorNightvision?: boolean;
+    autoCalibration?: boolean;
+}>;
+
 
 export type DeviceState = 
   | DeviceStateSchema0
   | DeviceStateSchema1
   | DeviceStateSchema3
   | DeviceStateSchema4
-  | DeviceStateSchema5;
+  | DeviceStateSchema5
+  | DeviceStateSchema6;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const dumpDevice = (device: Device, schemaVersion: number): DeviceState => {
@@ -240,11 +262,32 @@ export const dumpDevice = (device: Device, schemaVersion: number): DeviceState =
         return device4;
     }
 
-    // All schemas >= 5
     const device5 = device4 as DeviceStateSchema5;
     device5.nightvision = device.getPropertyValue(PropertyName.DeviceNightvision)?.value as number;
     device5.batteryIsCharging = device.getPropertyValue(PropertyName.DeviceBatteryIsCharging)?.value as boolean;
+    if (schemaVersion <= 5) {
+        return device5;
+    }
 
-    return device5;
+    // All schemas >= 6
+    const device6 = device5 as DeviceStateSchema6;
+    device6.motionDetectionRange = device.getPropertyValue(PropertyName.DeviceMotionDetectionRange)?.value as boolean;
+    device6.motionDetectionRangeStandardSensitivity = device.getPropertyValue(PropertyName.DeviceMotionDetectionRangeStandardSensitivity)?.value as number;
+    device6.motionDetectionRangeAdvancedLeftSensitivity = device.getPropertyValue(PropertyName.DeviceMotionDetectionRangeAdvancedLeftSensitivity)?.value as number;
+    device6.motionDetectionRangeAdvancedMiddleSensitivity = device.getPropertyValue(PropertyName.DeviceMotionDetectionRangeAdvancedMiddleSensitivity)?.value as number;
+    device6.motionDetectionRangeAdvancedRightSensitivity = device.getPropertyValue(PropertyName.DeviceMotionDetectionRangeAdvancedRightSensitivity)?.value as number;
+    device6.motionDetectionTestMode = device.getPropertyValue(PropertyName.DeviceMotionDetectionTestMode)?.value as boolean;
+    device6.motionTrackingSensitivity = device.getPropertyValue(PropertyName.DeviceMotionTrackingSensitivity)?.value as number;
+    device6.motionAutoCruise = device.getPropertyValue(PropertyName.DeviceMotionAutoCruise)?.value as boolean;
+    device6.motionOutOfViewDetection = device.getPropertyValue(PropertyName.DeviceMotionOutOfViewDetection)?.value as boolean;
+    device6.lightSettingsColorTemperatureManual = device.getPropertyValue(PropertyName.DeviceLightSettingsColorTemperatureManual)?.value as number;
+    device6.lightSettingsColorTemperatureMotion = device.getPropertyValue(PropertyName.DeviceLightSettingsColorTemperatureMotion)?.value as number;
+    device6.lightSettingsColorTemperatureSchedule = device.getPropertyValue(PropertyName.DeviceLightSettingsColorTemperatureSchedule)?.value as number;
+    device6.lightSettingsMotionActivationMode = device.getPropertyValue(PropertyName.DeviceLightSettingsMotionActivationMode)?.value as number;
+    device6.videoNightvisionImageAdjustment = device.getPropertyValue(PropertyName.DeviceVideoNightvisionImageAdjustment)?.value as boolean;
+    device6.videoColorNightvision = device.getPropertyValue(PropertyName.DeviceVideoColorNightvision)?.value as boolean;
+    device6.autoCalibration = device.getPropertyValue(PropertyName.DeviceAutoCalibration)?.value as boolean;
+
+    return device6;
     
 };

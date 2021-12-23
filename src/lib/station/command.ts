@@ -1,6 +1,5 @@
 export enum StationCommand {
     reboot = "station.reboot",
-    setGuardMode = "station.set_guard_mode",
     isConnected = "station.is_connected",
     connect = "station.connect",
     disconnect = "station.disconnect",
@@ -14,6 +13,9 @@ export enum StationCommand {
     hasCommand = "station.has_command",
     //    getCameraInfo = "station.get_camera_info",
     //    getStorageInfo = "station.get_storage_info",
+
+    //Deprecated
+    setGuardMode = "station.set_guard_mode",
 
     //Legacy
     isConnectedLegacy = "station.isConnected",

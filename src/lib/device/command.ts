@@ -1,15 +1,4 @@
 export enum DeviceCommand {
-    setStatusLed = "device.set_status_led",
-    setAutoNightVision = "device.set_auto_night_vision",
-    setMotionDetection = "device.set_motion_detection",
-    setSoundDetection = "device.set_sound_detection",
-    setPetDetection = "device.set_pet_detection",
-    setRTSPStream = "device.set_rtsp_stream",
-    setAntiTheftDetection = "device.set_anti_theft_detection",
-    setWatermark = "device.set_watermark",
-    enableDevice = "device.enable_device",
-    lockDevice = "device.lock_device",
-
     getPropertiesMetadata = "device.get_properties_metadata",
     getProperties = "device.get_properties",
     setProperty = "device.set_property",
@@ -29,4 +18,16 @@ export enum DeviceCommand {
     startRTSPLivestream = "device.start_rtsp_livestream",
     stopRTSPLivestream = "device.stop_rtsp_livestream",
     isRTSPLiveStreaming = "device.is_rtsp_livestreaming",
+
+    //Deprecated
+    setStatusLed = "device.set_status_led",
+    setAutoNightVision = "device.set_auto_night_vision",
+    setMotionDetection = "device.set_motion_detection",
+    setSoundDetection = "device.set_sound_detection",
+    setPetDetection = "device.set_pet_detection",
+    setRTSPStream = "device.set_rtsp_stream",
+    setAntiTheftDetection = "device.set_anti_theft_detection",
+    setWatermark = "device.set_watermark",
+    enableDevice = "device.enable_device",
+    lockDevice = "device.lock_device",
 }
