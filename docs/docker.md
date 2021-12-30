@@ -25,6 +25,6 @@ docker run -it \
     -e USERNAME=user \
     -e PASSWORD=password \
     -v "$(PWD)"/data:/data \
-    -p 3000:0000 \
+    -p 3000:3000 \
     bropat/eufy-security-ws:latest
 ```
