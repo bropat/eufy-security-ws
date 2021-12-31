@@ -11,6 +11,7 @@ const program = new Command();
 program
     .addOption(new Option("-c, --config <file>", "Configuration file").default("config.json", "looks in current directory"))
     .addOption(new Option("-p, --port <port>", "Listening port").default(3000))
+    .addOption(new Option("-h, --host <host>", "Listening Host").default("localhost"))
     .addOption(new Option("-v, --verbose"))
     .addOption(new Option("-q, --quiet"));
 
@@ -61,7 +62,7 @@ const args = program.opts();
     let server: EufySecurityServer;
 
     try {
-        server = new EufySecurityServer(driver, { port: args.port, logger: logger });
+        server = new EufySecurityServer(driver, { port: args.port, host: args.host, logger: logger });
         await server.start();
     } catch (error) {
         logger.error("Unable to start Server", error);
