@@ -334,13 +334,13 @@ export class  EufySecurityServer extends EventEmitter {
         this.sockets = new ClientsController(this.driver, this.logger);
         this.wsServer.on("connection", (socket, request) => this.sockets?.addSocket(socket, request));
 
-        this.logger.debug(`Starting server on port ${this.options.port}`);
+        this.logger.debug(`Starting server on host ${this.options.host}, port ${this.options.port}`);
 
         this.server.on("error", this.onError.bind(this));
-        this.server.listen(this.options.port);
+        this.server.listen(this.options.port, this.options.host);
         await once(this.server, "listening");
         this.emit("listening");
-        this.logger.info(`Eufy Security server listening on port ${this.options.port}`);
+        this.logger.info(`Eufy Security server listening on host ${this.options.host}, port ${this.options.port}`);
         this.driver.connect();
     }
 
