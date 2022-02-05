@@ -19,10 +19,12 @@ import { ServerCommand } from "./command";
 import { DriverMessageHandler } from "./driver/message_handler";
 import { IncomingMessageDriver } from "./driver/incoming_message";
 import { dumpState } from "./state";
+import { LoggingEventForwarder } from "./logging";
 
 export class Client {
 
     public receiveEvents = false;
+    public receiveLogs = false;
     private _outstandingPing = false;
     public schemaVersion = minSchemaVersion;
     public receiveLivestream: {
@@ -40,7 +42,9 @@ export class Client {
             DriverMessageHandler.handle(
                 message as IncomingMessageDriver,
                 this.driver,
-                this
+                this,
+                this.clientsController,
+                this.logger
             ),
         [Instance.device]: (message) =>
             DeviceMessageHandler.handle(
@@ -50,7 +54,7 @@ export class Client {
             ),
     };
 
-    constructor(private socket: WebSocket, private driver: EufySecurity, private logger: Logger) {
+    constructor(private socket: WebSocket, private driver: EufySecurity, private logger: Logger, private clientsController: ClientsController) {
         socket.on("pong", () => {
             this._outstandingPing = false;
         });
@@ -222,12 +226,13 @@ export class ClientsController {
     private pingInterval?: NodeJS.Timeout;
     private eventForwarder?: EventForwarder;
     private cleanupScheduled = false;
+    private loggingEventForwarder?: LoggingEventForwarder;
 
     constructor(public driver: EufySecurity, private logger: Logger) {}
 
     addSocket(socket: WebSocket, request: HttpIncomingMessage): void {
         this.logger.debug(`New client with ip: ${request.socket.remoteAddress} port: ${request.socket.remotePort}`);
-        const client = new Client(socket, this.driver, this.logger);
+        const client = new Client(socket, this.driver, this.logger, this);
         socket.on("error", (error) => {
             this.logger.error(`Client with ip: ${request.socket.remoteAddress} port: ${request.socket.remotePort} socket error`, error);
         });
@@ -260,7 +265,30 @@ export class ClientsController {
         }
     }
 
-    private scheduleClientCleanup() {
+    get loggingEventForwarderStarted(): boolean {
+        return this.loggingEventForwarder?.started === true;
+    }
+    
+    public restartLoggingEventForwarderIfNeeded(): void {
+        this.loggingEventForwarder?.restartIfNeeded();
+    }
+    
+    public configureLoggingEventForwarder(): void {
+        if (this.loggingEventForwarder === undefined) {
+            this.loggingEventForwarder = new LoggingEventForwarder(this, this.logger);
+        }
+        if (!this.loggingEventForwarderStarted) {
+            this.loggingEventForwarder?.start();
+        }
+    }
+    
+    public cleanupLoggingEventForwarder(): void {
+        if (this.clients.filter((cl) => cl.receiveLogs).length == 0 && this.loggingEventForwarderStarted) {
+            this.loggingEventForwarder?.stop();
+        }
+    }
+
+    private scheduleClientCleanup(): void {
         if (this.cleanupScheduled) {
             return;
         }
@@ -268,7 +296,7 @@ export class ClientsController {
         setTimeout(() => this.cleanupClients(), 0);
     }
 
-    private cleanupClients() {
+    private cleanupClients(): void {
         this.cleanupScheduled = false;
         const disconnectedClients = this.clients.filter((cl) => cl.isConnected === false);
         this.clients = this.clients.filter((cl) => cl.isConnected);
@@ -292,6 +320,7 @@ export class ClientsController {
                 }
             });
         });
+        this.cleanupLoggingEventForwarder();
     }
 
     disconnect(): void {
@@ -301,10 +330,12 @@ export class ClientsController {
         this.pingInterval = undefined;
         this.clients.forEach((client) => client.disconnect());
         this.clients = [];
+        this.cleanupLoggingEventForwarder();
     }
 }
 
 interface EufySecurityServerOptions {
+    host: string;
     port: number;
     logger?: Logger;
 }

@@ -100,6 +100,72 @@ interface {
 }
 ```
 
+### `mqtt connected`
+
+[compatible with schema version: 9+]
+
+This event is sent whenever the connection to the Eufy Cloud MQTT broker is successfully established.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "driver";
+    event: "mqtt connected";
+  }
+}
+```
+
+### `mqtt disconnected`
+
+[compatible with schema version: 9+]
+
+This event is sent whenever the connection to the Eufy Cloud MQTT broker is lost.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "driver";
+    event: "mqtt disconnected";
+  }
+}
+```
+
+### `log level changed`
+
+[compatible with schema version: 9+]
+
+This event is sent whenever the log level is changed.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "driver";
+    event: "log level changed";
+    level: "silly" | "trace" | "debug" | "info" | "warn" | "error" | "fatal";
+  }
+}
+```
+
+### `logging`
+
+[compatible with schema version: 9+]
+
+This event is sent whenever a log message is generated. Clients will only receive these events when they have issued the `driver.start_listening_logs` command.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "driver";
+    event: "logging";
+    message: ILogObject;  // tslog object
+  }
+}
+```
+
 ## Station level events
 
 ### `station added`

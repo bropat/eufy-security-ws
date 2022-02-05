@@ -1,4 +1,4 @@
-import { AudioCodec, Camera, CommandResult, CommandType, Device, DoorbellCamera, EntrySensor, ErrorCode, IndoorCamera, MotionSensor, ParamType, PropertyValue, Station, StreamMetadata, VideoCodec, AlarmEvent } from "eufy-security-client";
+import { AudioCodec, Camera, CommandResult, CommandType, Device, DoorbellCamera, EntrySensor, ErrorCode, IndoorCamera, MotionSensor, ParamType, PropertyValue, Station, StreamMetadata, VideoCodec, AlarmEvent, BatteryDoorbellCamera } from "eufy-security-client";
 import { Readable } from "stream";
 
 import { JSONValue, OutgoingEvent } from "./outgoing_message";
@@ -69,6 +69,24 @@ export class EventForwarder {
                 this.sendEvent(client, {
                     source: "driver",
                     event: DriverEvent.pushDisconnected,
+                })
+            );
+        });
+
+        this.clients.driver.on("mqtt connect", () => {
+            this.clients.clients.forEach((client) =>
+                this.sendEvent(client, {
+                    source: "driver",
+                    event: DriverEvent.mqttConnected,
+                })
+            );
+        });
+
+        this.clients.driver.on("mqtt close", () => {
+            this.clients.clients.forEach((client) =>
+                this.sendEvent(client, {
+                    source: "driver",
+                    event: DriverEvent.mqttDisconnected,
                 })
             );
         });
@@ -510,7 +528,8 @@ export class EventForwarder {
                     })
                 );
             });
-        } else if (device instanceof IndoorCamera) {
+        }
+        if (device instanceof IndoorCamera) {
             device.on("crying detected", (device: Device, state: boolean) => {
                 this.clients.clients.forEach((client) =>
                     this.sendEvent(client, {
@@ -543,7 +562,8 @@ export class EventForwarder {
                     })
                 );
             });
-        } else if (device instanceof DoorbellCamera) {
+        }
+        if (device instanceof DoorbellCamera) {
             device.on("rings", (device: Device, state: boolean) => {
                 this.clients.clients.forEach((client) =>
                     this.sendEvent(client, {
@@ -554,7 +574,8 @@ export class EventForwarder {
                     })
                 );
             });
-        } else if (device instanceof EntrySensor) {
+        }
+        if (device instanceof EntrySensor) {
             device.on("open", (device: Device, state: boolean) => {
                 this.clients.clients.forEach((client) =>
                     this.sendEvent(client, {
@@ -565,7 +586,8 @@ export class EventForwarder {
                     })
                 );
             });
-        } else if (device instanceof MotionSensor) {
+        }
+        if (device instanceof MotionSensor) {
             device.on("motion detected", (device: Device, state: boolean) => {
                 this.clients.clients.forEach((client) =>
                     this.sendEvent(client, {

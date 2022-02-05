@@ -18,6 +18,7 @@ export enum DeviceCommand {
     startRTSPLivestream = "device.start_rtsp_livestream",
     stopRTSPLivestream = "device.stop_rtsp_livestream",
     isRTSPLiveStreaming = "device.is_rtsp_livestreaming",
+    calibrateLock = "device.calibrate_lock",
 
     //Deprecated
     setStatusLed = "device.set_status_led",

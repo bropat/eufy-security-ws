@@ -143,6 +143,10 @@ export interface IncomingCommandDeviceIsRTSPLiveStreaming extends IncomingComman
     command: DeviceCommand.isRTSPLiveStreaming;
 }
 
+export interface IncomingCommandDeviceCalibrateLock extends IncomingCommandDeviceBase {
+    command: DeviceCommand.calibrateLock;
+}
+
 export type IncomingMessageDevice =
   | IncomingCommandDeviceSetStatusLed
   | IncomingCommandDeviceSetAutoNightVision
@@ -172,4 +176,5 @@ export type IncomingMessageDevice =
   | IncomingCommandDeviceGetCommands
   | IncomingCommandDeviceStartRTSPLivestream
   | IncomingCommandDeviceStopRTSPLivestream
-  | IncomingCommandDeviceIsRTSPLiveStreaming;
+  | IncomingCommandDeviceIsRTSPLiveStreaming
+  | IncomingCommandDeviceCalibrateLock;

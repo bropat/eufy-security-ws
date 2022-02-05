@@ -139,6 +139,24 @@ DeviceStateSchema5,
     autoCalibration?: boolean;
 }>;
 
+type DeviceStateSchema7 = Modify<
+DeviceStateSchema6,
+{
+    lockSettingsAutoLock?: boolean;
+    lockSettingsAutoLockTimer?: number;
+    lockSettingsAutoLockSchedule?: boolean;
+    lockSettingsAutoLockScheduleStartTime?: string;
+    lockSettingsAutoLockScheduleEndTime?: string;
+    lockSettingsOneTouchLocking?: boolean;
+    lockSettingsWrongTryProtection?: boolean;
+    lockSettingsWrongTryAttempts?: number;
+    lockSettingsWrongTryLockdownTime?: number;
+    lockSettingsScramblePasscode?: boolean;
+    lockSettingsSound?: number;
+    lockSettingsNotification?: boolean;
+    lockSettingsNotificationUnlocked?: boolean;
+    lockSettingsNotificationLocked?: boolean;
+}>;
 
 export type DeviceState = 
   | DeviceStateSchema0
@@ -146,7 +164,8 @@ export type DeviceState =
   | DeviceStateSchema3
   | DeviceStateSchema4
   | DeviceStateSchema5
-  | DeviceStateSchema6;
+  | DeviceStateSchema6
+  | DeviceStateSchema7;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const dumpDevice = (device: Device, schemaVersion: number): DeviceState => {
@@ -269,7 +288,6 @@ export const dumpDevice = (device: Device, schemaVersion: number): DeviceState =
         return device5;
     }
 
-    // All schemas >= 6
     const device6 = device5 as DeviceStateSchema6;
     device6.motionDetectionRange = device.getPropertyValue(PropertyName.DeviceMotionDetectionRange)?.value as boolean;
     device6.motionDetectionRangeStandardSensitivity = device.getPropertyValue(PropertyName.DeviceMotionDetectionRangeStandardSensitivity)?.value as number;
@@ -287,7 +305,27 @@ export const dumpDevice = (device: Device, schemaVersion: number): DeviceState =
     device6.videoNightvisionImageAdjustment = device.getPropertyValue(PropertyName.DeviceVideoNightvisionImageAdjustment)?.value as boolean;
     device6.videoColorNightvision = device.getPropertyValue(PropertyName.DeviceVideoColorNightvision)?.value as boolean;
     device6.autoCalibration = device.getPropertyValue(PropertyName.DeviceAutoCalibration)?.value as boolean;
+    if (schemaVersion <= 8) {
+        return device6;
+    }
 
-    return device6;
+    // All schemas >= 9
+    const device7 = device6 as DeviceStateSchema7;
+    device7.lockSettingsAutoLock = device.getPropertyValue(PropertyName.DeviceLockSettingsAutoLock)?.value as boolean;
+    device7.lockSettingsAutoLockTimer = device.getPropertyValue(PropertyName.DeviceLockSettingsAutoLockTimer)?.value as number;
+    device7.lockSettingsAutoLockSchedule = device.getPropertyValue(PropertyName.DeviceLockSettingsAutoLockSchedule)?.value as boolean;
+    device7.lockSettingsAutoLockScheduleStartTime = device.getPropertyValue(PropertyName.DeviceLockSettingsAutoLockScheduleStartTime)?.value as string;
+    device7.lockSettingsAutoLockScheduleEndTime = device.getPropertyValue(PropertyName.DeviceLockSettingsAutoLockScheduleEndTime)?.value as string;
+    device7.lockSettingsOneTouchLocking = device.getPropertyValue(PropertyName.DeviceLockSettingsOneTouchLocking)?.value as boolean;
+    device7.lockSettingsWrongTryProtection = device.getPropertyValue(PropertyName.DeviceLockSettingsWrongTryProtection)?.value as boolean;
+    device7.lockSettingsWrongTryAttempts = device.getPropertyValue(PropertyName.DeviceLockSettingsWrongTryAttempts)?.value as number;
+    device7.lockSettingsWrongTryLockdownTime = device.getPropertyValue(PropertyName.DeviceLockSettingsWrongTryLockdownTime)?.value as number;
+    device7.lockSettingsScramblePasscode = device.getPropertyValue(PropertyName.DeviceLockSettingsScramblePasscode)?.value as boolean;
+    device7.lockSettingsSound = device.getPropertyValue(PropertyName.DeviceLockSettingsSound)?.value as number;
+    device7.lockSettingsNotification = device.getPropertyValue(PropertyName.DeviceLockSettingsNotification)?.value as boolean;
+    device7.lockSettingsNotificationUnlocked = device.getPropertyValue(PropertyName.DeviceLockSettingsNotificationUnlocked)?.value as boolean;
+    device7.lockSettingsNotificationLocked = device.getPropertyValue(PropertyName.DeviceLockSettingsNotificationLocked)?.value as boolean;
+
+    return device7;
     
 };

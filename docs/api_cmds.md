@@ -214,6 +214,78 @@ interface {
 }
 ```
 
+### Get MQTT notification connection status
+
+[compatible with schema version: 9+]
+
+```ts
+interface {
+    messageId: string;
+    command: "driver.is_mqtt_connected";
+}
+```
+
+Returns:
+
+```ts
+interface {
+    connected: boolean;
+}
+```
+
+### Set log level
+
+[compatible with schema version: 9+]
+
+```ts
+interface {
+    messageId: string;
+    command: "driver.set_log_level";
+    level: "silly" | "trace" | "debug" | "info" | "warn" | "error" | "fatal";
+}
+```
+
+### Get log level
+
+[compatible with schema version: 9+]
+
+```ts
+interface {
+    messageId: string;
+    command: "driver.get_log_level";
+}
+```
+
+Returns:
+
+```ts
+interface {
+    level: "silly" | "trace" | "debug" | "info" | "warn" | "error" | "fatal";
+}
+```
+
+### Start listening logs
+
+[compatible with schema version: 9+]
+
+```ts
+interface {
+    messageId: string;
+    command: "driver.start_listening_logs";
+}
+```
+
+### Stop listening logs
+
+[compatible with schema version: 9+]
+
+```ts
+interface {
+    messageId: string;
+    command: "driver.stop_listening_logs";
+}
+```
+
 ## Station level commands
 
 ### Reboot station
@@ -897,5 +969,17 @@ Returns:
 interface {
     serialNumber: string;
     livestreaming: boolean;
+}
+```
+
+### Calibrate lock
+
+[compatible with schema version: 9+]
+
+```ts
+interface {
+  messageId: string;
+  command: "device.calibrate_lock";
+  serialNumber: string;
 }
 ```

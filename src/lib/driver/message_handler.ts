@@ -1,8 +1,10 @@
 import { EufySecurity } from "eufy-security-client";
+import { Logger } from "tslog";
 import { UnknownCommandError } from "../error";
-import { Client } from "../server";
+import { Client, ClientsController } from "../server";
 import { DriverCommand } from "./command";
-import { IncomingMessageDriver, IncomingCommandSetVerifyCode, IncomingCommandGetVideoEvents, IncomingCommandSetCaptcha } from "./incoming_message";
+import { DriverEvent } from "./event";
+import { IncomingMessageDriver, IncomingCommandSetVerifyCode, IncomingCommandGetVideoEvents, IncomingCommandSetCaptcha, IncomingCommandSetLogLevel } from "./incoming_message";
 import { DriverResultTypes } from "./outgoing_message";
 
 export class DriverMessageHandler {
@@ -10,7 +12,7 @@ export class DriverMessageHandler {
     static captchaId: string | null = null;
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    static async handle(message: IncomingMessageDriver, driver: EufySecurity, client: Client): Promise<DriverResultTypes[DriverCommand]> {
+    static async handle(message: IncomingMessageDriver, driver: EufySecurity, client: Client, clientsController: ClientsController, logger: Logger): Promise<DriverResultTypes[DriverCommand]> {
         const { command } = message;
         switch (command) {
             case DriverCommand.setVerifyCode:
@@ -110,6 +112,36 @@ export class DriverMessageHandler {
                     const events = await driver.getApi().getHistoryEvents(startTime, endTime, historyMessage.filter, historyMessage.maxResults);
                     return { events: events };
                 }
+            }
+            case DriverCommand.getLogLevel:
+                return { level: logger.settings.minLevel };
+            case DriverCommand.setLogLevel:
+                // If the logging event forwarder is enabled, we need to restart
+                // it so that it picks up the new config.
+                logger.setSettings({
+                    minLevel: (message as IncomingCommandSetLogLevel).level
+                });
+                clientsController.restartLoggingEventForwarderIfNeeded();
+                clientsController.clients.forEach((client) => {
+                    client.sendEvent({
+                        source: "driver",
+                        event: DriverEvent.logLevelChanged,
+                        level: (message as IncomingCommandSetLogLevel).level,
+                    });
+                });
+                return {};
+            case DriverCommand.startListeningLogs:
+                client.receiveLogs = true;
+                clientsController.configureLoggingEventForwarder();
+                return {};
+            case DriverCommand.stopListeningLogs:
+                client.receiveLogs = false;
+                clientsController.cleanupLoggingEventForwarder();
+                return {};
+            case DriverCommand.isMqttConnected:
+            {
+                const result = driver.isMQTTConnected();
+                return { connected: result };
             }
             default:
                 throw new UnknownCommandError(command);

@@ -310,6 +310,13 @@ export class DeviceMessageHandler {
                     };
                 }
             }
+            case DeviceCommand.calibrateLock:
+                if (client.schemaVersion >= 9) {
+                    await station.calibrateLock(device).catch((error) => {
+                        throw error;
+                    });
+                    return { };
+                }
             default:
                 throw new UnknownCommandError(command);
         }

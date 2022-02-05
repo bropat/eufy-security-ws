@@ -31,5 +31,6 @@ export interface DeviceResultTypes {
     [DeviceCommand.startRTSPLivestream]: Record<string, never>;
     [DeviceCommand.stopRTSPLivestream]: Record<string, never>;
     [DeviceCommand.isRTSPLiveStreaming]: { serialNumber?: string; livestreaming: boolean };
+    [DeviceCommand.calibrateLock]: Record<string, never>;
 
 }

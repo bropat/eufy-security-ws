@@ -49,3 +49,11 @@ Base schema.
 ## Schema 8
 
 * Added new properties `motionDetectionRange`, `motionDetectionRangeStandardSensitivity`, `motionDetectionRangeAdvancedLeftSensitivity`, `motionDetectionRangeAdvancedMiddleSensitivity`, `motionDetectionRangeAdvancedRightSensitivity`, `motionDetectionTestMode`, `motionTrackingSensitivity`, `motionAutoCruise`, `motionOutOfViewDetection`, `lightSettingsColorTemperatureManual`, `lightSettingsColorTemperatureMotion`, `lightSettingsColorTemperatureSchedule`, `lightSettingsMotionActivationMode`, `videoNightvisionImageAdjustment`, `videoColorNightvision` and `autoCalibration` to Device
+
+## Schema 8
+
+* Added new commands `setLogLevel`, `getLogLevel`, `startListeningLogs`, `stopListeningLogs` and `isMqttConnected` to Driver
+* Added new Driver events `mqttConnected`, `mqttDisconnected` , `logLevelChanged` and `logging`
+* Added new property `mqttConnected` to Driver
+* Added new command `calibrateLock` to Device
+* Added new properties `lockSettingsAutoLock`, `lockSettingsAutoLockTimer`, `lockSettingsAutoLockSchedule`, `lockSettingsAutoLockScheduleStartTime`, `lockSettingsAutoLockScheduleEndTime`, `lockSettingsOneTouchLocking`, `lockSettingsWrongTryProtection`, `lockSettingsWrongTryAttempts`, `lockSettingsWrongTryLockdownTime`, `lockSettingsScramblePasscode`, `lockSettingsSound`, `lockSettingsNotification`, `lockSettingsNotificationUnlocked` and `lockSettingsNotificationLocked` to Device

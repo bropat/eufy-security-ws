@@ -1,6 +1,6 @@
 import { EufySecurity } from "eufy-security-client";
 import { DeviceState, dumpDevice } from "./device/state";
-import { DriverState } from "./driver/state"
+import { DriverState, dumpDriver } from "./driver/state"
 import { dumpStation, StationState } from "./station/state";
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -19,11 +19,7 @@ export type EufySecurityState =
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const dumpState = (driver: EufySecurity, schemaVersion: number): EufySecurityState => {
     const base: Partial<EufySecurityStateSchema0> = {
-        driver: {
-            version: driver.getVersion(),
-            connected: driver.isConnected(),
-            pushConnected: driver.isPushConnected(),
-        },
+        driver: dumpDriver(driver, schemaVersion),
         stations: Array.from(driver.getStations(), (station) =>
             dumpStation(station, schemaVersion)
         ),

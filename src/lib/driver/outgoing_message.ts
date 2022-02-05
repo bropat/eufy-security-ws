@@ -1,4 +1,5 @@
 import { EventRecordResponse } from "eufy-security-client";
+import { TLogLevelName } from "tslog";
 import { DriverCommand } from "./command";
 
 export interface DriverResultTypes {
@@ -12,6 +13,11 @@ export interface DriverResultTypes {
     [DriverCommand.getVideoEvents]: { events: Array<EventRecordResponse> };
     [DriverCommand.getAlarmEvents]: { events: Array<EventRecordResponse> };
     [DriverCommand.getHistoryEvents]: { events: Array<EventRecordResponse> };
+    [DriverCommand.setLogLevel]: Record<string, never>;
+    [DriverCommand.getLogLevel]: { level: TLogLevelName };
+    [DriverCommand.startListeningLogs]: Record<string, never>;
+    [DriverCommand.stopListeningLogs]: Record<string, never>;
+    [DriverCommand.isMqttConnected]: { connected: boolean };
 
     //Legacy
     [DriverCommand.isConnectedLegacy]: { connected: boolean };

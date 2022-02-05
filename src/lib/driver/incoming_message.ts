@@ -1,6 +1,7 @@
 import { DriverCommand } from "./command";
 import { IncomingCommandBase } from "../incoming_message_base";
 import { EventFilterType } from "eufy-security-client";
+import { TLogLevelName } from "tslog";
 
 export interface IncomingCommandSetVerifyCode extends IncomingCommandBase {
     command: DriverCommand.setVerifyCode;
@@ -57,6 +58,27 @@ export interface IncomingCommandGetHistoryEvents extends IncomingCommandBase {
     maxResults?: number;
 }
 
+export interface IncomingCommandSetLogLevel extends IncomingCommandBase {
+    command: DriverCommand.setLogLevel;
+    level: TLogLevelName;
+}
+
+export interface IncomingCommandGetLogLevel extends IncomingCommandBase {
+    command: DriverCommand.getLogLevel;
+}
+
+export interface IncomingCommandStartListeningLogs extends IncomingCommandBase {
+    command: DriverCommand.startListeningLogs;
+}
+  
+export interface IncomingCommandStopListeningLogs extends IncomingCommandBase {
+    command: DriverCommand.stopListeningLogs;
+}
+
+export interface IncomingCommandIsMqttConnected extends IncomingCommandBase {
+    command: DriverCommand.isMqttConnected;
+}
+
 export type IncomingMessageDriver =
     | IncomingCommandSetVerifyCode
     | IncomingCommandSetCaptcha
@@ -67,4 +89,9 @@ export type IncomingMessageDriver =
     | IncomingCommandDisconnect
     | IncomingCommandGetVideoEvents
     | IncomingCommandGetAlarmEvents
-    | IncomingCommandGetHistoryEvents;
+    | IncomingCommandGetHistoryEvents
+    | IncomingCommandSetLogLevel
+    | IncomingCommandGetLogLevel
+    | IncomingCommandStartListeningLogs
+    | IncomingCommandStopListeningLogs
+    | IncomingCommandIsMqttConnected;

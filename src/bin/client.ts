@@ -28,7 +28,13 @@ const cmdHelp = (cmd: string): void => {
         case DriverCommand.getVideoEvents:
         case DriverCommand.getAlarmEvents:
         case DriverCommand.getHistoryEvents:
+        case DriverCommand.getLogLevel:
+        case DriverCommand.startListeningLogs:
+        case DriverCommand.stopListeningLogs:
             console.log(`${cmd}`);
+            break;
+        case DriverCommand.setLogLevel:
+            console.log(`${cmd} <loglevel>`);
             break;
         case DeviceCommand.setStatusLed:
         case DeviceCommand.setAutoNightVision:
@@ -56,6 +62,7 @@ const cmdHelp = (cmd: string): void => {
         case DeviceCommand.startRTSPLivestream:
         case DeviceCommand.stopRTSPLivestream:
         case DeviceCommand.isRTSPLiveStreaming:
+        case DeviceCommand.calibrateLock:
             console.log(`${cmd} <device_sn>`);
             break;
         case DeviceCommand.setProperty:
@@ -142,8 +149,8 @@ const isTrueFalse = (value: string): boolean => {
 const program = new Command();
 program
     .addOption(new Option("-s, --schemaVersion <host>", "Schema version the server should support").default(maxSchemaVersion, "max client supported version"))
-    .addOption(new Option("-H, --host <host>", "Host to connecto to").default("localhost"))
-    .addOption(new Option("-p, --port <port>", "Port to connecto to").default(3000))
+    .addOption(new Option("-H, --host <host>", "Host to connect to").default("localhost"))
+    .addOption(new Option("-p, --port <port>", "Port to connect to").default(3000))
     .addOption(new Option("-v, --verbose"));
 
 program.parse(process.argv);
@@ -337,6 +344,47 @@ process.on("SIGTERM", handleShutdown);
                     socket.send(JSON.stringify({
                         messageId: DriverCommand.getHistoryEvents.split(".")[1],
                         command: DriverCommand.getHistoryEvents
+                    }));
+                } else {
+                    cmdHelp(args[0]);
+                }
+                break;
+            case DriverCommand.getLogLevel:
+                if (args.length === 1) {
+                    socket.send(JSON.stringify({
+                        messageId: DriverCommand.getLogLevel.split(".")[1],
+                        command: DriverCommand.getLogLevel
+                    }));
+                } else {
+                    cmdHelp(args[0]);
+                }
+                break;
+            case DriverCommand.startListeningLogs:
+                if (args.length === 1) {
+                    socket.send(JSON.stringify({
+                        messageId: DriverCommand.startListeningLogs.split(".")[1],
+                        command: DriverCommand.startListeningLogs
+                    }));
+                } else {
+                    cmdHelp(args[0]);
+                }
+                break;
+            case DriverCommand.stopListeningLogs:
+                if (args.length === 1) {
+                    socket.send(JSON.stringify({
+                        messageId: DriverCommand.stopListeningLogs.split(".")[1],
+                        command: DriverCommand.stopListeningLogs
+                    }));
+                } else {
+                    cmdHelp(args[0]);
+                }
+                break;
+            case DriverCommand.setLogLevel:
+                if (args.length === 2) {
+                    socket.send(JSON.stringify({
+                        messageId: DriverCommand.setLogLevel.split(".")[1],
+                        command: DriverCommand.setLogLevel,
+                        level: args[1]
                     }));
                 } else {
                     cmdHelp(args[0]);

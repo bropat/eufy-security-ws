@@ -104,6 +104,7 @@ export interface OutgoingEventDeviceCommandResult extends OutgoingEventDeviceBas
     source: "device";
     event: DeviceEvent.commandResult;
     serialNumber: string;
+    propertyName: string;
     command: string;
     returnCode: number;
     returnCodeName: string;

@@ -11,7 +11,7 @@ const program = new Command();
 program
     .addOption(new Option("-c, --config <file>", "Configuration file").default("config.json", "looks in current directory"))
     .addOption(new Option("-p, --port <port>", "Listening port").default(3000))
-    .addOption(new Option("-h, --host <host>", "Listening Host").default("localhost"))
+    .addOption(new Option("-H, --host <host>", "Listening Host").default("localhost"))
     .addOption(new Option("-v, --verbose"))
     .addOption(new Option("-q, --quiet"));
 
