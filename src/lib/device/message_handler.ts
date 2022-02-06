@@ -203,7 +203,7 @@ export class DeviceMessageHandler {
                     return { };
                 }
             case DeviceCommand.calibrate:
-                if (client.schemaVersion >= 3) {
+                if (client.schemaVersion >= 9) {
                     await station.calibrate(device).catch((error) => {
                         throw error;
                     });
