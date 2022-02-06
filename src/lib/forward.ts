@@ -456,6 +456,9 @@ export class EventForwarder {
                     case CommandType.CMD_INDOOR_ROTATE:
                         command = DeviceCommand.panAndTilt;
                         break;
+                    case CommandType.CMD_INDOOR_PAN_CALIBRATION:
+                        command = DeviceCommand.calibrate;
+                        break;
                     case CommandType.CMD_SET_DEVS_TONE_FILE:
                         command = DeviceCommand.triggerAlarm;
                         break;

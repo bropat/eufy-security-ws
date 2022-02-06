@@ -202,6 +202,13 @@ export class DeviceMessageHandler {
                     });
                     return { };
                 }
+            case DeviceCommand.calibrate:
+                if (client.schemaVersion >= 3) {
+                    await station.calibrate(device).catch((error) => {
+                        throw error;
+                    });
+                    return { };
+                }
             case DeviceCommand.quickResponse:
                 if (client.schemaVersion >= 3) {
                     await station.quickResponse(device, (message as IncomingCommandDeviceQuickResponse).voiceId).catch((error) => {

@@ -97,6 +97,10 @@ export interface IncomingCommandDevicePanAndTilt extends IncomingCommandDeviceBa
     direction: PanTiltDirection;
 }
 
+export interface IncomingCommandDeviceCalibrate extends IncomingCommandDeviceBase {
+    command: DeviceCommand.calibrate;
+}
+
 export interface IncomingCommandDeviceQuickResponse extends IncomingCommandDeviceBase {
     command: DeviceCommand.quickResponse;
     voiceId: number;
@@ -167,6 +171,7 @@ export type IncomingMessageDevice =
   | IncomingCommandDeviceTriggerAlarm
   | IncomingCommandDeviceResetAlarm
   | IncomingCommandDevicePanAndTilt
+  | IncomingCommandDeviceCalibrate
   | IncomingCommandDeviceQuickResponse
   | IncomingCommandDeviceStartDownload
   | IncomingCommandDeviceCancelDownload
