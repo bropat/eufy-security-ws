@@ -1,6 +1,6 @@
-![logo](_media/eufy-security.png)
+![logo](_media/eufy-security-ws.png)
 
-# eufy-security-ws <small>0.8.0</small>
+# eufy-security-ws <small>0.8.1</small>
 
 > A small server wrapper around [eufy-security-client](https://github.com/bropat/eufy-security-client) library to access it via a WebSocket
 

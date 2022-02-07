@@ -1,6 +1,6 @@
-# eufy-security-ws
+![Logo](docs/_media/eufy-security-ws.png)
 
-![Logo](docs/_media/eufy-security.png)
+# eufy-security-ws
 
 [![node](https://img.shields.io/node/v/eufy-security-ws.svg)](https://www.npmjs.com/package/eufy-security-ws)
 [![NPM version](http://img.shields.io/npm/v/eufy-security-ws.svg)](https://www.npmjs.com/package/eufy-security-ws)
