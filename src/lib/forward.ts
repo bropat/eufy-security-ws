@@ -339,7 +339,7 @@ export class EventForwarder {
                 event: StationEvent.guardModeChanged,
                 serialNumber: station.getSerial(),
                 guardMode: guardMode,
-                currentMode: station.getCurrentMode().value as number,
+                currentMode: station.getCurrentMode() as number,
             }, 0 , 2);
             // Event for schemaVersion >= 3
             this.forwardEvent({
@@ -356,7 +356,7 @@ export class EventForwarder {
                 source: "station",
                 event: StationEvent.guardModeChanged,
                 serialNumber: station.getSerial(),
-                guardMode: station.getGuardMode().value as number,
+                guardMode: station.getGuardMode() as number,
                 currentMode: currentMode,
             }, 0, 2);
             //Event for schemaVersion >= 3
@@ -378,7 +378,7 @@ export class EventForwarder {
         });
 
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        station.on("rtsp url", (station: Station, channel:number, value: string, modified: number) => {
+        station.on("rtsp url", (station: Station, channel:number, value: string) => {
             const device = this.clients.driver.getStationDevice(station.getSerial(), channel);
             this.forwardEvent({
                 source: "device",
@@ -497,9 +497,16 @@ export class EventForwarder {
                 event: StationEvent.propertyChanged,
                 serialNumber: station.getSerial(),
                 name: name,
-                value: value.value as JSONValue,
-                timestamp: value.timestamp
-            }, 0);
+                value: value as JSONValue,
+                timestamp: +new Date
+            }, 0, 9);
+            this.forwardEvent({
+                source: "station",
+                event: StationEvent.propertyChanged,
+                serialNumber: station.getSerial(),
+                name: name,
+                value: value as JSONValue,
+            }, 10);
         });
 
     }
@@ -606,9 +613,16 @@ export class EventForwarder {
                 event: DeviceEvent.propertyChanged,
                 serialNumber: device.getSerial(),
                 name: name,
-                value: value.value as JSONValue,
-                timestamp: value.timestamp
-            }, 0);
+                value: value as JSONValue,
+                timestamp: +new Date
+            }, 0, 9);
+            this.forwardEvent({
+                source: "device",
+                event: DeviceEvent.propertyChanged,
+                serialNumber: device.getSerial(),
+                name: name,
+                value: value as JSONValue,
+            }, 10);
         });
     }
 

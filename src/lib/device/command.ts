@@ -19,8 +19,11 @@ export enum DeviceCommand {
     stopRTSPLivestream = "device.stop_rtsp_livestream",
     isRTSPLiveStreaming = "device.is_rtsp_livestreaming",
     calibrateLock = "device.calibrate_lock",
+    calibrate = "device.calibrate",
+    setDefaultAngle = "device.set_default_angle",
+    setPrivacyAngle = "device.set_privacy_angle",
 
-    //Deprecated
+    //Deprecated - Commands below will be removed in a feature version!
     setStatusLed = "device.set_status_led",
     setAutoNightVision = "device.set_auto_night_vision",
     setMotionDetection = "device.set_motion_detection",

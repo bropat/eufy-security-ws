@@ -1,6 +1,6 @@
 {
   "name": "eufy-security-ws",
-  "version": "0.8.4",
+  "version": "0.9.0",
   "description": "Node WebSocket server implementation to integrate Eufy Security devices",
   "main": "dist/lib/index.js",
   "bin": {
@@ -30,6 +30,8 @@
     "cameras",
     "security",
     "eufy-security",
+    "doorbell",
+    "lock",
     "ws",
     "websocket"
   ],
@@ -38,28 +40,28 @@
     "url": "https://github.com/bropat/eufy-security-ws"
   },
   "engines": {
-    "node": ">=12.0.0"
+    "node": ">=14.17.0"
   },
   "dependencies": {
     "ansi-colors": "^4.1.1",
-    "commander": "^9.0.0",
-    "eufy-security-client": "^1.6.6",
-    "fs-extra": "^10.0.0",
+    "commander": "^9.2.0",
+    "eufy-security-client": "^2.0.0",
+    "fs-extra": "^10.1.0",
     "promptly": "^3.2.0",
-    "tslog": "^3.3.2",
+    "tslog": "^3.3.3",
     "ws": "^8.5.0"
   },
   "devDependencies": {
-    "@types/node": "^16.11.14",
+    "@types/node": "^16.11.32",
     "@types/node-rsa": "^1.1.1",
     "@types/promptly": "^3.0.2",
-    "@types/ws": "^8.2.2",
-    "@typescript-eslint/eslint-plugin": "^4.33.0",
-    "@typescript-eslint/parser": "^4.33.0",
-    "eslint": "^7.32.0",
-    "eslint-config-prettier": "^8.3.0",
-    "prettier": "^2.5.1",
-    "ts-node": "^10.5.0",
-    "typescript": "^4.5.5"
+    "@types/ws": "^8.5.3",
+    "@typescript-eslint/eslint-plugin": "^5.21.0",
+    "@typescript-eslint/parser": "^5.21.0",
+    "eslint": "^8.14.0",
+    "eslint-config-prettier": "^8.5.0",
+    "prettier": "^2.6.2",
+    "ts-node": "^10.7.0",
+    "typescript": "^4.6.4"
   }
 }

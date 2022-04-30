@@ -1,4 +1,5 @@
 import { EufySecurity } from "eufy-security-client";
+
 import { LivestreamAlreadyRunningError, LivestreamNotRunningError, UnknownCommandError } from "../error";
 import { Client } from "../server";
 import { DeviceCommand } from "./command";
@@ -313,6 +314,27 @@ export class DeviceMessageHandler {
             case DeviceCommand.calibrateLock:
                 if (client.schemaVersion >= 9) {
                     await station.calibrateLock(device).catch((error) => {
+                        throw error;
+                    });
+                    return { };
+                }
+            case DeviceCommand.calibrate:
+                if (client.schemaVersion >= 10) {
+                    await station.calibrate(device).catch((error) => {
+                        throw error;
+                    });
+                    return { };
+                }
+            case DeviceCommand.setDefaultAngle:
+                if (client.schemaVersion >= 10) {
+                    await station.setDefaultAngle(device).catch((error) => {
+                        throw error;
+                    });
+                    return { };
+                }
+            case DeviceCommand.setPrivacyAngle:
+                if (client.schemaVersion >= 10) {
+                    await station.setPrivacyAngle(device).catch((error) => {
                         throw error;
                     });
                     return { };

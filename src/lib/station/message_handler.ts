@@ -1,4 +1,5 @@
 import { EufySecurity } from "eufy-security-client";
+
 import { UnknownCommandError } from "../error";
 import { Client } from "../server";
 import { StationCommand } from "./command";
@@ -7,7 +8,6 @@ import { StationResultTypes } from "./outgoing_message";
 
 export class StationMessageHandler {
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     static async handle(message: IncomingMessageStation, driver: EufySecurity, client: Client): Promise<StationResultTypes[StationCommand]> {
         const { serialNumber, command } = message;
 

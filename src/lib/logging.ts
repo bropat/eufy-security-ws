@@ -1,7 +1,7 @@
 import { ILogObject, Logger } from "tslog";
 import { ITransportProvider } from "tslog/dist/types/interfaces";
-import { DriverEvent } from "./driver/event";
 
+import { DriverEvent } from "./driver/event";
 import { Client, ClientsController } from "./server";
 
 export class LoggingEventForwarder {

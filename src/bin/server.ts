@@ -3,9 +3,9 @@
 import { resolve } from "path";
 import { Command, Option } from "commander";
 import { Logger } from "tslog";
+import { EufySecurity, EufySecurityConfig } from "eufy-security-client"
 
 import { EufySecurityServer } from "../lib/server";
-import { EufySecurity, EufySecurityConfig } from "eufy-security-client"
 
 const program = new Command();
 program
@@ -57,7 +57,7 @@ const args = program.opts();
         displayFilePath: args.verbose ? "hideNodeModulesOnly" : "hidden",
         displayFunctionName: args.verbose ? true : false
     });
-    const driver: EufySecurity = new EufySecurity(config, logger);
+    const driver: EufySecurity = await EufySecurity.initialize(config, logger);
 
     let server: EufySecurityServer;
 

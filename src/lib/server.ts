@@ -1,5 +1,5 @@
-import ws from "ws";
 import type WebSocket from "ws";
+import { WebSocketServer } from "ws"
 import { Logger } from "tslog";
 import { EventEmitter, once } from "events";
 import { Server as HttpServer, createServer, IncomingMessage as HttpIncomingMessage } from "http";
@@ -20,6 +20,7 @@ import { DriverMessageHandler } from "./driver/message_handler";
 import { IncomingMessageDriver } from "./driver/incoming_message";
 import { dumpState } from "./state";
 import { LoggingEventForwarder } from "./logging";
+import { ServerEvent } from "./event";
 
 export class Client {
 
@@ -328,6 +329,14 @@ export class ClientsController {
             clearInterval(this.pingInterval);
         }
         this.pingInterval = undefined;
+        this.clients.forEach((client) => {
+            if (client.schemaVersion >= 10) {
+                client.sendEvent({
+                    source: "server",
+                    event: ServerEvent.shutdown,
+                });
+            }
+        });
         this.clients.forEach((client) => client.disconnect());
         this.clients = [];
         this.cleanupLoggingEventForwarder();
@@ -350,7 +359,7 @@ export interface  EufySecurityServer {
 export class  EufySecurityServer extends EventEmitter {
 
     private server?: HttpServer;
-    private wsServer?: ws.Server;
+    private wsServer?: WebSocketServer;
     private sockets?: ClientsController;
     private logger: Logger;
 
@@ -361,7 +370,7 @@ export class  EufySecurityServer extends EventEmitter {
 
     async start(): Promise<void> {
         this.server = createServer();
-        this.wsServer = new ws.Server({ server: this.server });
+        this.wsServer = new WebSocketServer({ server: this.server });
         this.sockets = new ClientsController(this.driver, this.logger);
         this.wsServer.on("connection", (socket, request) => this.sockets?.addSocket(socket, request));
 
@@ -372,7 +381,7 @@ export class  EufySecurityServer extends EventEmitter {
         await once(this.server, "listening");
         this.emit("listening");
         this.logger.info(`Eufy Security server listening on host ${this.options.host}, port ${this.options.port}`);
-        this.driver.connect();
+        await this.driver.connect()
     }
 
     private onError(error: Error) {

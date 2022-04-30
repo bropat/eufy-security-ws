@@ -50,10 +50,17 @@ Base schema.
 
 * Added new properties `motionDetectionRange`, `motionDetectionRangeStandardSensitivity`, `motionDetectionRangeAdvancedLeftSensitivity`, `motionDetectionRangeAdvancedMiddleSensitivity`, `motionDetectionRangeAdvancedRightSensitivity`, `motionDetectionTestMode`, `motionTrackingSensitivity`, `motionAutoCruise`, `motionOutOfViewDetection`, `lightSettingsColorTemperatureManual`, `lightSettingsColorTemperatureMotion`, `lightSettingsColorTemperatureSchedule`, `lightSettingsMotionActivationMode`, `videoNightvisionImageAdjustment`, `videoColorNightvision` and `autoCalibration` to Device
 
-## Schema 8
+## Schema 9
 
 * Added new commands `setLogLevel`, `getLogLevel`, `startListeningLogs`, `stopListeningLogs` and `isMqttConnected` to Driver
 * Added new Driver events `mqttConnected`, `mqttDisconnected` , `logLevelChanged` and `logging`
 * Added new property `mqttConnected` to Driver
 * Added new command `calibrateLock` to Device
 * Added new properties `lockSettingsAutoLock`, `lockSettingsAutoLockTimer`, `lockSettingsAutoLockSchedule`, `lockSettingsAutoLockScheduleStartTime`, `lockSettingsAutoLockScheduleEndTime`, `lockSettingsOneTouchLocking`, `lockSettingsWrongTryProtection`, `lockSettingsWrongTryAttempts`, `lockSettingsWrongTryLockdownTime`, `lockSettingsScramblePasscode`, `lockSettingsSound`, `lockSettingsNotification`, `lockSettingsNotificationUnlocked` and `lockSettingsNotificationLocked` to Device
+
+## Schema 10
+
+* Added new Server event `shutdown`
+* Removed property `timestamp`from Station event `property changed`
+* Removed property `timestamp`from Device event `property changed`
+* Added new properties `notificationRadarDetector`, `continuousRecording`, `continuousRecordingType`, `loiteringDetection`, `loiteringDetectionRange`, `loiteringDetectionLength`, `motionDetectionSensitivityMode`, `motionDetectionSensitivityStandard`, `motionDetectionSensitivityAdvancedA`, `motionDetectionSensitivityAdvancedB`, `motionDetectionSensitivityAdvancedC`, `motionDetectionSensitivityAdvancedD`, `motionDetectionSensitivityAdvancedE`, `motionDetectionSensitivityAdvancedF`, `motionDetectionSensitivityAdvancedG`, `motionDetectionSensitivityAdvancedH`, `loiteringCustomResponsePhoneNotification`, `loiteringCustomResponseAutoVoiceResponse`, `loiteringCustomResponseAutoVoiceResponseVoice`, `loiteringCustomResponseHomeBaseNotification`, `loiteringCustomResponseTimeFrom`, `loiteringCustomResponseTimeTo`, `deliveryGuard`, `deliveryGuardPackageGuarding`, `deliveryGuardPackageGuardingVoiceResponseVoice`, `deliveryGuardPackageGuardingActivatedTimeFrom`, `deliveryGuardPackageGuardingActivatedTimeTo`, `deliveryGuardUncollectedPackageAlert`, `deliveryGuardUncollectedPackageAlertTimeToCheck`, `deliveryGuardPackageLiveCheckAssistance`, `dualCamWatchViewMode`, `ringAutoResponse`, `ringAutoResponseVoiceResponse`, `ringAutoResponseVoiceResponseVoice`, `ringAutoResponseTimeFrom`, `ringAutoResponseTimeTo`, `defaultAngle`, `defaultAngleIdleTime` and `soundDetectionRoundLook` to Device

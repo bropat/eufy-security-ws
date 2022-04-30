@@ -5,6 +5,7 @@ import { DriverResultTypes } from "./driver/outgoing_message";
 import { DeviceEvent, OutgoingEventDevice } from "./device/event";
 import { OutgoingEventStation, StationEvent } from "./station/event";
 import { DriverEvent, OutgoingEventDriver } from "./driver/event";
+import { ServerEvent, OutgoingEventServer } from "./event";
 
 // https://github.com/microsoft/TypeScript/issues/1897#issuecomment-822032151
 export type JSONValue =
@@ -16,15 +17,16 @@ export type JSONValue =
   | { [key: string]: JSONValue };
 
 export interface OutgoingBaseEvent {
-    source: "driver" | "station" | "device";
-    event: DeviceEvent | StationEvent | DriverEvent;
+    source: "driver" | "station" | "device" | "server";
+    event: DeviceEvent | StationEvent | DriverEvent | ServerEvent;
 }
 
 export type OutgoingEvent = 
   | OutgoingBaseEvent
   | OutgoingEventDriver
   | OutgoingEventDevice
-  | OutgoingEventStation;
+  | OutgoingEventStation
+  | OutgoingEventServer;
 
 export interface OutgoingVersionMessage {
     type: "version";

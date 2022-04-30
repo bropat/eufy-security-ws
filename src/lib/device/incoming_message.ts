@@ -1,5 +1,6 @@
 import { CommandName, PropertyName } from "eufy-security-client";
 import { PanTiltDirection } from "eufy-security-client/build/p2p/types";
+
 import { IncomingCommandBase } from "../incoming_message_base";
 import { DeviceCommand } from "./command";
 
@@ -147,6 +148,18 @@ export interface IncomingCommandDeviceCalibrateLock extends IncomingCommandDevic
     command: DeviceCommand.calibrateLock;
 }
 
+export interface IncomingCommandDeviceCalibrate extends IncomingCommandDeviceBase {
+    command: DeviceCommand.calibrate;
+}
+
+export interface IncomingCommandDeviceSetDefaultAngle extends IncomingCommandDeviceBase {
+    command: DeviceCommand.setDefaultAngle;
+}
+
+export interface IncomingCommandDeviceSetPrivacyAngle extends IncomingCommandDeviceBase {
+    command: DeviceCommand.setPrivacyAngle;
+}
+
 export type IncomingMessageDevice =
   | IncomingCommandDeviceSetStatusLed
   | IncomingCommandDeviceSetAutoNightVision
@@ -177,4 +190,7 @@ export type IncomingMessageDevice =
   | IncomingCommandDeviceStartRTSPLivestream
   | IncomingCommandDeviceStopRTSPLivestream
   | IncomingCommandDeviceIsRTSPLiveStreaming
-  | IncomingCommandDeviceCalibrateLock;
+  | IncomingCommandDeviceCalibrateLock
+  | IncomingCommandDeviceCalibrate
+  | IncomingCommandDeviceSetDefaultAngle
+  | IncomingCommandDeviceSetPrivacyAngle;

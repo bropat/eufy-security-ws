@@ -1,4 +1,5 @@
 import { ILogObject, TLogLevelName } from "tslog";
+
 import { OutgoingBaseEvent } from "../outgoing_message";
 
 export enum DriverEvent {
