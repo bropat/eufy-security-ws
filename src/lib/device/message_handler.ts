@@ -33,7 +33,7 @@ export class DeviceMessageHandler {
     static async handle(message: IncomingMessageDevice, driver: EufySecurity, client: Client): Promise<DeviceResultTypes[DeviceCommand]> {
         const { serialNumber, command } = message;
 
-        const device = driver.getDevice(serialNumber);
+        const device = await driver.getDevice(serialNumber);
         const station = driver.getStation(device.getStationSerial());  
 
         switch (command) {

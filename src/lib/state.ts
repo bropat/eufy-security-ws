@@ -18,13 +18,13 @@ export type EufySecurityState =
  | EufySecurityStateSchema0;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const dumpState = (driver: EufySecurity, schemaVersion: number): EufySecurityState => {
+export const dumpState = async (driver: EufySecurity, schemaVersion: number): Promise<EufySecurityState> => {
     const base: Partial<EufySecurityStateSchema0> = {
         driver: dumpDriver(driver, schemaVersion),
         stations: Array.from(driver.getStations(), (station) =>
             dumpStation(station, schemaVersion)
         ),
-        devices: Array.from(driver.getDevices(), (device) =>
+        devices: Array.from(await driver.getDevices(), (device) =>
             dumpDevice(device, schemaVersion)
         ),
     };

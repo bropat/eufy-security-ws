@@ -137,9 +137,11 @@ export class EventForwarder {
             this.setupStation(station);
         });
 
-        this.clients.driver.getDevices().forEach(device => {
-            this.setupDevice(device);
-        });
+        this.clients.driver.getDevices().then((devices: Device[]) => {
+            devices.forEach(device => {
+                this.setupDevice(device);
+            });
+        }).catch();
 
         this.clients.driver.on("station livestream start", (station: Station, device: Device, metadata: StreamMetadata, videostream: Readable, audiostream: Readable) => {
             const serialNumber = device.getSerial();
@@ -379,13 +381,14 @@ export class EventForwarder {
 
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         station.on("rtsp url", (station: Station, channel:number, value: string) => {
-            const device = this.clients.driver.getStationDevice(station.getSerial(), channel);
-            this.forwardEvent({
-                source: "device",
-                event: DeviceEvent.gotRtspUrl,
-                serialNumber: device.getSerial(),
-                rtspUrl: value,
-            }, 0);
+            this.clients.driver.getStationDevice(station.getSerial(), channel).then((device: Device) => {
+                this.forwardEvent({
+                    source: "device",
+                    event: DeviceEvent.gotRtspUrl,
+                    serialNumber: device.getSerial(),
+                    rtspUrl: value,
+                }, 0);
+            }).catch();
         });
 
         station.on("command result", (station: Station, result: CommandResult) => {
@@ -478,15 +481,16 @@ export class EventForwarder {
                         break;
                 }
                 if (command !== undefined) {
-                    const device = this.clients.driver.getStationDevice(station.getSerial(), result.channel);
-                    this.forwardEvent({
-                        source: "device",
-                        event: DeviceEvent.commandResult,
-                        serialNumber: device.getSerial(),
-                        command: command.split(".")[1],
-                        returnCode: result.return_code,
-                        returnCodeName: ErrorCode[result.return_code] !== undefined ? ErrorCode[result.return_code] : "UNKNOWN",
-                    }, 0);
+                    this.clients.driver.getStationDevice(station.getSerial(), result.channel).then((device: Device) => {
+                        this.forwardEvent({
+                            source: "device",
+                            event: DeviceEvent.commandResult,
+                            serialNumber: device.getSerial(),
+                            command: command?.split(".")[1],
+                            returnCode: result.return_code,
+                            returnCodeName: ErrorCode[result.return_code] !== undefined ? ErrorCode[result.return_code] : "UNKNOWN",
+                        }, 0);
+                    }).catch();
                 }
             }
         });
