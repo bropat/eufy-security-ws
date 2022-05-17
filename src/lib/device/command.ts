@@ -9,7 +9,6 @@ export enum DeviceCommand {
     triggerAlarm = "device.trigger_alarm",
     resetAlarm = "device.reset_alarm",
     panAndTilt = "device.pan_and_tilt",
-    calibrate = "device.calibrate",
     quickResponse = "device.quick_response",
     startDownload = "device.start_download",
     cancelDownload = "device.cancel_download",
