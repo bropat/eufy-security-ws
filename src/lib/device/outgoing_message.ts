@@ -22,7 +22,6 @@ export interface DeviceResultTypes {
     [DeviceCommand.triggerAlarm]: Record<string, never>;
     [DeviceCommand.resetAlarm]: Record<string, never>;
     [DeviceCommand.panAndTilt]: Record<string, never>;
-    [DeviceCommand.calibrate]: Record<string, never>;
     [DeviceCommand.quickResponse]: Record<string, never>;
     [DeviceCommand.startDownload]: Record<string, never>;
     [DeviceCommand.cancelDownload]: Record<string, never>;
