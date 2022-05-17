@@ -7,7 +7,7 @@ import c from "ansi-colors";
 import { Logger } from "tslog";
 
 import { maxSchemaVersion } from "../lib/const";
-import { OutgoingMessage } from "../lib/outgoing_message";
+import { OutgoingEventMessage, OutgoingMessage } from "../lib/outgoing_message";
 import { DriverCommand } from "../lib/driver/command";
 import { DeviceCommand } from "../lib/device/command";
 import { StationCommand } from "../lib/station/command";
@@ -63,6 +63,9 @@ const cmdHelp = (cmd: string): void => {
         case DeviceCommand.stopRTSPLivestream:
         case DeviceCommand.isRTSPLiveStreaming:
         case DeviceCommand.calibrateLock:
+        case DeviceCommand.calibrate:
+        case DeviceCommand.setDefaultAngle:
+        case DeviceCommand.setPrivacyAngle:
             console.log(`${cmd} <device_sn>`);
             break;
         case DeviceCommand.setProperty:
@@ -193,22 +196,14 @@ socket.on("open", function open() {
 socket.on("message", (data) => {
     const msg = JSON.parse(data.toString()) as OutgoingMessage;
 
-    /*if (msg.type === "event") {
+    if (msg.type === "event") {
         const event = msg as OutgoingEventMessage;
-        if (event.event.source === "driver" && event.event.event === "verify code") {
-            (async () => {
-                const verifyCode = await promptly.prompt("Insert verify code: ");
-                socket.send(JSON.stringify({
-                    messageId: "set_verify_code",
-                    command: "driver.set_verify_code",
-                    verifyCode: verifyCode
-                }));
-            })();
+        if (event.event.source === "server" && event.event.event === "shutdown") {
+            handleShutdown();
         }
-    }*/
+    }
 
     if (options.verbose) {
-        //console.log(JSON.stringify(msg));
         logger.info("Response:", msg);
     } else {
         console.dir(msg);
@@ -722,6 +717,50 @@ process.on("SIGTERM", handleShutdown);
                     socket.send(JSON.stringify({
                         messageId: DeviceCommand.isRTSPLiveStreaming.split(".")[1],
                         command: DeviceCommand.isRTSPLiveStreaming,
+                        serialNumber: args[1],
+                    }));
+                } else {
+                    cmdHelp(args[0]);
+                }
+                break;
+            case DeviceCommand.calibrateLock:
+                if (args.length === 2) {
+                    socket.send(JSON.stringify({
+                        messageId: DeviceCommand.calibrateLock.split(".")[1],
+                        command: DeviceCommand.calibrateLock,
+                        serialNumber: args[1],
+                    }));
+                } else {
+                    cmdHelp(args[0]);
+                }
+                break;
+            case DeviceCommand.calibrate:
+                if (args.length === 2) {
+                    socket.send(JSON.stringify({
+                        messageId: DeviceCommand.calibrate.split(".")[1],
+                        command: DeviceCommand.calibrate,
+                        serialNumber: args[1],
+                    }));
+                } else {
+                    cmdHelp(args[0]);
+                }
+                break;
+            case DeviceCommand.setDefaultAngle:
+                if (args.length === 2) {
+                    socket.send(JSON.stringify({
+                        messageId: DeviceCommand.setDefaultAngle.split(".")[1],
+                        command: DeviceCommand.setDefaultAngle,
+                        serialNumber: args[1],
+                    }));
+                } else {
+                    cmdHelp(args[0]);
+                }
+                break;
+            case DeviceCommand.setPrivacyAngle:
+                if (args.length === 2) {
+                    socket.send(JSON.stringify({
+                        messageId: DeviceCommand.setPrivacyAngle.split(".")[1],
+                        command: DeviceCommand.setPrivacyAngle,
                         serialNumber: args[1],
                     }));
                 } else {

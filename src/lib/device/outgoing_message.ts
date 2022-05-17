@@ -1,4 +1,5 @@
 import { Voices, CommandName } from "eufy-security-client";
+
 import { DeviceCommand } from "./command";
 
 export interface DeviceResultTypes {
@@ -33,5 +34,7 @@ export interface DeviceResultTypes {
     [DeviceCommand.stopRTSPLivestream]: Record<string, never>;
     [DeviceCommand.isRTSPLiveStreaming]: { serialNumber?: string; livestreaming: boolean };
     [DeviceCommand.calibrateLock]: Record<string, never>;
-
+    [DeviceCommand.calibrate]: Record<string, never>;
+    [DeviceCommand.setDefaultAngle]: Record<string, never>;
+    [DeviceCommand.setPrivacyAngle]: Record<string, never>;
 }

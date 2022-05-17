@@ -1,4 +1,5 @@
 import { CommandName, PropertyName } from "eufy-security-client";
+
 import { IncomingCommandBase } from "../incoming_message_base";
 import { StationCommand } from "./command";
 

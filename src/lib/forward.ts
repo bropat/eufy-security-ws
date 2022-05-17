@@ -137,9 +137,11 @@ export class EventForwarder {
             this.setupStation(station);
         });
 
-        this.clients.driver.getDevices().forEach(device => {
-            this.setupDevice(device);
-        });
+        this.clients.driver.getDevices().then((devices: Device[]) => {
+            devices.forEach(device => {
+                this.setupDevice(device);
+            });
+        }).catch();
 
         this.clients.driver.on("station livestream start", (station: Station, device: Device, metadata: StreamMetadata, videostream: Readable, audiostream: Readable) => {
             const serialNumber = device.getSerial();
@@ -339,7 +341,7 @@ export class EventForwarder {
                 event: StationEvent.guardModeChanged,
                 serialNumber: station.getSerial(),
                 guardMode: guardMode,
-                currentMode: station.getCurrentMode().value as number,
+                currentMode: station.getCurrentMode() as number,
             }, 0 , 2);
             // Event for schemaVersion >= 3
             this.forwardEvent({
@@ -356,7 +358,7 @@ export class EventForwarder {
                 source: "station",
                 event: StationEvent.guardModeChanged,
                 serialNumber: station.getSerial(),
-                guardMode: station.getGuardMode().value as number,
+                guardMode: station.getGuardMode() as number,
                 currentMode: currentMode,
             }, 0, 2);
             //Event for schemaVersion >= 3
@@ -378,14 +380,15 @@ export class EventForwarder {
         });
 
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        station.on("rtsp url", (station: Station, channel:number, value: string, modified: number) => {
-            const device = this.clients.driver.getStationDevice(station.getSerial(), channel);
-            this.forwardEvent({
-                source: "device",
-                event: DeviceEvent.gotRtspUrl,
-                serialNumber: device.getSerial(),
-                rtspUrl: value,
-            }, 0);
+        station.on("rtsp url", (station: Station, channel:number, value: string) => {
+            this.clients.driver.getStationDevice(station.getSerial(), channel).then((device: Device) => {
+                this.forwardEvent({
+                    source: "device",
+                    event: DeviceEvent.gotRtspUrl,
+                    serialNumber: device.getSerial(),
+                    rtspUrl: value,
+                }, 0);
+            }).catch();
         });
 
         station.on("command result", (station: Station, result: CommandResult) => {
@@ -481,15 +484,16 @@ export class EventForwarder {
                         break;
                 }
                 if (command !== undefined) {
-                    const device = this.clients.driver.getStationDevice(station.getSerial(), result.channel);
-                    this.forwardEvent({
-                        source: "device",
-                        event: DeviceEvent.commandResult,
-                        serialNumber: device.getSerial(),
-                        command: command.split(".")[1],
-                        returnCode: result.return_code,
-                        returnCodeName: ErrorCode[result.return_code] !== undefined ? ErrorCode[result.return_code] : "UNKNOWN",
-                    }, 0);
+                    this.clients.driver.getStationDevice(station.getSerial(), result.channel).then((device: Device) => {
+                        this.forwardEvent({
+                            source: "device",
+                            event: DeviceEvent.commandResult,
+                            serialNumber: device.getSerial(),
+                            command: command?.split(".")[1],
+                            returnCode: result.return_code,
+                            returnCodeName: ErrorCode[result.return_code] !== undefined ? ErrorCode[result.return_code] : "UNKNOWN",
+                        }, 0);
+                    }).catch();
                 }
             }
         });
@@ -500,9 +504,16 @@ export class EventForwarder {
                 event: StationEvent.propertyChanged,
                 serialNumber: station.getSerial(),
                 name: name,
-                value: value.value as JSONValue,
-                timestamp: value.timestamp
-            }, 0);
+                value: value as JSONValue,
+                timestamp: +new Date
+            }, 0, 9);
+            this.forwardEvent({
+                source: "station",
+                event: StationEvent.propertyChanged,
+                serialNumber: station.getSerial(),
+                name: name,
+                value: value as JSONValue,
+            }, 10);
         });
 
     }
@@ -609,9 +620,16 @@ export class EventForwarder {
                 event: DeviceEvent.propertyChanged,
                 serialNumber: device.getSerial(),
                 name: name,
-                value: value.value as JSONValue,
-                timestamp: value.timestamp
-            }, 0);
+                value: value as JSONValue,
+                timestamp: +new Date
+            }, 0, 9);
+            this.forwardEvent({
+                source: "device",
+                event: DeviceEvent.propertyChanged,
+                serialNumber: device.getSerial(),
+                name: name,
+                value: value as JSONValue,
+            }, 10);
         });
     }
 

@@ -1,9 +1,9 @@
-import ws from "ws";
 import type WebSocket from "ws";
+import { WebSocketServer } from "ws"
 import { Logger } from "tslog";
 import { EventEmitter, once } from "events";
 import { Server as HttpServer, createServer, IncomingMessage as HttpIncomingMessage } from "http";
-import { DeviceNotFoundError, EufySecurity, InvalidCountryCodeError, InvalidLanguageCodeError, InvalidPropertyValueError, libVersion, NotSupportedError, ReadOnlyPropertyError, StationNotFoundError, WrongStationError, PropertyNotSupportedError, InvalidPropertyError, InvalidCommandValueError } from "eufy-security-client";
+import { DeviceNotFoundError, EufySecurity, InvalidCountryCodeError, InvalidLanguageCodeError, InvalidPropertyValueError, libVersion, NotSupportedError, ReadOnlyPropertyError, StationNotFoundError, WrongStationError, PropertyNotSupportedError, InvalidPropertyError, InvalidCommandValueError, Device } from "eufy-security-client";
 
 import { EventForwarder } from "./forward";
 import type * as OutgoingMessages from "./outgoing_message";
@@ -20,6 +20,7 @@ import { DriverMessageHandler } from "./driver/message_handler";
 import { IncomingMessageDriver } from "./driver/incoming_message";
 import { dumpState } from "./state";
 import { LoggingEventForwarder } from "./logging";
+import { ServerEvent } from "./event";
 
 export class Client {
 
@@ -89,7 +90,7 @@ export class Client {
 
             if (msg.command === ServerCommand.startListening) {
                 this.sendResultSuccess(msg.messageId, {
-                    state: dumpState(this.driver, this.schemaVersion),
+                    state: await dumpState(this.driver, this.schemaVersion),
                 });
                 this.receiveEvents = true;
                 return;
@@ -303,8 +304,7 @@ export class ClientsController {
 
         disconnectedClients.forEach(client => {
             Object.keys(client.receiveLivestream).forEach(serialNumber => {
-                try {
-                    const device = this.driver.getDevice(serialNumber);
+                this.driver.getDevice(serialNumber).then((device: Device) => {
                     const station = this.driver.getStation(device.getStationSerial());
                     const streamingDevices = DeviceMessageHandler.getStreamingDevices(station.getSerial());
 
@@ -315,9 +315,9 @@ export class ClientsController {
 
                     client.receiveLivestream[device.getSerial()] = false;
                     DeviceMessageHandler.removeStreamingDevice(station.getSerial(), client);
-                } catch(error) {
+                }).catch((error) => {
                     this.logger.error(`Error doing cleanup of client`, error);
-                }
+                });
             });
         });
         this.cleanupLoggingEventForwarder();
@@ -328,6 +328,14 @@ export class ClientsController {
             clearInterval(this.pingInterval);
         }
         this.pingInterval = undefined;
+        this.clients.forEach((client) => {
+            if (client.schemaVersion >= 10) {
+                client.sendEvent({
+                    source: "server",
+                    event: ServerEvent.shutdown,
+                });
+            }
+        });
         this.clients.forEach((client) => client.disconnect());
         this.clients = [];
         this.cleanupLoggingEventForwarder();
@@ -350,7 +358,7 @@ export interface  EufySecurityServer {
 export class  EufySecurityServer extends EventEmitter {
 
     private server?: HttpServer;
-    private wsServer?: ws.Server;
+    private wsServer?: WebSocketServer;
     private sockets?: ClientsController;
     private logger: Logger;
 
@@ -361,7 +369,7 @@ export class  EufySecurityServer extends EventEmitter {
 
     async start(): Promise<void> {
         this.server = createServer();
-        this.wsServer = new ws.Server({ server: this.server });
+        this.wsServer = new WebSocketServer({ server: this.server });
         this.sockets = new ClientsController(this.driver, this.logger);
         this.wsServer.on("connection", (socket, request) => this.sockets?.addSocket(socket, request));
 
@@ -372,7 +380,7 @@ export class  EufySecurityServer extends EventEmitter {
         await once(this.server, "listening");
         this.emit("listening");
         this.logger.info(`Eufy Security server listening on host ${this.options.host}, port ${this.options.port}`);
-        this.driver.connect();
+        await this.driver.connect()
     }
 
     private onError(error: Error) {

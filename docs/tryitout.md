@@ -20,7 +20,7 @@ export interface EufySecurityConfig {
     language?: string;                      // ISO 639 language code (default: en)
     trustedDeviceName?: string;             // Label of the trusted devices (viewable with 2fa activated in Eufy App; default: eufyclient)
     persistentDir?: string;                 // Directory in which the persistent information is saved (default: module path)
-    p2pConnectionSetup: number;             // P2P connection setup (default: 0 ; Prefers local connection over cloud)
+    p2pConnectionSetup: number;             // P2P connection setup (default: 2 ; Quickest connection)
     pollingIntervalMinutes: number;         // Polling intervall for data refresh from Eufy Cloud (default: 10 min.)
     eventDurationSeconds: number;           // Duration in seconds before an event is reset E.g. motion event (default: 10 sec.)
     acceptInvitations?: booleam;            // Automatically accept device invitations (default: false)

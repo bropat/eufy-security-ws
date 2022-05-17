@@ -1,5 +1,6 @@
-import { EufySecurity } from "eufy-security-client";
+import { EufySecurity, LoginOptions } from "eufy-security-client";
 import { Logger } from "tslog";
+
 import { UnknownCommandError } from "../error";
 import { Client, ClientsController } from "../server";
 import { DriverCommand } from "./command";
@@ -11,29 +12,45 @@ export class DriverMessageHandler {
 
     static captchaId: string | null = null;
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     static async handle(message: IncomingMessageDriver, driver: EufySecurity, client: Client, clientsController: ClientsController, logger: Logger): Promise<DriverResultTypes[DriverCommand]> {
         const { command } = message;
         switch (command) {
             case DriverCommand.setVerifyCode:
             {
-                const result = await driver.connect((message as IncomingCommandSetVerifyCode).verifyCode).catch((error) => {
-                    throw error;
-                });
-                return { result: result };
+                let result = true;
+                try {
+                    await driver.connect({
+                        verifyCode: (message as IncomingCommandSetVerifyCode).verifyCode
+                    } as LoginOptions);
+                } catch (error) {
+                    result = false
+                }
+                if (client.schemaVersion <= 9) {
+                    return { result: result };
+                }
+                return { };
             }
             case DriverCommand.setCaptcha:
             {
-                let result = false;
-                const captchaId = (message as IncomingCommandSetCaptcha).captchaId ? (message as IncomingCommandSetCaptcha).captchaId : this.captchaId;
-                this.captchaId = null;
-                if (captchaId) {
-                    result = await driver.connect((message as IncomingCommandSetCaptcha).captcha, captchaId).catch((error) => {
-                        throw error;
-                    });
+                let result = true;
+                try {
+                    const captchaId = (message as IncomingCommandSetCaptcha).captchaId ? (message as IncomingCommandSetCaptcha).captchaId : DriverMessageHandler.captchaId;
+                    this.captchaId = null;
+                    if (captchaId) {
+                        await driver.connect({
+                            captcha: {
+                                captchaCode: (message as IncomingCommandSetCaptcha).captcha,
+                                captchaId: captchaId
+                            }
+                        } as LoginOptions);
+                    }
+                } catch (error) {
+                    result = false
                 }
-                
-                return { result: result };
+                if (client.schemaVersion <= 9) {
+                    return { result: result };
+                }
+                return { };
             }
             case DriverCommand.pollRefresh:
                 await driver.refreshCloudData().catch((error) => {
@@ -54,10 +71,16 @@ export class DriverMessageHandler {
             }
             case DriverCommand.connect:
             {
-                const result = await driver.connect().catch((error) => {
-                    throw error;
-                });
-                return { connected: result };
+                let result = true;
+                try {
+                    await driver.connect();
+                } catch (error) {
+                    result = false
+                }
+                if (client.schemaVersion <= 9) {
+                    return { result: result };
+                }
+                return { };
             }
             case DriverCommand.disconnect:
                 driver.close();

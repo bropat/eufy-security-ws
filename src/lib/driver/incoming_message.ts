@@ -1,7 +1,8 @@
-import { DriverCommand } from "./command";
-import { IncomingCommandBase } from "../incoming_message_base";
 import { EventFilterType } from "eufy-security-client";
 import { TLogLevelName } from "tslog";
+
+import { DriverCommand } from "./command";
+import { IncomingCommandBase } from "../incoming_message_base";
 
 export interface IncomingCommandSetVerifyCode extends IncomingCommandBase {
     command: DriverCommand.setVerifyCode;

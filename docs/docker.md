@@ -11,7 +11,7 @@ eufy-security-ws is available via a Docker image
 | `LANGUAGE` | ISO 639 language code (default: en) |
 | `TRUSTED_DEVICE_NAME` | Label of the trusted devices (viewable with 2fa activated in Eufy App; default: eufyclient) |
 | `EVENT_DURATION_SECONDS` | Duration in seconds before an event is reset E.g. motion event (default: 10 sec.) |
-| `P2P_CONNECTION_SETUP` | P2P connection setup (default: 0 ; Prefers local connection over cloud) |
+| `P2P_CONNECTION_SETUP` | P2P connection setup (default: 2 ; Quickest connection) |
 | `POLLING_INTERVAL_MINUTES` | Polling intervall for data refresh from Eufy Cloud (default: 10 min.) |
 | `ACCEPT_INVITATIONS` | Automatically accept device invitations (default: false) |
 | `DEBUG` | When the variable is set, debug mode is activated (default: unset) |

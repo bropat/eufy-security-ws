@@ -1,4 +1,5 @@
 import { EufySecurity } from "eufy-security-client";
+
 import { Modify } from "../state";
 
 export interface DriverStateSchema0 {

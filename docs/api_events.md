@@ -1,5 +1,23 @@
 # Events
 
+## Server level events
+
+### `shutdown`
+
+[compatible with schema version: 10+]
+
+This event is sent when the server is shutting down.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "server";
+    event: "shutdown";
+  }
+}
+```
+
 ## Driver level events
 
 ### `verify code`
@@ -192,18 +210,18 @@ interface {
       guardMode: number;
       connected: boolean;
       type: number;                             // [added with schema version: 1+]
-      timeFormat: number;                       // [added with schema version: 3+]
-      alarmVolume: number;                      // [added with schema version: 3+]
-      alarmTone: number;                        // [added with schema version: 3+]
-      promptVolume: number;                     // [added with schema version: 3+]
-      notificationSwitchModeSchedule: boolean;  // [added with schema version: 3+]
-      notificationSwitchModeGeofence: boolean;  // [added with schema version: 3+]
-      notificationSwitchModeApp: boolean;       // [added with schema version: 3+]
-      notificationSwitchModeKeypad: boolean;    // [added with schema version: 3+]
-      notificationStartAlarmDelay: boolean;     // [added with schema version: 3+]
-      switchModeWithAccessCode: boolean;        // [added with schema version: 5+]
-      autoEndAlarm: boolean;                    // [added with schema version: 5+]
-      turnOffAlarmWithButton: boolean;          // [added with schema version: 5+]
+      timeFormat?: number;                      // [added with schema version: 3+]
+      alarmVolume?: number;                     // [added with schema version: 3+]
+      alarmTone?: number;                       // [added with schema version: 3+]
+      promptVolume?: number;                    // [added with schema version: 3+]
+      notificationSwitchModeSchedule?: boolean; // [added with schema version: 3+]
+      notificationSwitchModeGeofence?: boolean; // [added with schema version: 3+]
+      notificationSwitchModeApp?: boolean;      // [added with schema version: 3+]
+      notificationSwitchModeKeypad?: boolean;   // [added with schema version: 3+]
+      notificationStartAlarmDelay?: boolean;    // [added with schema version: 3+]
+      switchModeWithAccessCode?: boolean;       // [added with schema version: 5+]
+      autoEndAlarm?: boolean;                   // [added with schema version: 5+]
+      turnOffAlarmWithButton?: boolean;         // [added with schema version: 5+]
     }
   }
 }
@@ -233,18 +251,18 @@ interface {
       guardMode: number;
       connected: boolean;
       type: number;                             // [added with schema version: 1+]
-      timeFormat: number;                       // [added with schema version: 3+]
-      alarmVolume: number;                      // [added with schema version: 3+]
-      alarmTone: number;                        // [added with schema version: 3+]
-      promptVolume: number;                     // [added with schema version: 3+]
-      notificationSwitchModeSchedule: boolean;  // [added with schema version: 3+]
-      notificationSwitchModeGeofence: boolean;  // [added with schema version: 3+]
-      notificationSwitchModeApp: boolean;       // [added with schema version: 3+]
-      notificationSwitchModeKeypad: boolean;    // [added with schema version: 3+]
-      notificationStartAlarmDelay: boolean;     // [added with schema version: 3+]
-      switchModeWithAccessCode: boolean;        // [added with schema version: 5+]
-      autoEndAlarm: boolean;                    // [added with schema version: 5+]
-      turnOffAlarmWithButton: boolean;          // [added with schema version: 5+]
+      timeFormat?: number;                      // [added with schema version: 3+]
+      alarmVolume?: number;                     // [added with schema version: 3+]
+      alarmTone?: number;                       // [added with schema version: 3+]
+      promptVolume?: number;                    // [added with schema version: 3+]
+      notificationSwitchModeSchedule?: boolean; // [added with schema version: 3+]
+      notificationSwitchModeGeofence?: boolean; // [added with schema version: 3+]
+      notificationSwitchModeApp?: boolean;      // [added with schema version: 3+]
+      notificationSwitchModeKeypad?: boolean;   // [added with schema version: 3+]
+      notificationStartAlarmDelay?: boolean;    // [added with schema version: 3+]
+      switchModeWithAccessCode?: boolean;       // [added with schema version: 5+]
+      autoEndAlarm?: boolean;                   // [added with schema version: 5+]
+      turnOffAlarmWithButton?: boolean;         // [added with schema version: 5+]
     }
   }
 }
@@ -356,7 +374,7 @@ interface {
     serialNumber: string;
     name: string;
     value: JSONValue;
-    timestamp: number;
+    timestamp?: number;                               // [removed with schema version: 10+]
   }
 }
 ```
@@ -400,92 +418,161 @@ interface {
       hardwareVersion: string;
       softwareVersion: string;
       stationSerialNumber: device.getPropertyValue(PropertyName.DeviceStationSN)?.value as string,
-      enabled: boolean;
-      state: number;
-      battery: number;
-      batteryTemperature: number;
-      batteryLow: boolean;
-      lastChargingDays: number;
-      lastChargingTotalEvents: number;
-      lastChargingRecordedEvents: number;
-      lastChargingFalseEvents: number;
-      batteryUsageLastWeek: number;
-      motionDetected: boolean;
-      personDetected: boolean;
-      personName: string;
-      soundDetected: boolean;
-      petDetected: boolean;
-      cryingDetected: boolean;
-      ringing: boolean;
-      locked: boolean;
-      sensorOpen: boolean;
-      sensorChangeTime: number;
-      antitheftDetection: boolean;
-      autoNightvision: boolean;
-      ledStatus: boolean;                             // [added with schema version: 0+; removed with schema version: 4+]
-      motionDetection: boolean;
-      soundDetection: boolean;
-      petDetection: boolean;
-      rtspStream: boolean;
-      watermark: number;
-      lockStatus: number;
-      motionSensorPIREvent: number;
-      wifiRSSI: number;
-      pictureUrl: string;
-      type: number;                                   // [added with schema version: 1+]
-      motionDetectionType: number;                    // [added with schema version: 3+]
-      motionDetectionSensivity: number;               // [added with schema version: 3+; removed with schema version: 4+]
-      motionTracking: boolean;                        // [added with schema version: 3+]
-      soundDetectionType: number;                     // [added with schema version: 3+]
-      soundDetectionSensivity: number;                // [added with schema version: 3+; removed with schema version: 4+]
-      light: boolean;                                 // [added with schema version: 3+]
-      microphone: boolean;                            // [added with schema version: 3+]
-      speaker: boolean;                               // [added with schema version: 3+]
-      speakerVolume: number;                          // [added with schema version: 3+]
-      ringtoneVolume: number;                         // [added with schema version: 3+]
-      audioRecording: boolean;                        // [added with schema version: 3+]
-      powerSource: number;                            // [added with schema version: 3+]
-      powerWorkingMode: number;                       // [added with schema version: 3+]
-      recordingEndClipMotionStops: boolean;           // [added with schema version: 3+]
-      recordingClipLength: number;                    // [added with schema version: 3+]
-      recordingRetriggerInterval: number;             // [added with schema version: 3+]
-      videoStreamingQuality: number;                  // [added with schema version: 3+]
-      videoRecordingQuality: number;                  // [added with schema version: 3+]
-      videoWDR: boolean;                              // [added with schema version: 3+]
-      lightSettingsEnable: boolean;                   // [added with schema version: 3+]
-      lightSettingsBrightnessManual: number;          // [added with schema version: 3+]
-      lightSettingsBrightnessMotion: number;          // [added with schema version: 3+]
-      lightSettingsBrightnessSchedule: number;        // [added with schema version: 3+]
-      lightSettingsMotionTriggered: boolean;          // [added with schema version: 3+]
-      lightSettingsMotionTriggeredDistance: number;   // [added with schema version: 3+]
-      lightSettingsMotionTriggeredTimer: number;      // [added with schema version: 3+]
-      chimeIndoor: boolean;                           // [added with schema version: 3+]
-      chimeHomebase: boolean;                         // [added with schema version: 3+]
-      chimeHomebaseRingtoneVolume: number;            // [added with schema version: 3+]
-      chimeHomebaseRingtoneType: number;              // [added with schema version: 3+]
-      notificationType: number;                       // [added with schema version: 3+]
-      rotationSpeed: number;                          // [added with schema version: 3+]
-      notificationPerson: boolean;                    // [added with schema version: 3+]
-      notificationPet: boolean;                       // [added with schema version: 3+]
-      notificationAllOtherMotion: boolean;            // [added with schema version: 3+]
-      notificationCrying: boolean;                    // [added with schema version: 3+]
-      notificationAllSound: boolean;                  // [added with schema version: 3+]
-      notificationIntervalTime: boolean;              // [added with schema version: 3+]
-      notificationRing: boolean;                      // [added with schema version: 3+]
-      notificationMotion:boolean;                     // [added with schema version: 3+]
-      chirpVolume: number;                            // [added with schema version: 4+]
-      chirpTone: number;                              // [added with schema version: 4+]
-      motionDetectionSensitivity: number;             // [added with schema version: 4+]
-      soundDetectionSensitivity: number;              // [added with schema version: 4+]
-      videoHdr: boolean;                              // [added with schema version: 4+]
-      videoDistortionCorrection: boolean;             // [added with schema version: 4+]
-      videoRingRecord: number;                        // [added with schema version: 4+]
-      statusLed: boolean;                             // [added with schema version: 4+]
-      chargingStatus: number;                         // [added with schema version: 4+]
-      rtspStreamUrl: string;                          // [added with schema version: 4+]
-      wifiSignalLevel: number;                        // [added with schema version: 4+]
-      nightvision: number;                            // [added with schema version: 5+]
-      batteryIsCharging: boolean;                     // [added with schema version: 5+]
+      enabled?: boolean;
+      state?: number;
+      battery?: number;
+      batteryTemperature?: number;
+      batteryLow?: boolean;
+      lastChargingDays?: number;
+      lastChargingTotalEvents?: number;
+      lastChargingRecordedEvents?: number;
+      lastChargingFalseEvents?: number;
+      batteryUsageLastWeek?: number;
+      motionDetected?: boolean;
+      personDetected?: boolean;
+      personName?: string;
+      soundDetected?: boolean;
+      petDetected?: boolean;
+      cryingDetected?: boolean;
+      ringing?: boolean;
+      locked?: boolean;
+      sensorOpen?: boolean;
+      sensorChangeTime?: number;
+      antitheftDetection?: boolean;
+      autoNightvision?: boolean;
+      ledStatus?: boolean;                                            // [added with schema version: 0+; removed with schema version: 4+]
+      motionDetection?: boolean;
+      soundDetection?: boolean;
+      petDetection?: boolean;
+      rtspStream?: boolean;
+      watermark?: number;
+      lockStatus?: number;
+      motionSensorPIREvent?: number;
+      wifiRSSI?: number;
+      pictureUrl?: string;
+      type?: number;                                                  // [added with schema version: 1+]
+      motionDetectionType?: number;                                   // [added with schema version: 3+]
+      motionDetectionSensivity?: number;                              // [added with schema version: 3+; removed with schema version: 4+]
+      motionTracking?: boolean;                                       // [added with schema version: 3+]
+      soundDetectionType?: number;                                    // [added with schema version: 3+]
+      soundDetectionSensivity?: number;                               // [added with schema version: 3+; removed with schema version: 4+]
+      light?: boolean;                                                // [added with schema version: 3+]
+      microphone?: boolean;                                           // [added with schema version: 3+]
+      speaker?: boolean;                                              // [added with schema version: 3+]
+      speakerVolume?: number;                                         // [added with schema version: 3+]
+      ringtoneVolume?: number;                                        // [added with schema version: 3+]
+      audioRecording?: boolean;                                       // [added with schema version: 3+]
+      powerSource?: number;                                           // [added with schema version: 3+]
+      powerWorkingMode?: number;                                      // [added with schema version: 3+]
+      recordingEndClipMotionStops?: boolean;                          // [added with schema version: 3+]
+      recordingClipLength?: number;                                   // [added with schema version: 3+]
+      recordingRetriggerInterval?: number;                            // [added with schema version: 3+]
+      videoStreamingQuality?: number;                                 // [added with schema version: 3+]
+      videoRecordingQuality?: number;                                 // [added with schema version: 3+]
+      videoWDR?: boolean;                                             // [added with schema version: 3+]
+      lightSettingsEnable?: boolean;                                  // [added with schema version: 3+]
+      lightSettingsBrightnessManual?: number;                         // [added with schema version: 3+]
+      lightSettingsBrightnessMotion?: number;                         // [added with schema version: 3+]
+      lightSettingsBrightnessSchedule?: number;                       // [added with schema version: 3+]
+      lightSettingsMotionTriggered?: boolean;                         // [added with schema version: 3+]
+      lightSettingsMotionTriggeredDistance?: number;                  // [added with schema version: 3+]
+      lightSettingsMotionTriggeredTimer?: number;                     // [added with schema version: 3+]
+      chimeIndoor?: boolean;                                          // [added with schema version: 3+]
+      chimeHomebase?: boolean;                                        // [added with schema version: 3+]
+      chimeHomebaseRingtoneVolume?: number;                           // [added with schema version: 3+]
+      chimeHomebaseRingtoneType?: number;                             // [added with schema version: 3+]
+      notificationType?: number;                                      // [added with schema version: 3+]
+      rotationSpeed?: number;                                         // [added with schema version: 3+]
+      notificationPerson?: boolean;                                   // [added with schema version: 3+]
+      notificationPet?: boolean;                                      // [added with schema version: 3+]
+      notificationAllOtherMotion?: boolean;                           // [added with schema version: 3+]
+      notificationCrying?: boolean;                                   // [added with schema version: 3+]
+      notificationAllSound?: boolean;                                 // [added with schema version: 3+]
+      notificationIntervalTime?: boolean;                             // [added with schema version: 3+]
+      notificationRing?: boolean;                                     // [added with schema version: 3+]
+      notificationMotion?: boolean;                                   // [added with schema version: 3+]
+      chirpVolume?: number;                                           // [added with schema version: 4+]
+      chirpTone?: number;                                             // [added with schema version: 4+]
+      motionDetectionSensitivity?: number;                            // [added with schema version: 4+]
+      soundDetectionSensitivity?: number;                             // [added with schema version: 4+]
+      videoHdr?: boolean;                                             // [added with schema version: 4+]
+      videoDistortionCorrection?: boolean;                            // [added with schema version: 4+]
+      videoRingRecord?: number;                                       // [added with schema version: 4+]
+      statusLed?: boolean;                                            // [added with schema version: 4+]
+      chargingStatus?: number;                                        // [added with schema version: 4+]
+      rtspStreamUrl?: string;                                         // [added with schema version: 4+]
+      wifiSignalLevel?: number;                                       // [added with schema version: 4+]
+      nightvision?: number;                                           // [added with schema version: 5+]
+      batteryIsCharging?: boolean;                                    // [added with schema version: 5+]
+      motionDetectionRange?: boolean;                                 // [added with schema version: 8+]
+      motionDetectionRangeStandardSensitivity?: number;               // [added with schema version: 8+]
+      motionDetectionRangeAdvancedLeftSensitivity?: number;           // [added with schema version: 8+]
+      motionDetectionRangeAdvancedMiddleSensitivity?: number;         // [added with schema version: 8+]
+      motionDetectionRangeAdvancedRightSensitivity?: number;          // [added with schema version: 8+]
+      motionDetectionTestMode?: boolean;                              // [added with schema version: 8+]
+      motionTrackingSensitivity?: number;                             // [added with schema version: 8+]
+      motionAutoCruise?: boolean;                                     // [added with schema version: 8+]
+      motionOutOfViewDetection?: boolean;                             // [added with schema version: 8+]
+      lightSettingsColorTemperatureManual?: number;                   // [added with schema version: 8+]
+      lightSettingsColorTemperatureMotion?: number;                   // [added with schema version: 8+]
+      lightSettingsColorTemperatureSchedule?: number;                 // [added with schema version: 8+]
+      lightSettingsMotionActivationMode?: number;                     // [added with schema version: 8+]
+      videoNightvisionImageAdjustment?: boolean;                      // [added with schema version: 8+]
+      videoColorNightvision?: boolean;                                // [added with schema version: 8+]
+      autoCalibration?: boolean;                                      // [added with schema version: 8+]
+      lockSettingsAutoLock?: boolean;                                 // [added with schema version: 9+]
+      lockSettingsAutoLockTimer?: number;                             // [added with schema version: 9+]
+      lockSettingsAutoLockSchedule?: boolean;                         // [added with schema version: 9+]
+      lockSettingsAutoLockScheduleStartTime?: string;                 // [added with schema version: 9+]
+      lockSettingsAutoLockScheduleEndTime?: string;                   // [added with schema version: 9+]
+      lockSettingsOneTouchLocking?: boolean;                          // [added with schema version: 9+]
+      lockSettingsWrongTryProtection?: boolean;                       // [added with schema version: 9+]
+      lockSettingsWrongTryAttempts?: number;                          // [added with schema version: 9+]
+      lockSettingsWrongTryLockdownTime?: number;                      // [added with schema version: 9+]
+      lockSettingsScramblePasscode?: boolean;                         // [added with schema version: 9+]
+      lockSettingsSound?: number;                                     // [added with schema version: 9+]
+      lockSettingsNotification?: boolean;                             // [added with schema version: 9+]
+      lockSettingsNotificationUnlocked?: boolean;                     // [added with schema version: 9+]
+      lockSettingsNotificationLocked?: boolean;                       // [added with schema version: 9+]
+      notificationRadarDetector?: boolean;                            // [added with schema version: 10+]
+      continuousRecording?: boolean;                                  // [added with schema version: 10+]
+      continuousRecordingType?: number;                               // [added with schema version: 10+]
+      loiteringDetection?: boolean;                                   // [added with schema version: 10+]
+      loiteringDetectionRange?: number;                               // [added with schema version: 10+]
+      loiteringDetectionLength?: number;                              // [added with schema version: 10+]
+      motionDetectionSensitivityMode?: number;                        // [added with schema version: 10+]
+      motionDetectionSensitivityStandard?: number;                    // [added with schema version: 10+]
+      motionDetectionSensitivityAdvancedA?: number;                   // [added with schema version: 10+]
+      motionDetectionSensitivityAdvancedB?: number;                   // [added with schema version: 10+]
+      motionDetectionSensitivityAdvancedC?: number;                   // [added with schema version: 10+]
+      motionDetectionSensitivityAdvancedD?: number;                   // [added with schema version: 10+]
+      motionDetectionSensitivityAdvancedE?: number;                   // [added with schema version: 10+]
+      motionDetectionSensitivityAdvancedF?: number;                   // [added with schema version: 10+]
+      motionDetectionSensitivityAdvancedG?: number;                   // [added with schema version: 10+]
+      motionDetectionSensitivityAdvancedH?: number;                   // [added with schema version: 10+]
+      loiteringCustomResponsePhoneNotification?: boolean;             // [added with schema version: 10+]
+      loiteringCustomResponseAutoVoiceResponse?: boolean;             // [added with schema version: 10+]
+      loiteringCustomResponseAutoVoiceResponseVoice?: number;         // [added with schema version: 10+]
+      loiteringCustomResponseHomeBaseNotification?: boolean;          // [added with schema version: 10+]
+      loiteringCustomResponseTimeFrom?: string;                       // [added with schema version: 10+]
+      loiteringCustomResponseTimeTo?: string;                         // [added with schema version: 10+]
+      deliveryGuard?: boolean;                                        // [added with schema version: 10+]
+      deliveryGuardPackageGuarding?: boolean;                         // [added with schema version: 10+]
+      deliveryGuardPackageGuardingVoiceResponseVoice?: number;        // [added with schema version: 10+]
+      deliveryGuardPackageGuardingActivatedTimeFrom?: string;         // [added with schema version: 10+]
+      deliveryGuardPackageGuardingActivatedTimeTo?: string;           // [added with schema version: 10+]
+      deliveryGuardUncollectedPackageAlert?: boolean;                 // [added with schema version: 10+]
+      deliveryGuardUncollectedPackageAlertTimeToCheck?: string;       // [added with schema version: 10+]
+      deliveryGuardPackageLiveCheckAssistance?: boolean;              // [added with schema version: 10+]
+      dualCamWatchViewMode?: number;                                  // [added with schema version: 10+]
+      ringAutoResponse?: boolean;                                     // [added with schema version: 10+]
+      ringAutoResponseVoiceResponse?: boolean;                        // [added with schema version: 10+]
+      ringAutoResponseVoiceResponseVoice?: number;                    // [added with schema version: 10+]
+      ringAutoResponseTimeFrom?: string;                              // [added with schema version: 10+]
+      ringAutoResponseTimeTo?: string;                                // [added with schema version: 10+]
+      defaultAngle?: boolean;                                         // [added with schema version: 10+]
+      defaultAngleIdleTime?: number;                                  // [added with schema version: 10+]
+      soundDetectionRoundLook?: boolean;                              // [added with schema version: 10+]
     }
   }
 }
@@ -510,92 +597,161 @@ interface {
       hardwareVersion: string;
       softwareVersion: string;
       stationSerialNumber: device.getPropertyValue(PropertyName.DeviceStationSN)?.value as string,
-      enabled: boolean;
-      state: number;
-      battery: number;
-      batteryTemperature: number;
-      batteryLow: boolean;
-      lastChargingDays: number;
-      lastChargingTotalEvents: number;
-      lastChargingRecordedEvents: number;
-      lastChargingFalseEvents: number;
-      batteryUsageLastWeek: number;
-      motionDetected: boolean;
-      personDetected: boolean;
-      personName: string;
-      soundDetected: boolean;
-      petDetected: boolean;
-      cryingDetected: boolean;
-      ringing: boolean;
-      locked: boolean;
-      sensorOpen: boolean;
-      sensorChangeTime: number;
-      antitheftDetection: boolean;
-      autoNightvision: boolean;
-      ledStatus: boolean;                             // [added with schema version: 0+; removed with schema version: 4+]
-      motionDetection: boolean;
-      soundDetection: boolean;
-      petDetection: boolean;
-      rtspStream: boolean;
-      watermark: number;
-      lockStatus: number;
-      motionSensorPIREvent: number;
-      wifiRSSI: number;
-      pictureUrl: string;
-      type: number;                                   // [added with schema version: 1+]
-      motionDetectionType: number;                    // [added with schema version: 3+]
-      motionDetectionSensivity: number;               // [added with schema version: 3+; removed with schema version: 4+]
-      motionTracking: boolean;                        // [added with schema version: 3+]
-      soundDetectionType: number;                     // [added with schema version: 3+]
-      soundDetectionSensivity: number;                // [added with schema version: 3+; removed with schema version: 4+]
-      light: boolean;                                 // [added with schema version: 3+]
-      microphone: boolean;                            // [added with schema version: 3+]
-      speaker: boolean;                               // [added with schema version: 3+]
-      speakerVolume: number;                          // [added with schema version: 3+]
-      ringtoneVolume: number;                         // [added with schema version: 3+]
-      audioRecording: boolean;                        // [added with schema version: 3+]
-      powerSource: number;                            // [added with schema version: 3+]
-      powerWorkingMode: number;                       // [added with schema version: 3+]
-      recordingEndClipMotionStops: boolean;           // [added with schema version: 3+]
-      recordingClipLength: number;                    // [added with schema version: 3+]
-      recordingRetriggerInterval: number;             // [added with schema version: 3+]
-      videoStreamingQuality: number;                  // [added with schema version: 3+]
-      videoRecordingQuality: number;                  // [added with schema version: 3+]
-      videoWDR: boolean;                              // [added with schema version: 3+]
-      lightSettingsEnable: boolean;                   // [added with schema version: 3+]
-      lightSettingsBrightnessManual: number;          // [added with schema version: 3+]
-      lightSettingsBrightnessMotion: number;          // [added with schema version: 3+]
-      lightSettingsBrightnessSchedule: number;        // [added with schema version: 3+]
-      lightSettingsMotionTriggered: boolean;          // [added with schema version: 3+]
-      lightSettingsMotionTriggeredDistance: number;   // [added with schema version: 3+]
-      lightSettingsMotionTriggeredTimer: number;      // [added with schema version: 3+]
-      chimeIndoor: boolean;                           // [added with schema version: 3+]
-      chimeHomebase: boolean;                         // [added with schema version: 3+]
-      chimeHomebaseRingtoneVolume: number;            // [added with schema version: 3+]
-      chimeHomebaseRingtoneType: number;              // [added with schema version: 3+]
-      notificationType: number;                       // [added with schema version: 3+]
-      rotationSpeed: number;                          // [added with schema version: 3+]
-      notificationPerson: boolean;                    // [added with schema version: 3+]
-      notificationPet: boolean;                       // [added with schema version: 3+]
-      notificationAllOtherMotion: boolean;            // [added with schema version: 3+]
-      notificationCrying: boolean;                    // [added with schema version: 3+]
-      notificationAllSound: boolean;                  // [added with schema version: 3+]
-      notificationIntervalTime: boolean;              // [added with schema version: 3+]
-      notificationRing: boolean;                      // [added with schema version: 3+]
-      notificationMotion:boolean;                     // [added with schema version: 3+]
-      chirpVolume: number;                            // [added with schema version: 4+]
-      chirpTone: number;                              // [added with schema version: 4+]
-      motionDetectionSensitivity: number;             // [added with schema version: 4+]
-      soundDetectionSensitivity: number;              // [added with schema version: 4+]
-      videoHdr: boolean;                              // [added with schema version: 4+]
-      videoDistortionCorrection: boolean;             // [added with schema version: 4+]
-      videoRingRecord: number;                        // [added with schema version: 4+]
-      statusLed: boolean;                             // [added with schema version: 4+]
-      chargingStatus: number;                         // [added with schema version: 4+]
-      rtspStreamUrl: string;                          // [added with schema version: 4+]
-      wifiSignalLevel: number;                        // [added with schema version: 4+]
-      nightvision: number;                            // [added with schema version: 5+]
-      batteryIsCharging: boolean;                     // [added with schema version: 5+]
+      enabled?: boolean;
+      state?: number;
+      battery?: number;
+      batteryTemperature?: number;
+      batteryLow?: boolean;
+      lastChargingDays?: number;
+      lastChargingTotalEvents?: number;
+      lastChargingRecordedEvents?: number;
+      lastChargingFalseEvents?: number;
+      batteryUsageLastWeek?: number;
+      motionDetected?: boolean;
+      personDetected?: boolean;
+      personName?: string;
+      soundDetected?: boolean;
+      petDetected?: boolean;
+      cryingDetected?: boolean;
+      ringing?: boolean;
+      locked?: boolean;
+      sensorOpen?: boolean;
+      sensorChangeTime?: number;
+      antitheftDetection?: boolean;
+      autoNightvision?: boolean;
+      ledStatus?: boolean;                                            // [added with schema version: 0+; removed with schema version: 4+]
+      motionDetection?: boolean;
+      soundDetection?: boolean;
+      petDetection?: boolean;
+      rtspStream?: boolean;
+      watermark?: number;
+      lockStatus?: number;
+      motionSensorPIREvent?: number;
+      wifiRSSI?: number;
+      pictureUrl?: string;
+      type?: number;                                                  // [added with schema version: 1+]
+      motionDetectionType?: number;                                   // [added with schema version: 3+]
+      motionDetectionSensivity?: number;                              // [added with schema version: 3+; removed with schema version: 4+]
+      motionTracking?: boolean;                                       // [added with schema version: 3+]
+      soundDetectionType?: number;                                    // [added with schema version: 3+]
+      soundDetectionSensivity?: number;                               // [added with schema version: 3+; removed with schema version: 4+]
+      light?: boolean;                                                // [added with schema version: 3+]
+      microphone?: boolean;                                           // [added with schema version: 3+]
+      speaker?: boolean;                                              // [added with schema version: 3+]
+      speakerVolume?: number;                                         // [added with schema version: 3+]
+      ringtoneVolume?: number;                                        // [added with schema version: 3+]
+      audioRecording?: boolean;                                       // [added with schema version: 3+]
+      powerSource?: number;                                           // [added with schema version: 3+]
+      powerWorkingMode?: number;                                      // [added with schema version: 3+]
+      recordingEndClipMotionStops?: boolean;                          // [added with schema version: 3+]
+      recordingClipLength?: number;                                   // [added with schema version: 3+]
+      recordingRetriggerInterval?: number;                            // [added with schema version: 3+]
+      videoStreamingQuality?: number;                                 // [added with schema version: 3+]
+      videoRecordingQuality?: number;                                 // [added with schema version: 3+]
+      videoWDR?: boolean;                                             // [added with schema version: 3+]
+      lightSettingsEnable?: boolean;                                  // [added with schema version: 3+]
+      lightSettingsBrightnessManual?: number;                         // [added with schema version: 3+]
+      lightSettingsBrightnessMotion?: number;                         // [added with schema version: 3+]
+      lightSettingsBrightnessSchedule?: number;                       // [added with schema version: 3+]
+      lightSettingsMotionTriggered?: boolean;                         // [added with schema version: 3+]
+      lightSettingsMotionTriggeredDistance?: number;                  // [added with schema version: 3+]
+      lightSettingsMotionTriggeredTimer?: number;                     // [added with schema version: 3+]
+      chimeIndoor?: boolean;                                          // [added with schema version: 3+]
+      chimeHomebase?: boolean;                                        // [added with schema version: 3+]
+      chimeHomebaseRingtoneVolume?: number;                           // [added with schema version: 3+]
+      chimeHomebaseRingtoneType?: number;                             // [added with schema version: 3+]
+      notificationType?: number;                                      // [added with schema version: 3+]
+      rotationSpeed?: number;                                         // [added with schema version: 3+]
+      notificationPerson?: boolean;                                   // [added with schema version: 3+]
+      notificationPet?: boolean;                                      // [added with schema version: 3+]
+      notificationAllOtherMotion?: boolean;                           // [added with schema version: 3+]
+      notificationCrying?: boolean;                                   // [added with schema version: 3+]
+      notificationAllSound?: boolean;                                 // [added with schema version: 3+]
+      notificationIntervalTime?: boolean;                             // [added with schema version: 3+]
+      notificationRing?: boolean;                                     // [added with schema version: 3+]
+      notificationMotion?: boolean;                                   // [added with schema version: 3+]
+      chirpVolume?: number;                                           // [added with schema version: 4+]
+      chirpTone?: number;                                             // [added with schema version: 4+]
+      motionDetectionSensitivity?: number;                            // [added with schema version: 4+]
+      soundDetectionSensitivity?: number;                             // [added with schema version: 4+]
+      videoHdr?: boolean;                                             // [added with schema version: 4+]
+      videoDistortionCorrection?: boolean;                            // [added with schema version: 4+]
+      videoRingRecord?: number;                                       // [added with schema version: 4+]
+      statusLed?: boolean;                                            // [added with schema version: 4+]
+      chargingStatus?: number;                                        // [added with schema version: 4+]
+      rtspStreamUrl?: string;                                         // [added with schema version: 4+]
+      wifiSignalLevel?: number;                                       // [added with schema version: 4+]
+      nightvision?: number;                                           // [added with schema version: 5+]
+      batteryIsCharging?: boolean;                                    // [added with schema version: 5+]
+      motionDetectionRange?: boolean;                                 // [added with schema version: 8+]
+      motionDetectionRangeStandardSensitivity?: number;               // [added with schema version: 8+]
+      motionDetectionRangeAdvancedLeftSensitivity?: number;           // [added with schema version: 8+]
+      motionDetectionRangeAdvancedMiddleSensitivity?: number;         // [added with schema version: 8+]
+      motionDetectionRangeAdvancedRightSensitivity?: number;          // [added with schema version: 8+]
+      motionDetectionTestMode?: boolean;                              // [added with schema version: 8+]
+      motionTrackingSensitivity?: number;                             // [added with schema version: 8+]
+      motionAutoCruise?: boolean;                                     // [added with schema version: 8+]
+      motionOutOfViewDetection?: boolean;                             // [added with schema version: 8+]
+      lightSettingsColorTemperatureManual?: number;                   // [added with schema version: 8+]
+      lightSettingsColorTemperatureMotion?: number;                   // [added with schema version: 8+]
+      lightSettingsColorTemperatureSchedule?: number;                 // [added with schema version: 8+]
+      lightSettingsMotionActivationMode?: number;                     // [added with schema version: 8+]
+      videoNightvisionImageAdjustment?: boolean;                      // [added with schema version: 8+]
+      videoColorNightvision?: boolean;                                // [added with schema version: 8+]
+      autoCalibration?: boolean;                                      // [added with schema version: 8+]
+      lockSettingsAutoLock?: boolean;                                 // [added with schema version: 9+]
+      lockSettingsAutoLockTimer?: number;                             // [added with schema version: 9+]
+      lockSettingsAutoLockSchedule?: boolean;                         // [added with schema version: 9+]
+      lockSettingsAutoLockScheduleStartTime?: string;                 // [added with schema version: 9+]
+      lockSettingsAutoLockScheduleEndTime?: string;                   // [added with schema version: 9+]
+      lockSettingsOneTouchLocking?: boolean;                          // [added with schema version: 9+]
+      lockSettingsWrongTryProtection?: boolean;                       // [added with schema version: 9+]
+      lockSettingsWrongTryAttempts?: number;                          // [added with schema version: 9+]
+      lockSettingsWrongTryLockdownTime?: number;                      // [added with schema version: 9+]
+      lockSettingsScramblePasscode?: boolean;                         // [added with schema version: 9+]
+      lockSettingsSound?: number;                                     // [added with schema version: 9+]
+      lockSettingsNotification?: boolean;                             // [added with schema version: 9+]
+      lockSettingsNotificationUnlocked?: boolean;                     // [added with schema version: 9+]
+      lockSettingsNotificationLocked?: boolean;                       // [added with schema version: 9+]
+      notificationRadarDetector?: boolean;                            // [added with schema version: 10+]
+      continuousRecording?: boolean;                                  // [added with schema version: 10+]
+      continuousRecordingType?: number;                               // [added with schema version: 10+]
+      loiteringDetection?: boolean;                                   // [added with schema version: 10+]
+      loiteringDetectionRange?: number;                               // [added with schema version: 10+]
+      loiteringDetectionLength?: number;                              // [added with schema version: 10+]
+      motionDetectionSensitivityMode?: number;                        // [added with schema version: 10+]
+      motionDetectionSensitivityStandard?: number;                    // [added with schema version: 10+]
+      motionDetectionSensitivityAdvancedA?: number;                   // [added with schema version: 10+]
+      motionDetectionSensitivityAdvancedB?: number;                   // [added with schema version: 10+]
+      motionDetectionSensitivityAdvancedC?: number;                   // [added with schema version: 10+]
+      motionDetectionSensitivityAdvancedD?: number;                   // [added with schema version: 10+]
+      motionDetectionSensitivityAdvancedE?: number;                   // [added with schema version: 10+]
+      motionDetectionSensitivityAdvancedF?: number;                   // [added with schema version: 10+]
+      motionDetectionSensitivityAdvancedG?: number;                   // [added with schema version: 10+]
+      motionDetectionSensitivityAdvancedH?: number;                   // [added with schema version: 10+]
+      loiteringCustomResponsePhoneNotification?: boolean;             // [added with schema version: 10+]
+      loiteringCustomResponseAutoVoiceResponse?: boolean;             // [added with schema version: 10+]
+      loiteringCustomResponseAutoVoiceResponseVoice?: number;         // [added with schema version: 10+]
+      loiteringCustomResponseHomeBaseNotification?: boolean;          // [added with schema version: 10+]
+      loiteringCustomResponseTimeFrom?: string;                       // [added with schema version: 10+]
+      loiteringCustomResponseTimeTo?: string;                         // [added with schema version: 10+]
+      deliveryGuard?: boolean;                                        // [added with schema version: 10+]
+      deliveryGuardPackageGuarding?: boolean;                         // [added with schema version: 10+]
+      deliveryGuardPackageGuardingVoiceResponseVoice?: number;        // [added with schema version: 10+]
+      deliveryGuardPackageGuardingActivatedTimeFrom?: string;         // [added with schema version: 10+]
+      deliveryGuardPackageGuardingActivatedTimeTo?: string;           // [added with schema version: 10+]
+      deliveryGuardUncollectedPackageAlert?: boolean;                 // [added with schema version: 10+]
+      deliveryGuardUncollectedPackageAlertTimeToCheck?: string;       // [added with schema version: 10+]
+      deliveryGuardPackageLiveCheckAssistance?: boolean;              // [added with schema version: 10+]
+      dualCamWatchViewMode?: number;                                  // [added with schema version: 10+]
+      ringAutoResponse?: boolean;                                     // [added with schema version: 10+]
+      ringAutoResponseVoiceResponse?: boolean;                        // [added with schema version: 10+]
+      ringAutoResponseVoiceResponseVoice?: number;                    // [added with schema version: 10+]
+      ringAutoResponseTimeFrom?: string;                              // [added with schema version: 10+]
+      ringAutoResponseTimeTo?: string;                                // [added with schema version: 10+]
+      defaultAngle?: boolean;                                         // [added with schema version: 10+]
+      defaultAngleIdleTime?: number;                                  // [added with schema version: 10+]
+      soundDetectionRoundLook?: boolean;                              // [added with schema version: 10+]
     }
   }
 }
@@ -781,7 +937,7 @@ interface {
     serialNumber: string;
     name: string;
     value: JSONValue;
-    timestamp: number;
+    timestamp?: number;                               // [removed with schema version: 10+]
   }
 }
 ```
