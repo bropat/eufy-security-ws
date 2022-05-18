@@ -203,6 +203,12 @@ DeviceStateSchema7,
     soundDetectionRoundLook?: boolean;
 }>;
 
+type DeviceStateSchema9 = Modify<
+DeviceStateSchema8,
+{
+    imageMirrored?: boolean;
+}>;
+
 export type DeviceState = 
   | DeviceStateSchema0
   | DeviceStateSchema1
@@ -211,7 +217,8 @@ export type DeviceState =
   | DeviceStateSchema5
   | DeviceStateSchema6
   | DeviceStateSchema7
-  | DeviceStateSchema8;
+  | DeviceStateSchema8
+  | DeviceStateSchema9;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const dumpDevice = (device: Device, schemaVersion: number): DeviceState => {
@@ -415,7 +422,13 @@ export const dumpDevice = (device: Device, schemaVersion: number): DeviceState =
     device8.defaultAngle = device.getPropertyValue(PropertyName.DeviceDefaultAngle) as boolean;
     device8.defaultAngleIdleTime = device.getPropertyValue(PropertyName.DeviceDefaultAngleIdleTime) as number;
     device8.soundDetectionRoundLook = device.getPropertyValue(PropertyName.DeviceSoundDetectionRoundLook) as boolean;
+    if (schemaVersion <= 10) {
+        return device8;
+    }
 
-    return device8;
-    
+    // All schema >= 10
+    const device9 = device8 as DeviceStateSchema9;
+    device9.imageMirrored = device.getPropertyValue(PropertyName.DeviceImageMirrored)?.value as boolean;
+
+    return device9;
 };
