@@ -64,3 +64,8 @@ Base schema.
 * Removed property `timestamp`from Station event `property changed`
 * Removed property `timestamp`from Device event `property changed`
 * Added new properties `notificationRadarDetector`, `continuousRecording`, `continuousRecordingType`, `loiteringDetection`, `loiteringDetectionRange`, `loiteringDetectionLength`, `motionDetectionSensitivityMode`, `motionDetectionSensitivityStandard`, `motionDetectionSensitivityAdvancedA`, `motionDetectionSensitivityAdvancedB`, `motionDetectionSensitivityAdvancedC`, `motionDetectionSensitivityAdvancedD`, `motionDetectionSensitivityAdvancedE`, `motionDetectionSensitivityAdvancedF`, `motionDetectionSensitivityAdvancedG`, `motionDetectionSensitivityAdvancedH`, `loiteringCustomResponsePhoneNotification`, `loiteringCustomResponseAutoVoiceResponse`, `loiteringCustomResponseAutoVoiceResponseVoice`, `loiteringCustomResponseHomeBaseNotification`, `loiteringCustomResponseTimeFrom`, `loiteringCustomResponseTimeTo`, `deliveryGuard`, `deliveryGuardPackageGuarding`, `deliveryGuardPackageGuardingVoiceResponseVoice`, `deliveryGuardPackageGuardingActivatedTimeFrom`, `deliveryGuardPackageGuardingActivatedTimeTo`, `deliveryGuardUncollectedPackageAlert`, `deliveryGuardUncollectedPackageAlertTimeToCheck`, `deliveryGuardPackageLiveCheckAssistance`, `dualCamWatchViewMode`, `ringAutoResponse`, `ringAutoResponseVoiceResponse`, `ringAutoResponseVoiceResponseVoice`, `ringAutoResponseTimeFrom`, `ringAutoResponseTimeTo`, `defaultAngle`, `defaultAngleIdleTime` and `soundDetectionRoundLook` to Device
+
+## Schema 11
+
+* Added new property `imageMirrored` to Device
+* Added new Station events `alarmDelayEvent` and `alarmArmedEvent`

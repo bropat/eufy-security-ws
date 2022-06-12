@@ -12,6 +12,8 @@ export enum StationEvent {
     disconnected = "disconnected",
     propertyChanged = "property changed",
     alarmEvent = "alarm event",
+    alarmDelayEvent = "alarm delay event",
+    alarmArmedEvent = "alarm armed event",
 }
 
 export interface OutgoingEventStationBase extends OutgoingBaseEvent {
@@ -83,6 +85,20 @@ export interface OutgoingEventStationAlarmEvent extends OutgoingEventStationBase
     alarmEvent: AlarmEvent;
 }
 
+export interface OutgoingEventStationAlarmDelayEvent extends OutgoingEventStationBase {
+    source: "station";
+    event: StationEvent.alarmDelayEvent;
+    serialNumber: string;
+    alarmDelayEvent: AlarmEvent;
+    alarmDelay: number;
+}
+
+export interface OutgoingEventStationAlarmArmedEvent extends OutgoingEventStationBase {
+    source: "station";
+    event: StationEvent.alarmArmedEvent;
+    serialNumber: string;
+}
+
 export type OutgoingEventStation =
   | OutgoingEventStationAdded
   | OutgoingEventStationRemoved
@@ -92,4 +108,6 @@ export type OutgoingEventStation =
   | OutgoingEventStationConnected
   | OutgoingEventStationDisconnected
   | OutgoingEventStationPropertyChanged
-  | OutgoingEventStationAlarmEvent;
+  | OutgoingEventStationAlarmEvent
+  | OutgoingEventStationAlarmDelayEvent
+  | OutgoingEventStationAlarmArmedEvent;

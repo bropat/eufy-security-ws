@@ -459,6 +459,9 @@ export class EventForwarder {
                     case CommandType.CMD_INDOOR_ROTATE:
                         command = DeviceCommand.panAndTilt;
                         break;
+                    case CommandType.CMD_INDOOR_PAN_CALIBRATION:
+                        command = DeviceCommand.calibrate;
+                        break;
                     case CommandType.CMD_SET_DEVS_TONE_FILE:
                         command = DeviceCommand.triggerAlarm;
                         break;
@@ -511,6 +514,24 @@ export class EventForwarder {
                 name: name,
                 value: value as JSONValue,
             }, 10);
+        });
+
+        station.on("alarm delay event", (station: Station, alarmDelayEvent: AlarmEvent, alarmDelay: number) => {
+            this.forwardEvent({
+                source: "station",
+                event: StationEvent.alarmDelayEvent,
+                serialNumber: station.getSerial(),
+                alarmDelayEvent: alarmDelayEvent,
+                alarmDelay: alarmDelay
+            }, 11);
+        });
+
+        station.on("alarm armed event", (station: Station) => {
+            this.forwardEvent({
+                source: "station",
+                event: StationEvent.alarmDelayEvent,
+                serialNumber: station.getSerial()
+            }, 11);
         });
 
     }
