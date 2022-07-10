@@ -20,7 +20,7 @@ export interface DeviceStateSchema0 {
     batteryUsageLastWeek?: number;
     motionDetected?: boolean;
     personDetected?: boolean;
-    personName?: string;
+    peopleNames?: string;
     soundDetected?: boolean;
     petDetected?: boolean;
     cryingDetected?: boolean;
@@ -241,7 +241,7 @@ export const dumpDevice = (device: Device, schemaVersion: number): DeviceState =
         batteryUsageLastWeek: device.getPropertyValue(PropertyName.DeviceBatteryUsageLastWeek) as number,
         motionDetected: device.getPropertyValue(PropertyName.DeviceMotionDetected) as boolean,
         personDetected: device.getPropertyValue(PropertyName.DevicePersonDetected) as boolean,
-        personName: device.getPropertyValue(PropertyName.DevicePersonName) as string,
+        peopleNames: device.getPropertyValue(PropertyName.DevicePeopleNames) as string,
         soundDetected: device.getPropertyValue(PropertyName.DeviceSoundDetected) as boolean,
         petDetected: device.getPropertyValue(PropertyName.DevicePetDetected) as boolean,
         cryingDetected: device.getPropertyValue(PropertyName.DeviceCryingDetected) as boolean,
@@ -428,7 +428,7 @@ export const dumpDevice = (device: Device, schemaVersion: number): DeviceState =
 
     // All schema >= 10
     const device9 = device8 as DeviceStateSchema9;
-    device9.imageMirrored = device.getPropertyValue(PropertyName.DeviceImageMirrored)?.value as boolean;
+    device9.imageMirrored = device.getPropertyValue(PropertyName.DeviceImageMirrored) as boolean;
 
     return device9;
 };
