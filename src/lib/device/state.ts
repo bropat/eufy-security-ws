@@ -381,7 +381,6 @@ export const dumpDevice = (device: Device, schemaVersion: number): DeviceState =
         return device7;
     }
 
-    // All schemas >= 10
     const device8 = device7 as DeviceStateSchema8;
     device8.notificationRadarDetector = device.getPropertyValue(PropertyName.DeviceNotificationRadarDetector) as boolean;
     device8.continuousRecording = device.getPropertyValue(PropertyName.DeviceContinuousRecording) as boolean;
@@ -426,9 +425,9 @@ export const dumpDevice = (device: Device, schemaVersion: number): DeviceState =
         return device8;
     }
 
-    // All schema >= 10
+    // All schemas >= 11
     const device9 = device8 as DeviceStateSchema9;
     device9.imageMirrored = device.getPropertyValue(PropertyName.DeviceImageMirrored) as boolean;
-
+    
     return device9;
 };

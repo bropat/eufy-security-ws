@@ -397,6 +397,42 @@ interface {
 }
 ```
 
+### `alarm delay event`
+
+[compatible with schema version: 11+]
+
+This event is sent whenever an alarm delay event occurred.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "station";
+    event: "alarm delay event";
+    serialNumber: string;
+    alarmDelayEvent: AlarmEvent;
+    alarmDelay: number;
+  }
+}
+```
+
+### `alarm armed event`
+
+[compatible with schema version: 11+]
+
+This event is sent whenever an alarm armed event occurred.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "station";
+    event: "alarm armed event";
+    serialNumber: string;
+  }
+}
+```
+
 ## Device level events
 
 ### `device added`
@@ -573,6 +609,7 @@ interface {
       defaultAngle?: boolean;                                         // [added with schema version: 10+]
       defaultAngleIdleTime?: number;                                  // [added with schema version: 10+]
       soundDetectionRoundLook?: boolean;                              // [added with schema version: 10+]
+      imageMirrored?: boolean;                                        // [added with schema version: 11+]
     }
   }
 }
@@ -752,6 +789,7 @@ interface {
       defaultAngle?: boolean;                                         // [added with schema version: 10+]
       defaultAngleIdleTime?: number;                                  // [added with schema version: 10+]
       soundDetectionRoundLook?: boolean;                              // [added with schema version: 10+]
+      imageMirrored?: boolean;                                        // [added with schema version: 11+]
     }
   }
 }

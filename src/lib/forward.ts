@@ -389,6 +389,14 @@ export class EventForwarder {
             }, 3);
         });
 
+        station.on("alarm armed event", (station: Station) => {
+            this.forwardEvent({
+                source: "station",
+                event: StationEvent.alarmArmedEvent,
+                serialNumber: station.getSerial()
+            }, 3);
+        });
+
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         station.on("rtsp url", (station: Station, channel:number, value: string) => {
             this.clients.driver.getStationDevice(station.getSerial(), channel).then((device: Device) => {
