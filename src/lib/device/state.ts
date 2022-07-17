@@ -20,7 +20,7 @@ export interface DeviceStateSchema0 {
     batteryUsageLastWeek?: number;
     motionDetected?: boolean;
     personDetected?: boolean;
-    peopleNames?: string;
+    personName?: string;
     soundDetected?: boolean;
     petDetected?: boolean;
     cryingDetected?: boolean;
@@ -241,7 +241,7 @@ export const dumpDevice = (device: Device, schemaVersion: number): DeviceState =
         batteryUsageLastWeek: device.getPropertyValue(PropertyName.DeviceBatteryUsageLastWeek) as number,
         motionDetected: device.getPropertyValue(PropertyName.DeviceMotionDetected) as boolean,
         personDetected: device.getPropertyValue(PropertyName.DevicePersonDetected) as boolean,
-        peopleNames: device.getPropertyValue(PropertyName.DevicePeopleNames) as string,
+        personName: device.getPropertyValue(PropertyName.DevicePersonName) as string,
         soundDetected: device.getPropertyValue(PropertyName.DeviceSoundDetected) as boolean,
         petDetected: device.getPropertyValue(PropertyName.DevicePetDetected) as boolean,
         cryingDetected: device.getPropertyValue(PropertyName.DeviceCryingDetected) as boolean,
