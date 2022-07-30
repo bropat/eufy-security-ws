@@ -1,4 +1,4 @@
-import { AudioCodec, Camera, CommandResult, CommandType, Device, DoorbellCamera, EntrySensor, ErrorCode, IndoorCamera, MotionSensor, ParamType, PropertyValue, Station, StreamMetadata, VideoCodec, AlarmEvent, BatteryDoorbellCamera } from "eufy-security-client";
+import { AudioCodec, Camera, CommandResult, CommandType, Device, DoorbellCamera, EntrySensor, ErrorCode, IndoorCamera, MotionSensor, ParamType, PropertyValue, Station, StreamMetadata, VideoCodec, AlarmEvent } from "eufy-security-client";
 import { Readable } from "stream";
 
 import { JSONValue, OutgoingEvent } from "./outgoing_message";
@@ -459,6 +459,9 @@ export class EventForwarder {
                     case CommandType.CMD_INDOOR_ROTATE:
                         command = DeviceCommand.panAndTilt;
                         break;
+                    case CommandType.CMD_INDOOR_PAN_CALIBRATION:
+                        command = DeviceCommand.calibrate;
+                        break;
                     case CommandType.CMD_SET_DEVS_TONE_FILE:
                         command = DeviceCommand.triggerAlarm;
                         break;
@@ -537,7 +540,7 @@ export class EventForwarder {
                 event: StationEvent.alarmArmDelayEvent,
                 serialNumber: station.getSerial(),
                 armDelay: armDelay
-            }, 11);
+            }, 12);
         });
     }
 

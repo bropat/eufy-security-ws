@@ -433,6 +433,24 @@ interface {
 }
 ```
 
+### `alarm arm delay event`
+
+[compatible with schema version: 12+]
+
+This event is sent whenever an alarm arm delay event occurred.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "station";
+    event: "alarm arm delay event";
+    serialNumber: string;
+    alarmDelay: number;
+  }
+}
+```
+
 ## Device level events
 
 ### `device added`

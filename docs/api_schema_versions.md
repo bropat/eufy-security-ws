@@ -69,3 +69,7 @@ Base schema.
 
 * Added new property `imageMirrored` to Device
 * Added new Station events `alarmDelayEvent` and `alarmArmedEvent`
+
+## Schema 12
+
+* Added new Station event `alarmArmDelayEvent`
