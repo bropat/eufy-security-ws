@@ -2,18 +2,68 @@
 
 This document describes the changes that are introduced with each schema version.
 
-## Schema 0
+## Schema 13
 
-Base schema.
+* Modified Station event `command result` adding custom data
+* Modified Device event `command result` adding custom data
+* Modified Station commands `get_properties` and `get_properties_metadata` to only return supported properties (schema versioned)
+* Modified Device commands `get_properties` and `get_properties_metadata` to only return supported properties (schema versioned)
+* Added new Device events `locked`, `package delivered` , `package stranded`, `package taken`, `someone loitering`, `radar motion detected`, `alarm 911`, `shake alarm`, `wrong try-protect alarm`, `long time not close`, `low battery`, `jammed`, `talkback started` and `talkback stopped`
+* Added new commands `snooze`, `unlock`, `is_downloading`, `start_talkback`, `stop_talkback`, `is_talkback_ongoing` and `talkback_audio_data` to Device
+* Removed deprecated commands `set_status_led`, `set_auto_night_vision`, `set_motion_detection`, `set_sound_detection`, `set_pet_detection`, `set_rtsp_stream`, `set_anti_theft_detection`, `set_watermark`, `enable_device` and `lock_device` to Device. Please use instead `set_property` command.
+* Changed `start_listening` response to only list station and device serial numbers (removed all properties). Please use now appropiate calls for getting properties (`get_properties` etc.)
+* Device events `device added` and `device removed` only returns the device serial number (no more all properties of the device)
+* Station events `station added` and `station removed` only returns the station serial number (no more all properties of the station)
+* Added new Station event `connection error`
+* Added new error types `device_download_already_running`, `device_download_not_running`, `device_only_one_download_at_a_time`, `deviceTalkbackAlreadyRunning`, `device_talkback_already_running`, `device_talkback_not_running`, `deviceOnlyOneTalkbackAtATime`, `device_only_one_talkback_at_a_time` and `device_rtsp_property_not_enabled` to Device
+* Added new error type `station_connection_timeout` to Station
 
-## Schema 1
+## Schema 12
 
-* Added `type`property to Device and Station
+* Added new Station event `alarmArmDelayEvent`
 
-## Schema 2
+## Schema 11
 
-* Added new commands `startLivestream`, `stopLivestream` and `isLiveStreaming` to Device
-* Added new Device events `livestreamStarted`,`livestreamStopped`, `livestreamVideoData` and `livestreamAudioData`
+* Added new property `imageMirrored` to Device
+* Added new Station events `alarmDelayEvent` and `alarmArmedEvent`
+
+## Schema 10
+
+* Added new Server event `shutdown`
+* Removed property `timestamp`from Station event `property changed`
+* Removed property `timestamp`from Device event `property changed`
+* Added new properties `notificationRadarDetector`, `continuousRecording`, `continuousRecordingType`, `loiteringDetection`, `loiteringDetectionRange`, `loiteringDetectionLength`, `motionDetectionSensitivityMode`, `motionDetectionSensitivityStandard`, `motionDetectionSensitivityAdvancedA`, `motionDetectionSensitivityAdvancedB`, `motionDetectionSensitivityAdvancedC`, `motionDetectionSensitivityAdvancedD`, `motionDetectionSensitivityAdvancedE`, `motionDetectionSensitivityAdvancedF`, `motionDetectionSensitivityAdvancedG`, `motionDetectionSensitivityAdvancedH`, `loiteringCustomResponsePhoneNotification`, `loiteringCustomResponseAutoVoiceResponse`, `loiteringCustomResponseAutoVoiceResponseVoice`, `loiteringCustomResponseHomeBaseNotification`, `loiteringCustomResponseTimeFrom`, `loiteringCustomResponseTimeTo`, `deliveryGuard`, `deliveryGuardPackageGuarding`, `deliveryGuardPackageGuardingVoiceResponseVoice`, `deliveryGuardPackageGuardingActivatedTimeFrom`, `deliveryGuardPackageGuardingActivatedTimeTo`, `deliveryGuardUncollectedPackageAlert`, `deliveryGuardUncollectedPackageAlertTimeToCheck`, `deliveryGuardPackageLiveCheckAssistance`, `dualCamWatchViewMode`, `ringAutoResponse`, `ringAutoResponseVoiceResponse`, `ringAutoResponseVoiceResponseVoice`, `ringAutoResponseTimeFrom`, `ringAutoResponseTimeTo`, `defaultAngle`, `defaultAngleIdleTime` and `soundDetectionRoundLook` to Device
+
+## Schema 9
+
+* Added new commands `setLogLevel`, `getLogLevel`, `startListeningLogs`, `stopListeningLogs` and `isMqttConnected` to Driver
+* Added new Driver events `mqttConnected`, `mqttDisconnected` , `logLevelChanged` and `logging`
+* Added new property `mqttConnected` to Driver
+* Added new command `calibrateLock` to Device
+* Added new properties `lockSettingsAutoLock`, `lockSettingsAutoLockTimer`, `lockSettingsAutoLockSchedule`, `lockSettingsAutoLockScheduleStartTime`, `lockSettingsAutoLockScheduleEndTime`, `lockSettingsOneTouchLocking`, `lockSettingsWrongTryProtection`, `lockSettingsWrongTryAttempts`, `lockSettingsWrongTryLockdownTime`, `lockSettingsScramblePasscode`, `lockSettingsSound`, `lockSettingsNotification`, `lockSettingsNotificationUnlocked` and `lockSettingsNotificationLocked` to Device
+
+## Schema 8
+
+* Added new properties `motionDetectionRange`, `motionDetectionRangeStandardSensitivity`, `motionDetectionRangeAdvancedLeftSensitivity`, `motionDetectionRangeAdvancedMiddleSensitivity`, `motionDetectionRangeAdvancedRightSensitivity`, `motionDetectionTestMode`, `motionTrackingSensitivity`, `motionAutoCruise`, `motionOutOfViewDetection`, `lightSettingsColorTemperatureManual`, `lightSettingsColorTemperatureMotion`, `lightSettingsColorTemperatureSchedule`, `lightSettingsMotionActivationMode`, `videoNightvisionImageAdjustment`, `videoColorNightvision` and `autoCalibration` to Device
+
+## Schema 7
+
+* Added new command `setCaptcha` to Driver
+* Added new Driver event `captchaRequest`
+
+## Schema 6
+
+* Added new commands `startRTSPLivestream`, `stopRTSPLivestream` and `isRTSPLiveStreaming` to Station
+
+## Schema 5
+
+* Added new properties `nightvision` and `batteryIsCharging` to Device
+* Added new properties `switchModeWithAccessCode`, `autoEndAlarm` and `turnOffAlarmWithButton` to Station
+
+## Schema 4
+
+* Added new properties `chargingStatus`, `wifiSignalLevel`, `rtspStreamUrl`, `chirpVolume`, `chirpTone`, `videoHdr`, `videoDistortionCorrection` and `videoRingRecord` to Device
+* Renamed properties from `motionDetectionSensivity`, `soundDetectionSensivity` and `ledStatus` to `motionDetectionSensitivity`, `soundDetectionSensitivity` and `statusLed` for Device
 
 ## Schema 3
 
@@ -27,49 +77,15 @@ Base schema.
 * Added new properties `timeFormat`, `alarmVolume`, `alarmTone`, `promptVolume`, `notificationSwitchModeSchedule`, `notificationSwitchModeGeofence`, `notificationSwitchModeApp`, `notificationSwitchModeKeypad` and `notificationStartAlarmDelay` to Station
 * Added new error codes `deviceInvalidProperty`, `deviceInvalidPropertyValue`, `devicePropertyNotSupported`, `deviceReadOnlyProperty`, `deviceNotSupported`, `deviceInvalidCommandValue`, `deviceLivestreamAlreadyRunning`, `deviceLivestreamNotRunning`, `schemaIncompatible`, `invalidCountryCode` and `invalidLanguageCode`
 
-## Schema 4
+## Schema 2
 
-* Added new properties `chargingStatus`, `wifiSignalLevel`, `rtspStreamUrl`, `chirpVolume`, `chirpTone`, `videoHdr`, `videoDistortionCorrection` and `videoRingRecord` to Device
-* Renamed properties from `motionDetectionSensivity`, `soundDetectionSensivity` and `ledStatus` to `motionDetectionSensitivity`, `soundDetectionSensitivity` and `statusLed` for Device
+* Added new commands `startLivestream`, `stopLivestream` and `isLiveStreaming` to Device
+* Added new Device events `livestreamStarted`,`livestreamStopped`, `livestreamVideoData` and `livestreamAudioData`
 
-## Schema 5
+## Schema 1
 
-* Added new properties `nightvision` and `batteryIsCharging` to Device
-* Added new properties `switchModeWithAccessCode`, `autoEndAlarm` and `turnOffAlarmWithButton` to Station
+* Added `type`property to Device and Station
 
-## Schema 6
+## Schema 0
 
-* Added new commands `startRTSPLivestream`, `stopRTSPLivestream` and `isRTSPLiveStreaming` to Station
-
-## Schema 7
-
-* Added new command `setCaptcha` to Driver
-* Added new Driver event `captchaRequest`
-
-## Schema 8
-
-* Added new properties `motionDetectionRange`, `motionDetectionRangeStandardSensitivity`, `motionDetectionRangeAdvancedLeftSensitivity`, `motionDetectionRangeAdvancedMiddleSensitivity`, `motionDetectionRangeAdvancedRightSensitivity`, `motionDetectionTestMode`, `motionTrackingSensitivity`, `motionAutoCruise`, `motionOutOfViewDetection`, `lightSettingsColorTemperatureManual`, `lightSettingsColorTemperatureMotion`, `lightSettingsColorTemperatureSchedule`, `lightSettingsMotionActivationMode`, `videoNightvisionImageAdjustment`, `videoColorNightvision` and `autoCalibration` to Device
-
-## Schema 9
-
-* Added new commands `setLogLevel`, `getLogLevel`, `startListeningLogs`, `stopListeningLogs` and `isMqttConnected` to Driver
-* Added new Driver events `mqttConnected`, `mqttDisconnected` , `logLevelChanged` and `logging`
-* Added new property `mqttConnected` to Driver
-* Added new command `calibrateLock` to Device
-* Added new properties `lockSettingsAutoLock`, `lockSettingsAutoLockTimer`, `lockSettingsAutoLockSchedule`, `lockSettingsAutoLockScheduleStartTime`, `lockSettingsAutoLockScheduleEndTime`, `lockSettingsOneTouchLocking`, `lockSettingsWrongTryProtection`, `lockSettingsWrongTryAttempts`, `lockSettingsWrongTryLockdownTime`, `lockSettingsScramblePasscode`, `lockSettingsSound`, `lockSettingsNotification`, `lockSettingsNotificationUnlocked` and `lockSettingsNotificationLocked` to Device
-
-## Schema 10
-
-* Added new Server event `shutdown`
-* Removed property `timestamp`from Station event `property changed`
-* Removed property `timestamp`from Device event `property changed`
-* Added new properties `notificationRadarDetector`, `continuousRecording`, `continuousRecordingType`, `loiteringDetection`, `loiteringDetectionRange`, `loiteringDetectionLength`, `motionDetectionSensitivityMode`, `motionDetectionSensitivityStandard`, `motionDetectionSensitivityAdvancedA`, `motionDetectionSensitivityAdvancedB`, `motionDetectionSensitivityAdvancedC`, `motionDetectionSensitivityAdvancedD`, `motionDetectionSensitivityAdvancedE`, `motionDetectionSensitivityAdvancedF`, `motionDetectionSensitivityAdvancedG`, `motionDetectionSensitivityAdvancedH`, `loiteringCustomResponsePhoneNotification`, `loiteringCustomResponseAutoVoiceResponse`, `loiteringCustomResponseAutoVoiceResponseVoice`, `loiteringCustomResponseHomeBaseNotification`, `loiteringCustomResponseTimeFrom`, `loiteringCustomResponseTimeTo`, `deliveryGuard`, `deliveryGuardPackageGuarding`, `deliveryGuardPackageGuardingVoiceResponseVoice`, `deliveryGuardPackageGuardingActivatedTimeFrom`, `deliveryGuardPackageGuardingActivatedTimeTo`, `deliveryGuardUncollectedPackageAlert`, `deliveryGuardUncollectedPackageAlertTimeToCheck`, `deliveryGuardPackageLiveCheckAssistance`, `dualCamWatchViewMode`, `ringAutoResponse`, `ringAutoResponseVoiceResponse`, `ringAutoResponseVoiceResponseVoice`, `ringAutoResponseTimeFrom`, `ringAutoResponseTimeTo`, `defaultAngle`, `defaultAngleIdleTime` and `soundDetectionRoundLook` to Device
-
-## Schema 11
-
-* Added new property `imageMirrored` to Device
-* Added new Station events `alarmDelayEvent` and `alarmArmedEvent`
-
-## Schema 12
-
-* Added new Station event `alarmArmDelayEvent`
+Base schema.

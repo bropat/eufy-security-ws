@@ -12,6 +12,7 @@ export enum DeviceCommand {
     quickResponse = "device.quick_response",
     startDownload = "device.start_download",
     cancelDownload = "device.cancel_download",
+    isDownloading = "device.is_downloading",
     getVoices = "device.get_voices",
     getCommands = "device.get_commands",
     hasCommand = "device.has_command",
@@ -22,8 +23,14 @@ export enum DeviceCommand {
     calibrate = "device.calibrate",
     setDefaultAngle = "device.set_default_angle",
     setPrivacyAngle = "device.set_privacy_angle",
+    unlock = "device.unlock",
+    startTalkback = "device.start_talkback",
+    stopTalkback = "device.stop_talkback",
+    isTalkbackOngoing = "device.is_talkback_ongoing",
+    talkbackAudioData = "device.talkback_audio_data",
+    snooze = "device.snooze",
 
-    //Deprecated - Commands below will be removed in a feature version!
+    // Deprecated - The following commands have been removed from schema version 13
     setStatusLed = "device.set_status_led",
     setAutoNightVision = "device.set_auto_night_vision",
     setMotionDetection = "device.set_motion_detection",

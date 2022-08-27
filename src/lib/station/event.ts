@@ -1,4 +1,4 @@
-import { AlarmEvent } from "eufy-security-client";
+import { AlarmEvent, CustomData } from "eufy-security-client";
 
 import { JSONValue, OutgoingBaseEvent } from "../outgoing_message";
 
@@ -10,6 +10,7 @@ export enum StationEvent {
     commandResult = "command result",
     connected = "connected",
     disconnected = "disconnected",
+    connectionError = "connection error",
     propertyChanged = "property changed",
     alarmEvent = "alarm event",
     alarmDelayEvent = "alarm delay event",
@@ -57,6 +58,7 @@ export interface OutgoingEventStationCommandResult extends OutgoingEventStationB
     command: string;
     returnCode: number;
     returnCodeName: string;
+    customData?: CustomData;
 }
 
 export interface OutgoingEventStationConnected extends OutgoingEventStationBase {
@@ -107,6 +109,12 @@ export interface OutgoingEventStationAlarmArmDelayEvent extends OutgoingEventSta
     armDelay: number;
 }
 
+export interface OutgoingEventStationConnectionError extends OutgoingEventStationBase {
+    source: "station";
+    event: StationEvent.connectionError;
+    serialNumber: string;
+}
+
 export type OutgoingEventStation =
   | OutgoingEventStationAdded
   | OutgoingEventStationRemoved
@@ -119,4 +127,5 @@ export type OutgoingEventStation =
   | OutgoingEventStationAlarmEvent
   | OutgoingEventStationAlarmDelayEvent
   | OutgoingEventStationAlarmArmedEvent
-  | OutgoingEventStationAlarmArmDelayEvent;
+  | OutgoingEventStationAlarmArmDelayEvent
+  | OutgoingEventStationConnectionError;

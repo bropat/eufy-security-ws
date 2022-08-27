@@ -35,8 +35,8 @@ interface {
               connected:
               pushConnected:
           }
-          stations: Partial<StationState>[];
-          devices: Partial<DeviceState>[];
+          stations: string[];
+          devices: string[];
       }
   };
 }
@@ -53,10 +53,10 @@ In an attempt to keep compatibility between different server and client versions
    ```json
    {
      "type": "version",
-     "driverVersion": "0.8.0",
-     "serverVersion": "0.1.0",
+     "driverVersion": "2.2.0",
+     "serverVersion": "1.0.0",
      "minSchemaVersion": 0,
-     "maxSchemaVersion": 1
+     "maxSchemaVersion": 13
    }
    ```
 

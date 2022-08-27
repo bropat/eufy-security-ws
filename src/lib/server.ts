@@ -3,7 +3,7 @@ import { WebSocketServer } from "ws"
 import { Logger } from "tslog";
 import { EventEmitter, once } from "events";
 import { Server as HttpServer, createServer, IncomingMessage as HttpIncomingMessage } from "http";
-import { DeviceNotFoundError, EufySecurity, InvalidCountryCodeError, InvalidLanguageCodeError, InvalidPropertyValueError, libVersion, NotSupportedError, ReadOnlyPropertyError, StationNotFoundError, WrongStationError, PropertyNotSupportedError, InvalidPropertyError, InvalidCommandValueError, Device } from "eufy-security-client";
+import { DeviceNotFoundError, EufySecurity, InvalidCountryCodeError, InvalidLanguageCodeError, InvalidPropertyValueError, libVersion, NotSupportedError, ReadOnlyPropertyError, StationNotFoundError, WrongStationError, PropertyNotSupportedError, InvalidPropertyError, InvalidCommandValueError, Device, LivestreamNotRunningError as EufyLivestreamNotRunningError, LivestreamAlreadyRunningError as EufyLivestreamAlreadyRunningError, InvalidPropertyError as EufyInvalidPropertyError, PropertyNotSupportedError as EufyPropertyNotSupportedError, StationConnectTimeoutError, RTSPPropertyNotEnabledError } from "eufy-security-client";
 
 import { EventForwarder } from "./forward";
 import type * as OutgoingMessages from "./outgoing_message";
@@ -12,7 +12,7 @@ import { version, minSchemaVersion, maxSchemaVersion } from "./const";
 import { DeviceMessageHandler } from "./device/message_handler";
 import { StationMessageHandler } from "./station/message_handler";
 import { IncomingMessageStation } from "./station/incoming_message";
-import { BaseError, ErrorCode, LivestreamAlreadyRunningError, LivestreamNotRunningError, SchemaIncompatibleError, UnknownCommandError } from "./error";
+import { BaseError, DownloadAlreadyRunningError, DownloadNotRunningError, DownloadOnlyOneAtATimeError, ErrorCode, LivestreamAlreadyRunningError, LivestreamNotRunningError, SchemaIncompatibleError, TalkbackAlreadyRunningError, TalkbackNotRunningError, TalkbackOnlyOneAtATimeError, UnknownCommandError } from "./error";
 import { Instance } from "./instance";
 import { IncomingMessageDevice } from "./device/incoming_message";
 import { ServerCommand } from "./command";
@@ -21,6 +21,7 @@ import { IncomingMessageDriver } from "./driver/incoming_message";
 import { dumpState } from "./state";
 import { LoggingEventForwarder } from "./logging";
 import { ServerEvent } from "./event";
+import { DriverEvent } from "./driver/event";
 
 export class Client {
 
@@ -29,6 +30,12 @@ export class Client {
     private _outstandingPing = false;
     public schemaVersion = minSchemaVersion;
     public receiveLivestream: {
+        [index: string]: boolean;
+    } = {};
+    public receiveDownloadStream: {
+        [index: string]: boolean;
+    } = {};
+    public sendTalkbackStream: {
         [index: string]: boolean;
     } = {};
 
@@ -93,6 +100,22 @@ export class Client {
                     state: await dumpState(this.driver, this.schemaVersion),
                 });
                 this.receiveEvents = true;
+                if (DriverMessageHandler.tfa) {
+                    this.sendEvent({
+                        source: "driver",
+                        event: DriverEvent.verifyCode,
+                    });
+                }
+                if (DriverMessageHandler.captchaId && DriverMessageHandler.captcha) {
+                    if (this.schemaVersion >= 7) {
+                        this.sendEvent({
+                            source: "driver",
+                            event: DriverEvent.captchaRequest,
+                            captchaId: DriverMessageHandler.captchaId,
+                            captcha: DriverMessageHandler.captcha,
+                        });
+                    }
+                }
                 return;
             }
 
@@ -142,19 +165,19 @@ export class Client {
                 this.logger.error("Message error", error);
                 return this.sendResultError(msg.messageId, ErrorCode.invalidLanguageCode);
             }
-            if (error instanceof InvalidPropertyError) {
+            if (error instanceof InvalidPropertyError || error instanceof EufyInvalidPropertyError) {
                 this.logger.error("Message error", error);
                 return this.sendResultError(msg.messageId, ErrorCode.deviceInvalidProperty);
             }
-            if (error instanceof LivestreamAlreadyRunningError) {
+            if (error instanceof LivestreamAlreadyRunningError || error instanceof EufyLivestreamAlreadyRunningError) {
                 this.logger.error("Message error", error);
                 return this.sendResultError(msg.messageId, ErrorCode.deviceLivestreamAlreadyRunning);
             }
-            if (error instanceof LivestreamNotRunningError) {
+            if (error instanceof LivestreamNotRunningError || error instanceof EufyLivestreamNotRunningError) {
                 this.logger.error("Message error", error);
                 return this.sendResultError(msg.messageId, ErrorCode.deviceLivestreamNotRunning);
             }
-            if (error instanceof PropertyNotSupportedError) {
+            if (error instanceof PropertyNotSupportedError || error instanceof EufyPropertyNotSupportedError) {
                 this.logger.error("Message error", error);
                 return this.sendResultError(msg.messageId, ErrorCode.devicePropertyNotSupported);
             }
@@ -162,6 +185,39 @@ export class Client {
                 this.logger.error("Message error", error);
                 return this.sendResultError(msg.messageId, ErrorCode.deviceInvalidCommandValue);
             }
+            if (error instanceof DownloadAlreadyRunningError) {
+                this.logger.error("Message error", error);
+                return this.sendResultError(msg.messageId, ErrorCode.deviceDownloadAlreadyRunning);
+            }
+            if (error instanceof DownloadNotRunningError) {
+                this.logger.error("Message error", error);
+                return this.sendResultError(msg.messageId, ErrorCode.deviceDownloadNotRunning);
+            }
+            if (error instanceof DownloadOnlyOneAtATimeError) {
+                this.logger.error("Message error", error);
+                return this.sendResultError(msg.messageId, ErrorCode.deviceOnlyOneDownloadAtATime);
+            }
+            if (error instanceof TalkbackAlreadyRunningError) {
+                this.logger.error("Message error", error);
+                return this.sendResultError(msg.messageId, ErrorCode.deviceTalkbackAlreadyRunning);
+            }
+            if (error instanceof TalkbackNotRunningError) {
+                this.logger.error("Message error", error);
+                return this.sendResultError(msg.messageId, ErrorCode.deviceTalkbackNotRunning);
+            }
+            if (error instanceof TalkbackOnlyOneAtATimeError) {
+                this.logger.error("Message error", error);
+                return this.sendResultError(msg.messageId, ErrorCode.deviceOnlyOneTalkbackAtATime);
+            }
+            if (error instanceof StationConnectTimeoutError) {
+                this.logger.error("Message error", error);
+                return this.sendResultError(msg.messageId, ErrorCode.stationConnectionTimeout);
+            }
+            if (error instanceof RTSPPropertyNotEnabledError) {
+                this.logger.error("Message error", error);
+                return this.sendResultError(msg.messageId, ErrorCode.deviceRTSPPropertyNotEnabled);
+            }
+            
 
             this.logger.error("Unexpected error", error as Error);
             this.sendResultError(msg.messageId, ErrorCode.unknownError);
@@ -225,11 +281,31 @@ export class ClientsController {
 
     public clients: Array<Client> = [];
     private pingInterval?: NodeJS.Timeout;
-    private eventForwarder?: EventForwarder;
+    private eventForwarder: EventForwarder;
     private cleanupScheduled = false;
     private loggingEventForwarder?: LoggingEventForwarder;
+    private readonly closureReasons: { [index: number]: string; } = {
+        1000: "Normal Closure",
+        1001: "Going Away",
+        1002: "Protocol error",
+        1003: "Unsupported Data",
+        1005: "Closure without status (client implementation issue)",
+        1006: "Abnormal Closure",
+        1007: "Invalid frame payload data",
+        1008: "Policy Viollation",
+        1009: "Message Too Big",
+        1010: "Mantatory Extension",
+        1011: "Internal Error",
+        1012: "Service Restart",
+        1013: "Try Again Later",
+        1014: "Bad Gateway",
+        1015: "TLS handshake failure"
+    }
 
-    constructor(public driver: EufySecurity, private logger: Logger) {}
+    constructor(public driver: EufySecurity, private logger: Logger) {
+        this.eventForwarder = new EventForwarder(this, logger);
+        this.eventForwarder.start();
+    }
 
     addSocket(socket: WebSocket, request: HttpIncomingMessage): void {
         this.logger.debug(`New client with ip: ${request.socket.remoteAddress} port: ${request.socket.remotePort}`);
@@ -237,8 +313,9 @@ export class ClientsController {
         socket.on("error", (error) => {
             this.logger.error(`Client with ip: ${request.socket.remoteAddress} port: ${request.socket.remotePort} socket error`, error);
         });
-        socket.on("close", (code, reason) => {
-            this.logger.info(`Client disconnected with ip: ${request.socket.remoteAddress} port: ${request.socket.remotePort} code: ${code} reason: ${reason}`);
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        socket.on("close", (code: number, reason: Buffer) => {
+            this.logger.info(`Client disconnected with ip: ${request.socket.remoteAddress} port: ${request.socket.remotePort} code: ${code} reason: ${this.closureReasons[code]}`);
             this.scheduleClientCleanup();
         });
         client.sendVersion();
@@ -258,11 +335,6 @@ export class ClientsController {
 
                 this.clients = newClients;
             }, 30000);
-        }
-
-        if (this.eventForwarder === undefined) {
-            this.eventForwarder = new EventForwarder(this);
-            this.eventForwarder.start();
         }
     }
 
@@ -316,7 +388,39 @@ export class ClientsController {
                     client.receiveLivestream[device.getSerial()] = false;
                     DeviceMessageHandler.removeStreamingDevice(station.getSerial(), client);
                 }).catch((error) => {
-                    this.logger.error(`Error doing cleanup of client`, error);
+                    this.logger.error(`Error doing livestream cleanup of client`, error);
+                });
+            });
+            Object.keys(client.receiveDownloadStream).forEach(serialNumber => {
+                this.driver.getDevice(serialNumber).then((device: Device) => {
+                    const station = this.driver.getStation(device.getStationSerial());
+                    const downloadingDevices = DeviceMessageHandler.getDownloadingDevices(station.getSerial());
+
+                    if (client.receiveDownloadStream[serialNumber] === true && downloadingDevices.length === 1 && downloadingDevices.includes(client)) {
+                        if (station.isDownloading(device))
+                            station.cancelDownload(device);
+                    }
+
+                    client.receiveDownloadStream[device.getSerial()] = false;
+                    DeviceMessageHandler.removeDownloadingDevice(station.getSerial(), client);
+                }).catch((error) => {
+                    this.logger.error(`Error doing download cleanup of client`, error);
+                });
+            });
+            Object.keys(client.sendTalkbackStream).forEach(serialNumber => {
+                this.driver.getDevice(serialNumber).then((device: Device) => {
+                    const station = this.driver.getStation(device.getStationSerial());
+                    const talkbackingDevices = DeviceMessageHandler.getTalkbackingDevices(station.getSerial());
+
+                    if (client.sendTalkbackStream[serialNumber] === true && talkbackingDevices.length === 1 && talkbackingDevices.includes(client)) {
+                        if (station.isTalkbackOngoing(device))
+                            station.stopTalkback(device);
+                    }
+
+                    client.sendTalkbackStream[device.getSerial()] = false;
+                    DeviceMessageHandler.removeTalkbackingDevice(station.getSerial(), client);
+                }).catch((error) => {
+                    this.logger.error(`Error doing download cleanup of client`, error);
                 });
             });
         });

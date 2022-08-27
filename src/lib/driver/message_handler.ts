@@ -5,12 +5,14 @@ import { UnknownCommandError } from "../error";
 import { Client, ClientsController } from "../server";
 import { DriverCommand } from "./command";
 import { DriverEvent } from "./event";
-import { IncomingMessageDriver, IncomingCommandSetVerifyCode, IncomingCommandGetVideoEvents, IncomingCommandSetCaptcha, IncomingCommandSetLogLevel } from "./incoming_message";
+import { IncomingMessageDriver, IncomingCommandSetVerifyCode, IncomingCommandGetVideoEvents, IncomingCommandSetCaptcha, IncomingCommandSetLogLevel, IncomingCommandGetAlarmEvents, IncomingCommandGetHistoryEvents } from "./incoming_message";
 import { DriverResultTypes } from "./outgoing_message";
 
 export class DriverMessageHandler {
 
-    static captchaId: string | null = null;
+    public static captchaId: string | null = null;
+    public static captcha: string | null = null;
+    public static tfa = false;
 
     static async handle(message: IncomingMessageDriver, driver: EufySecurity, client: Client, clientsController: ClientsController, logger: Logger): Promise<DriverResultTypes[DriverCommand]> {
         const { command } = message;
@@ -19,6 +21,7 @@ export class DriverMessageHandler {
             {
                 let result = true;
                 try {
+                    DriverMessageHandler.tfa = false;
                     await driver.connect({
                         verifyCode: (message as IncomingCommandSetVerifyCode).verifyCode
                     } as LoginOptions);
@@ -35,7 +38,8 @@ export class DriverMessageHandler {
                 let result = true;
                 try {
                     const captchaId = (message as IncomingCommandSetCaptcha).captchaId ? (message as IncomingCommandSetCaptcha).captchaId : DriverMessageHandler.captchaId;
-                    this.captchaId = null;
+                    DriverMessageHandler.captchaId = null;
+                    DriverMessageHandler.captcha = null;
                     if (captchaId) {
                         await driver.connect({
                             captcha: {
@@ -100,13 +104,15 @@ export class DriverMessageHandler {
                     }
                     const events = await driver.getApi().getVideoEvents(startTime, endTime, videoMessage.filter, videoMessage.maxResults);
                     return { events: events };
+                } else {
+                    throw new UnknownCommandError(command);
                 }
             }
             case DriverCommand.getAlarmEvents:
             {
                 if (client.schemaVersion >= 3) {
                     const fifthyYearsInMilliseconds = 15 * 365 * 24 * 60 * 60 * 1000;
-                    const alarmMessage = message as IncomingCommandGetVideoEvents;
+                    const alarmMessage = message as IncomingCommandGetAlarmEvents;
                     let startTime = new Date(new Date().getTime() - fifthyYearsInMilliseconds);
                     let endTime = new Date();
                     if (alarmMessage.startTimestampMs !== undefined) {
@@ -117,13 +123,15 @@ export class DriverMessageHandler {
                     }
                     const events = await driver.getApi().getAlarmEvents(startTime, endTime, alarmMessage.filter, alarmMessage.maxResults);
                     return { events: events };
+                } else {
+                    throw new UnknownCommandError(command);
                 }
             }
             case DriverCommand.getHistoryEvents:
             {
                 if (client.schemaVersion >= 3) {
                     const fifthyYearsInMilliseconds = 15 * 365 * 24 * 60 * 60 * 1000;
-                    const historyMessage = message as IncomingCommandGetVideoEvents;
+                    const historyMessage = message as IncomingCommandGetHistoryEvents;
                     let startTime = new Date(new Date().getTime() - fifthyYearsInMilliseconds);
                     let endTime = new Date();
                     if (historyMessage.startTimestampMs !== undefined) {
@@ -134,6 +142,8 @@ export class DriverMessageHandler {
                     }
                     const events = await driver.getApi().getHistoryEvents(startTime, endTime, historyMessage.filter, historyMessage.maxResults);
                     return { events: events };
+                } else {
+                    throw new UnknownCommandError(command);
                 }
             }
             case DriverCommand.getLogLevel:

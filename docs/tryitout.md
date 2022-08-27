@@ -1,8 +1,20 @@
 # Trying it out
 
-These instructions are for development only. These CLIs will be available as `eufy-security-server` and `eufy-security-client` after installing the NPM package.
+These CLIs will be available as `eufy-security-server` and `eufy-security-client` after installing the NPM package.
 
 ## Start server
+
+```shell
+Usage: server [options]
+
+Options:
+  -c, --config <file>  Configuration file (default: looks in current directory)
+  -p, --port <port>    Listening port (default: 3000)
+  -H, --host <host>    Listening Host (default: "localhost")
+  -v, --verbose
+  -q, --quiet
+  -h, --help           display help for command
+```
 
 ```shell
 ts-node src/bin/server.ts
@@ -33,6 +45,32 @@ To specify different listening port specify `--port`.
 
 Requires server to be running.
 
+```shell
+Usage: client [options]
+
+Options:
+  -s, --schemaVersion <host>    Schema version the server should support (default: max client supported version)
+  -H, --host <host>             Host to connect to (default: "localhost")
+  -p, --port <port>             Port to connect to (default: 3000)
+  -c, --command <command_name>  Silent command to execute (choices: "driver.set_verify_code", "driver.set_captcha", "driver.poll_refresh", "driver.is_connected", "driver.is_push_connected",
+                                "driver.connect", "driver.disconnect", "driver.get_alarm_events", "driver.get_video_events", "driver.get_history_events", "driver.set_log_level",
+                                "driver.get_log_level", "driver.start_listening_logs", "driver.stop_listening_logs", "driver.is_mqtt_connected", "driver.isConnected", "driver.isPushConnected",
+                                "device.get_properties_metadata", "device.get_properties", "device.set_property", "device.has_property", "device.start_livestream", "device.stop_livestream",
+                                "device.is_livestreaming", "device.trigger_alarm", "device.reset_alarm", "device.pan_and_tilt", "device.quick_response", "device.start_download",
+                                "device.cancel_download", "device.is_downloading", "device.get_voices", "device.get_commands", "device.has_command", "device.start_rtsp_livestream",
+                                "device.stop_rtsp_livestream", "device.is_rtsp_livestreaming", "device.calibrate_lock", "device.calibrate", "device.set_default_angle",
+                                "device.set_privacy_angle", "device.unlock", "device.start_talkback", "device.stop_talkback", "device.is_talkback_ongoing", "device.talkback_audio_data",
+                                "device.set_status_led", "device.set_auto_night_vision", "device.set_motion_detection", "device.set_sound_detection", "device.set_pet_detection",
+                                "device.set_rtsp_stream", "device.set_anti_theft_detection", "device.set_watermark", "device.enable_device", "device.lock_device", "station.reboot",
+                                "station.is_connected", "station.connect", "station.disconnect", "station.get_properties_metadata", "station.get_properties", "station.set_property",
+                                "station.has_property", "station.trigger_alarm", "station.reset_alarm", "station.get_commands", "station.has_command", "station.set_guard_mode",
+                                "station.isConnected")
+  -a, --arguments <args...>     Arguments for silent command if expected
+  -t, --timeout <command_name>  Silent command timeout seconds (default: 30)
+  -v, --verbose
+  -h, --help                    display help for command
+```
+
 Default connects to `ws://localhost:3000`:
 
 ```shell
@@ -51,4 +89,24 @@ To specify a schema version other than the latest (`maxSchemaVersion`):
 ts-node src/bin/client.ts --schemaVersion 0
 ```
 
+To run single command in silent mode (default interactive mode):
+
+```shell
+ts-node src/bin/client.ts --command device.start_livestream -a T1234P0123456789
+```
+
+```shell
+ts-node src/bin/client.ts --command device.set_property -a T1234P0123456789 enabled false
+```
+
 All these options can be combined.
+
+Return codes for silent command execution:
+
+| Return code | Meaning |
+| - | - |
+| 0 | Command executed successfully |
+| 1 | Wrong command syntax/arguments or not existing command |
+| 2 | Command executed and returned error |
+| 3 | Command execution timed out |
+| 4 | WebSocket error |

@@ -114,6 +114,11 @@ export interface IncomingCommandDeviceCancelDownload extends IncomingCommandDevi
     voiceId: number;
 }
 
+export interface IncomingCommandDeviceIsDownloading extends IncomingCommandDeviceBase {
+    command: DeviceCommand.isDownloading;
+}
+
+
 export interface IncomingCommandDeviceGetVoices extends IncomingCommandDeviceBase {
     command: DeviceCommand.getVoices;
 }
@@ -160,6 +165,35 @@ export interface IncomingCommandDeviceSetPrivacyAngle extends IncomingCommandDev
     command: DeviceCommand.setPrivacyAngle;
 }
 
+export interface IncomingCommandDeviceUnlock extends IncomingCommandDeviceBase {
+    command: DeviceCommand.unlock;
+}
+
+export interface IncomingCommandDeviceStartTalkback extends IncomingCommandDeviceBase {
+    command: DeviceCommand.startTalkback;
+}
+
+export interface IncomingCommandDeviceStopTalkback extends IncomingCommandDeviceBase {
+    command: DeviceCommand.stopTalkback;
+}
+
+export interface IncomingCommandDeviceIsTalkbackOngoing extends IncomingCommandDeviceBase {
+    command: DeviceCommand.isTalkbackOngoing;
+}
+
+export interface IncomingCommandDeviceTalkbackAudioData extends IncomingCommandDeviceBase {
+    command: DeviceCommand.talkbackAudioData;
+    buffer: Buffer;
+}
+
+export interface IncomingCommandDeviceSnooze extends IncomingCommandDeviceBase {
+    command: DeviceCommand.snooze;
+    snoozeTime: number;
+    snoozeChime?: boolean;
+    snoozeMotion?: boolean;
+    snoozeHomebase?: boolean;
+}
+
 export type IncomingMessageDevice =
   | IncomingCommandDeviceSetStatusLed
   | IncomingCommandDeviceSetAutoNightVision
@@ -183,6 +217,7 @@ export type IncomingMessageDevice =
   | IncomingCommandDeviceQuickResponse
   | IncomingCommandDeviceStartDownload
   | IncomingCommandDeviceCancelDownload
+  | IncomingCommandDeviceIsDownloading
   | IncomingCommandDeviceGetVoices
   | IncomingCommandDeviceHasProperty
   | IncomingCommandDeviceHasCommand
@@ -193,4 +228,10 @@ export type IncomingMessageDevice =
   | IncomingCommandDeviceCalibrateLock
   | IncomingCommandDeviceCalibrate
   | IncomingCommandDeviceSetDefaultAngle
-  | IncomingCommandDeviceSetPrivacyAngle;
+  | IncomingCommandDeviceSetPrivacyAngle
+  | IncomingCommandDeviceUnlock
+  | IncomingCommandDeviceStartTalkback
+  | IncomingCommandDeviceStopTalkback
+  | IncomingCommandDeviceIsTalkbackOngoing
+  | IncomingCommandDeviceTalkbackAudioData
+  | IncomingCommandDeviceSnooze;

@@ -3,3 +3,4 @@ config.json
 /dist/
 .vscode/*
 tsconfig.tsbuildinfo
+persistent.json

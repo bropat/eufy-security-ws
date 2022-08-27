@@ -1,3 +1,5 @@
+import { SmartSafeAlarm911Event, SmartSafeShakeAlarmEvent } from "eufy-security-client";
+
 import { JSONValue, OutgoingBaseEvent } from "../outgoing_message";
 
 export enum DeviceEvent {
@@ -23,6 +25,20 @@ export enum DeviceEvent {
     downloadAudioData = "download audio data",
     rtspLivestreamStarted = "rtsp livestream started",
     rtspLivestreamStopped = "rtsp livestream stopped",
+    locked = "locked",
+    packageDelivered = "package delivered",
+    packageStranded = "package stranded",
+    packageTaken = "package taken",
+    someoneLoitering = "someone loitering",
+    radarMotionDetected = "radar motion detected",
+    alarm911 = "alarm 911",
+    shakeAlarm = "shake alarm",
+    wrongTryProtectAlarm = "wrong try-protect alarm",
+    LongTimeNotClose = "long time not close",
+    lowBattery = "low battery",
+    jammed = "jammed",
+    talkbackStarted = "talkback started",
+    talkbackStopped = "talkback stopped",
 }
 
 export interface OutgoingEventDeviceBase extends OutgoingBaseEvent {
@@ -201,6 +217,104 @@ export interface OutgoingEventDeviceRTSPLivestreamStopped extends OutgoingEventD
     serialNumber: string;
 }
 
+export interface OutgoingEventDeviceLocked extends OutgoingEventDeviceBase {
+    source: "device";
+    event: DeviceEvent.locked;
+    serialNumber: string;
+    state: boolean;
+}
+
+export interface OutgoingEventDevicePackageDelivered extends OutgoingEventDeviceBase {
+    source: "device";
+    event: DeviceEvent.packageDelivered;
+    serialNumber: string;
+    state: boolean;
+}
+
+export interface OutgoingEventDevicePackageStranded extends OutgoingEventDeviceBase {
+    source: "device";
+    event: DeviceEvent.packageStranded;
+    serialNumber: string;
+    state: boolean;
+}
+
+export interface OutgoingEventDevicePackageTaken extends OutgoingEventDeviceBase {
+    source: "device";
+    event: DeviceEvent.packageTaken;
+    serialNumber: string;
+    state: boolean;
+}
+
+export interface OutgoingEventDeviceSomeoneLoitering extends OutgoingEventDeviceBase {
+    source: "device";
+    event: DeviceEvent.someoneLoitering;
+    serialNumber: string;
+    state: boolean;
+}
+
+export interface OutgoingEventDeviceRadarMotionDetected extends OutgoingEventDeviceBase {
+    source: "device";
+    event: DeviceEvent.radarMotionDetected;
+    serialNumber: string;
+    state: boolean;
+}
+
+export interface OutgoingEventDeviceAlarm911 extends OutgoingEventDeviceBase {
+    source: "device";
+    event: DeviceEvent.alarm911;
+    serialNumber: string;
+    state: boolean;
+    detail: SmartSafeAlarm911Event;
+}
+
+export interface OutgoingEventDeviceShakeAlarm extends OutgoingEventDeviceBase {
+    source: "device";
+    event: DeviceEvent.shakeAlarm;
+    serialNumber: string;
+    state: boolean;
+    detail: SmartSafeShakeAlarmEvent;
+}
+
+export interface OutgoingEventDeviceWrongTryProtectAlarm extends OutgoingEventDeviceBase {
+    source: "device";
+    event: DeviceEvent.wrongTryProtectAlarm;
+    serialNumber: string;
+    state: boolean;
+}
+
+export interface OutgoingEventDeviceLongTimeNotClose extends OutgoingEventDeviceBase {
+    source: "device";
+    event: DeviceEvent.LongTimeNotClose;
+    serialNumber: string;
+    state: boolean;
+}
+
+export interface OutgoingEventDeviceLowBattery extends OutgoingEventDeviceBase {
+    source: "device";
+    event: DeviceEvent.lowBattery;
+    serialNumber: string;
+    state: boolean;
+}
+
+export interface OutgoingEventDeviceJammed extends OutgoingEventDeviceBase {
+    source: "device";
+    event: DeviceEvent.jammed;
+    serialNumber: string;
+    state: boolean;
+}
+
+export interface OutgoingEventDeviceTalkbackStarted extends OutgoingEventDeviceBase {
+    source: "device";
+    event: DeviceEvent.talkbackStarted;
+    serialNumber: string;
+}
+
+export interface OutgoingEventDeviceTalkbackStopped extends OutgoingEventDeviceBase {
+    source: "device";
+    event: DeviceEvent.talkbackStopped;
+    serialNumber: string;
+}
+
 export type OutgoingEventDevice =
   | OutgoingEventDeviceAdded
   | OutgoingEventDeviceRemoved
@@ -223,4 +337,18 @@ export type OutgoingEventDevice =
   | OutgoingEventDeviceDownloadVideoData
   | OutgoingEventDeviceDownloadAudioData
   | OutgoingEventDeviceRTSPLivestreamStarted
-  | OutgoingEventDeviceRTSPLivestreamStopped;
+  | OutgoingEventDeviceRTSPLivestreamStopped
+  | OutgoingEventDeviceLocked
+  | OutgoingEventDevicePackageDelivered
+  | OutgoingEventDevicePackageStranded
+  | OutgoingEventDevicePackageTaken
+  | OutgoingEventDeviceSomeoneLoitering
+  | OutgoingEventDeviceRadarMotionDetected
+  | OutgoingEventDeviceAlarm911
+  | OutgoingEventDeviceShakeAlarm
+  | OutgoingEventDeviceWrongTryProtectAlarm
+  | OutgoingEventDeviceLongTimeNotClose
+  | OutgoingEventDeviceLowBattery
+  | OutgoingEventDeviceJammed
+  | OutgoingEventDeviceTalkbackStarted
+  | OutgoingEventDeviceTalkbackStopped;

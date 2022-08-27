@@ -1,5 +1,6 @@
-import { AudioCodec, Camera, CommandResult, CommandType, Device, DoorbellCamera, EntrySensor, ErrorCode, IndoorCamera, MotionSensor, ParamType, PropertyValue, Station, StreamMetadata, VideoCodec, AlarmEvent } from "eufy-security-client";
+import { AudioCodec, CommandResult, CommandType, Device,  ErrorCode, ParamType, PropertyValue, Station, StreamMetadata, VideoCodec, AlarmEvent, SmartSafeAlarm911Event, SmartSafeShakeAlarmEvent, TalkbackStream } from "eufy-security-client";
 import { Readable } from "stream";
+import { Logger } from "tslog";
 
 import { JSONValue, OutgoingEvent } from "./outgoing_message";
 import { dumpStation } from "./station/state";
@@ -13,14 +14,16 @@ import { DeviceCommand } from "./device/command";
 import { maxSchemaVersion as internalSchemaVersion } from "./const";
 import { DeviceMessageHandler } from "./device/message_handler";
 import { DriverMessageHandler } from "./driver/message_handler";
+import { convertCamelCaseToSnakeCase } from "./utils";
 
 export class EventForwarder {
 
-    constructor(private clients: ClientsController) {}
+    constructor(private clients: ClientsController, private logger: Logger) {}
 
     public start(): void {
 
         this.clients.driver.on("tfa request", () => {
+            DriverMessageHandler.tfa = true;
             this.forwardEvent({
                 source: "driver",
                 event: DriverEvent.verifyCode,
@@ -29,6 +32,7 @@ export class EventForwarder {
 
         this.clients.driver.on("captcha request", (id: string, captcha: string) => {
             DriverMessageHandler.captchaId = id;
+            DriverMessageHandler.captcha = captcha;
             this.forwardEvent({
                 source: "driver",
                 event: DriverEvent.captchaRequest,
@@ -92,45 +96,77 @@ export class EventForwarder {
         });
 
         this.clients.driver.on("station added", (station: Station) => {
-            this.clients.clients.forEach((client) =>
-                this.sendEvent(client, {
-                    source: "station",
-                    event: StationEvent.stationAdded,
-                    station: dumpStation(station, client.schemaVersion) as JSONValue,
-                })
-            );
+            this.clients.clients.forEach((client) => {
+                if (client.schemaVersion <= 12) {
+                    this.sendEvent(client, {
+                        source: "station",
+                        event: StationEvent.stationAdded,
+                        station: dumpStation(station, client.schemaVersion) as JSONValue,
+                    });
+                } else {
+                    this.sendEvent(client, {
+                        source: "station",
+                        event: StationEvent.stationAdded,
+                        station: station.getSerial(),
+                    });
+                }
+            });
             this.setupStation(station);
         });
 
         this.clients.driver.on("station removed", (station: Station) => {
-            this.clients.clients.forEach((client) =>
-                this.sendEvent(client, {
-                    source: "station",
-                    event: StationEvent.stationRemoved,
-                    station: dumpStation(station, client.schemaVersion) as JSONValue,
-                })
-            );
+            this.clients.clients.forEach((client) => {
+                if (client.schemaVersion <= 12) {
+                    this.sendEvent(client, {
+                        source: "station",
+                        event: StationEvent.stationRemoved,
+                        station: dumpStation(station, client.schemaVersion) as JSONValue,
+                    });
+                } else {
+                    this.sendEvent(client, {
+                        source: "station",
+                        event: StationEvent.stationRemoved,
+                        station: station.getSerial(),
+                    });
+                }
+            });
         });
 
         this.clients.driver.on("device added", (device: Device) => {
-            this.clients.clients.forEach((client) =>
-                this.sendEvent(client, {
-                    source: "device",
-                    event: DeviceEvent.deviceAdded,
-                    device: dumpDevice(device, client.schemaVersion) as JSONValue,
-                })
-            );
+            this.clients.clients.forEach((client) => {
+                if (client.schemaVersion <= 12) {
+                    this.sendEvent(client, {
+                        source: "device",
+                        event: DeviceEvent.deviceAdded,
+                        device: dumpDevice(device, client.schemaVersion) as JSONValue,
+                    });
+                } else {
+                    this.sendEvent(client, {
+                        source: "device",
+                        event: DeviceEvent.deviceAdded,
+                        device: device.getSerial(),
+                    });
+                }
+            });
             this.setupDevice(device);
         });
 
         this.clients.driver.on("device removed", (device: Device) => {
-            this.clients.clients.forEach((client) =>
-                this.sendEvent(client, {
-                    source: "device",
-                    event: DeviceEvent.deviceRemoved,
-                    device: dumpDevice(device, client.schemaVersion) as JSONValue,
-                })
-            );
+            this.clients.clients.forEach((client) => {
+                if (client.schemaVersion <= 12) {
+                    this.sendEvent(client, {
+                        source: "device",
+                        event: DeviceEvent.deviceRemoved,
+                        device: dumpDevice(device, client.schemaVersion) as JSONValue,
+                    });
+                } else {
+                    this.sendEvent(client, {
+                        source: "device",
+                        event: DeviceEvent.deviceRemoved,
+                        device: device.getSerial(),
+                    });
+                }
+            });
         });
 
         this.clients.driver.getStations().forEach(station => {
@@ -210,7 +246,7 @@ export class EventForwarder {
 
         this.clients.driver.on("station download start", (station: Station, device: Device, metadata: StreamMetadata, videostream: Readable, audiostream: Readable) => {
             const serialNumber = device.getSerial();
-            this.clients.clients.filter((cl) => cl.receiveLivestream[serialNumber] === true && cl.isConnected)
+            this.clients.clients.filter((cl) => cl.receiveDownloadStream[serialNumber] === true && cl.isConnected)
                 .forEach((client) => {
                     if (client.schemaVersion >= 3) {
                         client.sendEvent({
@@ -221,7 +257,7 @@ export class EventForwarder {
                     }
                 });
             videostream.on("data", (chunk: Buffer) => {
-                this.clients.clients.filter((cl) => cl.isConnected)
+                this.clients.clients.filter((cl) => cl.receiveDownloadStream[serialNumber] === true && cl.isConnected)
                     .forEach((client) => {
                         if (client.schemaVersion >= 3) {
                             client.sendEvent({
@@ -240,7 +276,7 @@ export class EventForwarder {
                     });
             });
             audiostream.on("data", (chunk: Buffer) => {
-                this.clients.clients.filter((cl) => cl.receiveLivestream[serialNumber] === true && cl.isConnected)
+                this.clients.clients.filter((cl) => cl.receiveDownloadStream[serialNumber] === true && cl.isConnected)
                     .forEach((client) => {
                         if (client.schemaVersion >= 3) {
                             client.sendEvent({
@@ -259,7 +295,7 @@ export class EventForwarder {
 
         this.clients.driver.on("station download finish", (station: Station, device: Device) => {
             const serialNumber = device.getSerial();
-            this.clients.clients.filter((cl) => cl.isConnected)
+            this.clients.clients.filter((cl) => cl.receiveDownloadStream[serialNumber] === true && cl.isConnected)
                 .forEach((client) => {
                     if (client.schemaVersion >= 3) {
                         client.sendEvent({
@@ -268,6 +304,8 @@ export class EventForwarder {
                             serialNumber: serialNumber,
                         });
                     }
+                    client.receiveDownloadStream[serialNumber] = false;
+                    DeviceMessageHandler.removeDownloadingDevice(station.getSerial(), client);
                 });
         });
 
@@ -334,6 +372,14 @@ export class EventForwarder {
             }, 0);
         });
 
+        station.on("connection error", () => {
+            this.forwardEvent({
+                source: "station",
+                event: StationEvent.connectionError,
+                serialNumber: station.getSerial()
+            }, 13);
+        });
+
         station.on("guard mode", (station: Station, guardMode: number) => {
             // Event for schemaVersion <= 2
             this.forwardEvent({
@@ -392,8 +438,7 @@ export class EventForwarder {
         });
 
         station.on("command result", (station: Station, result: CommandResult) => {
-            //TODO: Implement this event differently or remove the commands already implemented as properties
-            if (result.channel === Station.CHANNEL) {
+            if (result.channel === Station.CHANNEL || result.channel === Station.CHANNEL_INDOOR) {
                 //Station command result
                 let command: string | undefined = undefined;
                 switch (result.command_type) {
@@ -415,7 +460,31 @@ export class EventForwarder {
                         command: command.split(".")[1],
                         returnCode: result.return_code,
                         returnCodeName: ErrorCode[result.return_code] !== undefined ? ErrorCode[result.return_code] : "UNKNOWN",
-                    }, 0);
+                    }, 0, 12);
+                }
+                if (result.customData !== undefined) {
+                    if (result.customData.property !== undefined) {
+                        this.forwardEvent({
+                            source: "station",
+                            event: StationEvent.commandResult,
+                            serialNumber: station.getSerial(),
+                            command: "set_property",
+                            returnCode: result.return_code,
+                            returnCodeName: ErrorCode[result.return_code] !== undefined ? ErrorCode[result.return_code] : "UNKNOWN",
+                            customData: result.customData,
+                        }, 13);
+                    } else if (result.customData.command !== undefined && result.customData.command.name.startsWith("station")) {
+                        const command = result.customData.command.name;
+                        this.forwardEvent({
+                            source: "station",
+                            event: StationEvent.commandResult,
+                            serialNumber: station.getSerial(),
+                            command: convertCamelCaseToSnakeCase(command.replace("station", "")),
+                            returnCode: result.return_code,
+                            returnCodeName: ErrorCode[result.return_code] !== undefined ? ErrorCode[result.return_code] : "UNKNOWN",
+                            customData: result.customData,
+                        }, 13);
+                    }
                 }
             } else {
                 // Device command result
@@ -492,8 +561,37 @@ export class EventForwarder {
                             command: command?.split(".")[1],
                             returnCode: result.return_code,
                             returnCodeName: ErrorCode[result.return_code] !== undefined ? ErrorCode[result.return_code] : "UNKNOWN",
-                        }, 0);
+                        }, 0, 12);
                     }).catch();
+                }
+                if (result.customData !== undefined) {
+                    if (result.customData.property !== undefined) {
+                        this.clients.driver.getStationDevice(station.getSerial(), result.channel).then((device: Device) => {
+                            this.forwardEvent({
+                                source: "device",
+                                event: DeviceEvent.commandResult,
+                                serialNumber: device.getSerial(),
+                                command: "set_property",
+                                returnCode: result.return_code,
+                                returnCodeName: ErrorCode[result.return_code] !== undefined ? ErrorCode[result.return_code] : "UNKNOWN",
+                                customData: result.customData,
+                            }, 13);
+                        }).catch();
+                        
+                    } else if (result.customData.command !== undefined && result.customData.command.name.startsWith("device")) {
+                        const command = result.customData.command.name;
+                        this.clients.driver.getStationDevice(station.getSerial(), result.channel).then((device: Device) => {
+                            this.forwardEvent({
+                                source: "device",
+                                event: DeviceEvent.commandResult,
+                                serialNumber: device.getSerial(),
+                                command: convertCamelCaseToSnakeCase(command.replace("device", "")),
+                                returnCode: result.return_code,
+                                returnCodeName: ErrorCode[result.return_code] !== undefined ? ErrorCode[result.return_code] : "UNKNOWN",
+                                customData: result.customData,
+                            }, 13);
+                        }).catch();
+                    }
                 }
             }
         });
@@ -545,100 +643,188 @@ export class EventForwarder {
     }
 
     private setupDevice(device: Device): void {
-        if (device instanceof Camera) {
-            device.on("motion detected", (device: Device, state: boolean) => {
-                this.clients.clients.forEach((client) =>
-                    this.sendEvent(client, {
-                        source: "device",
-                        event: DeviceEvent.motionDetected,
-                        serialNumber: device.getSerial(),
-                        state: state,
-                    })
-                );
-            });
+        device.on("motion detected", (device: Device, state: boolean) => {
+            this.forwardEvent({
+                source: "device",
+                event: DeviceEvent.motionDetected,
+                serialNumber: device.getSerial(),
+                state: state,
+            }, 0);
+        });
 
-            device.on("person detected", (device: Device, state: boolean, person: string) => {
-                this.clients.clients.forEach((client) =>
-                    this.sendEvent(client, {
-                        source: "device",
-                        event: DeviceEvent.personDetected,
-                        serialNumber: device.getSerial(),
-                        state: state,
-                        person: person,
-                    })
-                );
-            });
-        }
-        if (device instanceof IndoorCamera) {
-            device.on("crying detected", (device: Device, state: boolean) => {
-                this.clients.clients.forEach((client) =>
-                    this.sendEvent(client, {
-                        source: "device",
-                        event: DeviceEvent.cryingDetected,
-                        serialNumber: device.getSerial(),
-                        state: state
-                    })
-                );
-            });
-    
-            device.on("pet detected", (device: Device, state: boolean) => {
-                this.clients.clients.forEach((client) =>
-                    this.sendEvent(client, {
-                        source: "device",
-                        event: DeviceEvent.petDetected,
-                        serialNumber: device.getSerial(),
-                        state: state,
-                    })
-                );
-            });
-    
-            device.on("sound detected", (device: Device, state: boolean) => {
-                this.clients.clients.forEach((client) =>
-                    this.sendEvent(client, {
-                        source: "device",
-                        event: DeviceEvent.soundDetected,
-                        serialNumber: device.getSerial(),
-                        state: state,
-                    })
-                );
-            });
-        }
-        if (device instanceof DoorbellCamera) {
-            device.on("rings", (device: Device, state: boolean) => {
-                this.clients.clients.forEach((client) =>
-                    this.sendEvent(client, {
-                        source: "device",
-                        event: DeviceEvent.rings,
-                        serialNumber: device.getSerial(),
-                        state: state,
-                    })
-                );
-            });
-        }
-        if (device instanceof EntrySensor) {
-            device.on("open", (device: Device, state: boolean) => {
-                this.clients.clients.forEach((client) =>
-                    this.sendEvent(client, {
-                        source: "device",
-                        event: DeviceEvent.sensorOpen,
-                        serialNumber: device.getSerial(),
-                        state: state,
-                    })
-                );
-            });
-        }
-        if (device instanceof MotionSensor) {
-            device.on("motion detected", (device: Device, state: boolean) => {
-                this.clients.clients.forEach((client) =>
-                    this.sendEvent(client, {
-                        source: "device",
-                        event: DeviceEvent.motionDetected,
-                        serialNumber: device.getSerial(),
-                        state: state,
-                    })
-                );
-            });
-        }
+        device.on("person detected", (device: Device, state: boolean, person: string) => {
+            this.forwardEvent({
+                source: "device",
+                event: DeviceEvent.personDetected,
+                serialNumber: device.getSerial(),
+                state: state,
+                person: person,
+            }, 0);
+        });
+
+        device.on("crying detected", (device: Device, state: boolean) => {
+            this.forwardEvent({
+                source: "device",
+                event: DeviceEvent.cryingDetected,
+                serialNumber: device.getSerial(),
+                state: state
+            }, 0);
+        });
+
+        device.on("pet detected", (device: Device, state: boolean) => {
+            this.forwardEvent({
+                source: "device",
+                event: DeviceEvent.petDetected,
+                serialNumber: device.getSerial(),
+                state: state,
+            }, 0);
+        });
+
+        device.on("sound detected", (device: Device, state: boolean) => {
+            this.forwardEvent({
+                source: "device",
+                event: DeviceEvent.soundDetected,
+                serialNumber: device.getSerial(),
+                state: state,
+            }, 0);
+        });
+
+        device.on("rings", (device: Device, state: boolean) => {
+            this.forwardEvent({
+                source: "device",
+                event: DeviceEvent.rings,
+                serialNumber: device.getSerial(),
+                state: state,
+            }, 0);
+        });
+
+        device.on("package delivered", (device: Device, state: boolean) => {
+            this.forwardEvent({
+                source: "device",
+                event: DeviceEvent.packageDelivered,
+                serialNumber: device.getSerial(),
+                state: state,
+            }, 13);
+        });
+
+        device.on("package stranded", (device: Device, state: boolean) => {
+            this.forwardEvent({
+                source: "device",
+                event: DeviceEvent.packageStranded,
+                serialNumber: device.getSerial(),
+                state: state,
+            }, 13);
+        });
+
+        device.on("package taken", (device: Device, state: boolean) => {
+            this.forwardEvent({
+                source: "device",
+                event: DeviceEvent.packageTaken,
+                serialNumber: device.getSerial(),
+                state: state,
+            }, 13);
+        });
+
+        device.on("someone loitering", (device: Device, state: boolean) => {
+            this.forwardEvent({
+                source: "device",
+                event: DeviceEvent.someoneLoitering,
+                serialNumber: device.getSerial(),
+                state: state,
+            }, 13);
+        });
+
+        device.on("radar motion detected", (device: Device, state: boolean) => {
+            this.forwardEvent({
+                source: "device",
+                event: DeviceEvent.radarMotionDetected,
+                serialNumber: device.getSerial(),
+                state: state,
+            }, 13);
+        });
+
+        device.on("open", (device: Device, state: boolean) => {
+            this.forwardEvent({
+                source: "device",
+                event: DeviceEvent.sensorOpen,
+                serialNumber: device.getSerial(),
+                state: state,
+            }, 0);
+        });
+        
+        device.on("motion detected", (device: Device, state: boolean) => {
+            this.forwardEvent({
+                source: "device",
+                event: DeviceEvent.motionDetected,
+                serialNumber: device.getSerial(),
+                state: state,
+            }, 0);
+        });
+
+        device.on("911 alarm", (device: Device, state: boolean, detail: SmartSafeAlarm911Event) => {
+            this.forwardEvent({
+                source: "device",
+                event: DeviceEvent.alarm911,
+                serialNumber: device.getSerial(),
+                state: state,
+                detail: detail,
+            }, 13);
+        });
+
+        device.on("shake alarm", (device: Device, state: boolean, detail: SmartSafeShakeAlarmEvent) => {
+            this.forwardEvent({
+                source: "device",
+                event: DeviceEvent.shakeAlarm,
+                serialNumber: device.getSerial(),
+                state: state,
+                detail: detail,
+            }, 13);
+        });
+
+        device.on("wrong try-protect alarm", (device: Device, state: boolean) => {
+            this.forwardEvent({
+                source: "device",
+                event: DeviceEvent.wrongTryProtectAlarm,
+                serialNumber: device.getSerial(),
+                state: state,
+            }, 13);
+        });
+
+        device.on("long time not close", (device: Device, state: boolean) => {
+            this.forwardEvent({
+                source: "device",
+                event: DeviceEvent.LongTimeNotClose,
+                serialNumber: device.getSerial(),
+                state: state,
+            }, 13);
+        });
+
+        device.on("jammed", (device: Device, state: boolean) => {
+            this.forwardEvent({
+                source: "device",
+                event: DeviceEvent.jammed,
+                serialNumber: device.getSerial(),
+                state: state,
+            }, 13);
+        });
+
+        device.on("low battery", (device: Device, state: boolean) => {
+            this.forwardEvent({
+                source: "device",
+                event: DeviceEvent.lowBattery,
+                serialNumber: device.getSerial(),
+                state: state,
+            }, 13);
+        });
+
+        device.on("locked", (device: Device, state: boolean) => {
+            this.forwardEvent({
+                source: "device",
+                event: DeviceEvent.locked,
+                serialNumber: device.getSerial(),
+                state: state,
+            }, 0);
+        });
 
         device.on("property changed", (device: Device, name: string, value: PropertyValue) => {
             this.forwardEvent({
@@ -656,6 +842,37 @@ export class EventForwarder {
                 name: name,
                 value: value as JSONValue,
             }, 10);
+        });
+
+        this.clients.driver.on("station talkback start", (station: Station, device: Device, talkbackStream: TalkbackStream) => {
+            const serialNumber = device.getSerial();
+            this.clients.clients.filter((cl) => cl.sendTalkbackStream[serialNumber] === true && cl.isConnected)
+                .forEach((client) => {
+                    if (client.schemaVersion >= 13) {
+                        client.sendEvent({
+                            source: "device",
+                            event: DeviceEvent.talkbackStarted,
+                            serialNumber: serialNumber
+                        });
+                    }
+                });
+            DeviceMessageHandler.talkbackStream = talkbackStream;
+        });
+
+        this.clients.driver.on("station talkback stop", (station: Station, device: Device) => {
+            const serialNumber = device.getSerial();
+            this.clients.clients.filter((cl) => cl.sendTalkbackStream[serialNumber] === true && cl.isConnected)
+                .forEach((client) => {
+                    if (client.schemaVersion >= 13) {
+                        client.sendEvent({
+                            source: "device",
+                            event: DeviceEvent.talkbackStopped,
+                            serialNumber: serialNumber
+                        });
+                    }
+                    client.sendTalkbackStream[serialNumber] = false;
+                    DeviceMessageHandler.removeTalkbackingDevice(station.getSerial(), client);
+                });
         });
     }
 

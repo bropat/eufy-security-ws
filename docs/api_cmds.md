@@ -300,21 +300,6 @@ interface {
 }
 ```
 
-### Set guard mode
-
-[compatible with schema version: 0+]
-
-!>_Deprecated: Will be removed in future versions. Use the set/get property commands instead._
-
-```ts
-interface {
-    messageId: string;
-    command: "station.set_guard_mode";
-    serialNumber: string;
-    mode: number;
-}
-```
-
 ### Get station connection status
 
 [compatible with schema version: 0+]
@@ -507,6 +492,21 @@ interface {
 }
 ```
 
+### Set guard mode
+
+[compatible with schema version: 0-12]
+
+!>_Deprecated: Removed since schema version 13. Use the set/get property commands instead._
+
+```ts
+interface {
+    messageId: string;
+    command: "station.set_guard_mode";
+    serialNumber: string;
+    mode: number;
+}
+```
+
 ## Device level commands
 
 ### Get properties metadata
@@ -566,156 +566,6 @@ interface {
     serialNumber: string;
     name: string;
     value: unknown;
-}
-```
-
-### Enable/disable status led
-
-[compatible with schema version: 0+]
-
-!>_Deprecated: Will be removed in future versions. Use the set/get property commands instead._
-
-```ts
-interface {
-  messageId: string;
-  command: "device.set_status_led";
-  serialNumber: string;
-  value: boolean;
-}
-```
-
-### Enable/disable auto nightvision
-
-[compatible with schema version: 0+]
-
-!>_Deprecated: Will be removed in future versions. Use the set/get property commands instead._
-
-```ts
-interface {
-  messageId: string;
-  command: "device.set_auto_night_vision";
-  serialNumber: string;
-  value: boolean;
-}
-```
-
-### Enable/disable motion detection
-
-[compatible with schema version: 0+]
-
-!>_Deprecated: Will be removed in future versions. Use the set/get property commands instead._
-
-```ts
-interface {
-  messageId: string;
-  command: "device.set_motion_detection";
-  serialNumber: string;
-  value: boolean;
-}
-```
-
-### Enable/disable sound detection
-
-[compatible with schema version: 0+]
-
-!>_Deprecated: Will be removed in future versions. Use the set/get property commands instead._
-
-```ts
-interface {
-  messageId: string;
-  command: "device.set_sound_detection";
-  serialNumber: string;
-  value: boolean;
-}
-```
-
-### Enable/disable pet detection
-
-[compatible with schema version: 0+]
-
-!>_Deprecated: Will be removed in future versions. Use the set/get property commands instead._
-
-```ts
-interface {
-  messageId: string;
-  command: "device.set_pet_detection";
-  serialNumber: string;
-  value: boolean;
-}
-```
-
-### Enable/disable RTSP stream
-
-[compatible with schema version: 0+]
-
-!>_Deprecated: Will be removed in future versions. Use the set/get property commands instead._
-
-```ts
-interface {
-  messageId: string;
-  command: "device.set_rtsp_stream";
-  serialNumber: string;
-  value: boolean;
-}
-```
-
-### Enable/disable anti theft detection
-
-[compatible with schema version: 0+]
-
-!>_Deprecated: Will be removed in future versions. Use the set/get property commands instead._
-
-```ts
-interface {
-  messageId: string;
-  command: "device.set_anti_theft_detection";
-  serialNumber: string;
-  value: boolean;
-}
-```
-
-### Set watermark
-
-[compatible with schema version: 0+]
-
-!>_Deprecated: Will be removed in future versions. Use the set/get property commands instead._
-
-```ts
-interface {
-  messageId: string;
-  command: "device.set_watermark";
-  serialNumber: string;
-  value: number;
-}
-```
-
-### Enable/disable device
-
-[compatible with schema version: 0+]
-
-!>_Deprecated: Will be removed in future versions. Use the set/get property commands instead._
-
-```ts
-interface {
-  messageId: string;
-  command: "device.enable_device";
-  serialNumber: string;
-  value: boolean;
-}
-```
-
-### Lock/unlock device
-
-[compatible with schema version: 0+]
-
-!>_Deprecated: Will be removed in future versions. Use the set/get property commands instead._
-
-```ts
-interface {
-  messageId: string;
-  command: "device.lock_device";
-  serialNumber: string;
-  value: boolean;
 }
 ```
 
@@ -812,6 +662,27 @@ interface {
   messageId: string;
   command: "device.cancel_download";
   serialNumber: string;
+}
+```
+
+### Get download status
+
+[compatible with schema version: 13+]
+
+```ts
+interface {
+  messageId: string;
+  command: "device.is_downloading";
+  serialNumber: string;
+}
+```
+
+Returns:
+
+```ts
+interface {
+    serialNumber: string;
+    downloading: boolean;
 }
 ```
 
@@ -981,5 +852,241 @@ interface {
   messageId: string;
   command: "device.calibrate_lock";
   serialNumber: string;
+}
+```
+
+### Unlock
+
+[compatible with schema version: 13+]
+
+```ts
+interface {
+  messageId: string;
+  command: "device.unlock";
+  serialNumber: string;
+}
+```
+
+### Start talkback
+
+[compatible with schema version: 13+]
+
+```ts
+interface {
+  messageId: string;
+  command: "device.start_talkback";
+  serialNumber: string;
+}
+```
+
+### Stop talkback
+
+[compatible with schema version: 13+]
+
+```ts
+interface {
+  messageId: string;
+  command: "device.stop_talkback";
+  serialNumber: string;
+}
+```
+
+### Get talkback status
+
+[compatible with schema version: 13+]
+
+```ts
+interface {
+  messageId: string;
+  command: "device.is_talkback_ongoing";
+  serialNumber: string;
+}
+```
+
+Returns:
+
+```ts
+interface {
+    serialNumber: string;
+    talkbackOngoing: boolean;
+}
+```
+
+### Send talkback audio data
+
+[compatible with schema version: 13+]
+
+```ts
+interface {
+  messageId: string;
+  command: "device.talkback_audio_data";
+  serialNumber: string;
+  buffer: Buffer;
+}
+```
+
+### Snooze
+
+[compatible with schema version: 13+]
+
+```ts
+interface {
+  messageId: string;
+  command: "device.snooze";
+  serialNumber: string;
+  snoozeTime: number;
+  snoozeChime?: boolean;
+  snoozeMotion?: boolean;
+  snoozeHomebase?: boolean;
+}
+```
+
+### Enable/disable status led
+
+[compatible with schema version: 0-12]
+
+!>_Deprecated: Removed since schema version 13. Use the set/get property commands instead._
+
+```ts
+interface {
+  messageId: string;
+  command: "device.set_status_led";
+  serialNumber: string;
+  value: boolean;
+}
+```
+
+### Enable/disable auto nightvision
+
+[compatible with schema version: 0-12]
+
+!>_Deprecated: Removed since schema version 13. Use the set/get property commands instead._
+
+```ts
+interface {
+  messageId: string;
+  command: "device.set_auto_night_vision";
+  serialNumber: string;
+  value: boolean;
+}
+```
+
+### Enable/disable motion detection
+
+[compatible with schema version: 0-12]
+
+!>_Deprecated: Removed since schema version 13. Use the set/get property commands instead._
+
+```ts
+interface {
+  messageId: string;
+  command: "device.set_motion_detection";
+  serialNumber: string;
+  value: boolean;
+}
+```
+
+### Enable/disable sound detection
+
+[compatible with schema version: 0-12]
+
+!>_Deprecated: Removed since schema version 13. Use the set/get property commands instead._
+
+```ts
+interface {
+  messageId: string;
+  command: "device.set_sound_detection";
+  serialNumber: string;
+  value: boolean;
+}
+```
+
+### Enable/disable pet detection
+
+[compatible with schema version: 0-12]
+
+!>_Deprecated: Removed since schema version 13. Use the set/get property commands instead._
+
+```ts
+interface {
+  messageId: string;
+  command: "device.set_pet_detection";
+  serialNumber: string;
+  value: boolean;
+}
+```
+
+### Enable/disable RTSP stream
+
+[compatible with schema version: 0-12]
+
+!>_Deprecated: Removed since schema version 13. Use the set/get property commands instead._
+
+```ts
+interface {
+  messageId: string;
+  command: "device.set_rtsp_stream";
+  serialNumber: string;
+  value: boolean;
+}
+```
+
+### Enable/disable anti theft detection
+
+[compatible with schema version: 0-12]
+
+!>_Deprecated: Removed since schema version 13. Use the set/get property commands instead._
+
+```ts
+interface {
+  messageId: string;
+  command: "device.set_anti_theft_detection";
+  serialNumber: string;
+  value: boolean;
+}
+```
+
+### Set watermark
+
+[compatible with schema version: 0-12]
+
+!>_Deprecated: Removed since schema version 13. Use the set/get property commands instead._
+
+```ts
+interface {
+  messageId: string;
+  command: "device.set_watermark";
+  serialNumber: string;
+  value: number;
+}
+```
+
+### Enable/disable device
+
+[compatible with schema version: 0-12]
+
+!>_Deprecated: Removed since schema version 13. Use the set/get property commands instead._
+
+```ts
+interface {
+  messageId: string;
+  command: "device.enable_device";
+  serialNumber: string;
+  value: boolean;
+}
+```
+
+### Lock/unlock device
+
+[compatible with schema version: 0-12]
+
+!>_Deprecated: Removed since schema version 13. Use the set/get property commands instead._
+
+```ts
+interface {
+  messageId: string;
+  command: "device.lock_device";
+  serialNumber: string;
+  value: boolean;
 }
 ```

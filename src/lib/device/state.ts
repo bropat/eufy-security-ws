@@ -220,7 +220,6 @@ export type DeviceState =
   | DeviceStateSchema8
   | DeviceStateSchema9;
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const dumpDevice = (device: Device, schemaVersion: number): DeviceState => {
     const base: DeviceStateSchema0 = {
         name: device.getPropertyValue(PropertyName.Name) as string,
@@ -363,20 +362,20 @@ export const dumpDevice = (device: Device, schemaVersion: number): DeviceState =
     }
 
     const device7 = device6 as DeviceStateSchema7;
-    device7.lockSettingsAutoLock = device.getPropertyValue(PropertyName.DeviceLockSettingsAutoLock) as boolean;
-    device7.lockSettingsAutoLockTimer = device.getPropertyValue(PropertyName.DeviceLockSettingsAutoLockTimer) as number;
-    device7.lockSettingsAutoLockSchedule = device.getPropertyValue(PropertyName.DeviceLockSettingsAutoLockSchedule) as boolean;
-    device7.lockSettingsAutoLockScheduleStartTime = device.getPropertyValue(PropertyName.DeviceLockSettingsAutoLockScheduleStartTime) as string;
-    device7.lockSettingsAutoLockScheduleEndTime = device.getPropertyValue(PropertyName.DeviceLockSettingsAutoLockScheduleEndTime) as string;
-    device7.lockSettingsOneTouchLocking = device.getPropertyValue(PropertyName.DeviceLockSettingsOneTouchLocking) as boolean;
-    device7.lockSettingsWrongTryProtection = device.getPropertyValue(PropertyName.DeviceLockSettingsWrongTryProtection) as boolean;
-    device7.lockSettingsWrongTryAttempts = device.getPropertyValue(PropertyName.DeviceLockSettingsWrongTryAttempts) as number;
-    device7.lockSettingsWrongTryLockdownTime = device.getPropertyValue(PropertyName.DeviceLockSettingsWrongTryLockdownTime) as number;
-    device7.lockSettingsScramblePasscode = device.getPropertyValue(PropertyName.DeviceLockSettingsScramblePasscode) as boolean;
-    device7.lockSettingsSound = device.getPropertyValue(PropertyName.DeviceLockSettingsSound) as number;
-    device7.lockSettingsNotification = device.getPropertyValue(PropertyName.DeviceLockSettingsNotification) as boolean;
-    device7.lockSettingsNotificationUnlocked = device.getPropertyValue(PropertyName.DeviceLockSettingsNotificationUnlocked) as boolean;
-    device7.lockSettingsNotificationLocked = device.getPropertyValue(PropertyName.DeviceLockSettingsNotificationLocked) as boolean;
+    device7.lockSettingsAutoLock = device.getPropertyValue(PropertyName.DeviceAutoLock) as boolean;
+    device7.lockSettingsAutoLockTimer = device.getPropertyValue(PropertyName.DeviceAutoLockTimer) as number;
+    device7.lockSettingsAutoLockSchedule = device.getPropertyValue(PropertyName.DeviceAutoLockSchedule) as boolean;
+    device7.lockSettingsAutoLockScheduleStartTime = device.getPropertyValue(PropertyName.DeviceAutoLockScheduleStartTime) as string;
+    device7.lockSettingsAutoLockScheduleEndTime = device.getPropertyValue(PropertyName.DeviceAutoLockScheduleEndTime) as string;
+    device7.lockSettingsOneTouchLocking = device.getPropertyValue(PropertyName.DeviceOneTouchLocking) as boolean;
+    device7.lockSettingsWrongTryProtection = device.getPropertyValue(PropertyName.DeviceWrongTryProtection) as boolean;
+    device7.lockSettingsWrongTryAttempts = device.getPropertyValue(PropertyName.DeviceWrongTryAttempts) as number;
+    device7.lockSettingsWrongTryLockdownTime = device.getPropertyValue(PropertyName.DeviceWrongTryLockdownTime) as number;
+    device7.lockSettingsScramblePasscode = device.getPropertyValue(PropertyName.DeviceScramblePasscode) as boolean;
+    device7.lockSettingsSound = device.getPropertyValue(PropertyName.DeviceSound) as number;
+    device7.lockSettingsNotification = device.getPropertyValue(PropertyName.DeviceNotification) as boolean;
+    device7.lockSettingsNotificationUnlocked = device.getPropertyValue(PropertyName.DeviceNotificationUnlocked) as boolean;
+    device7.lockSettingsNotificationLocked = device.getPropertyValue(PropertyName.DeviceNotificationLocked) as boolean;
     if (schemaVersion <= 9) {
         return device7;
     }

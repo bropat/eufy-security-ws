@@ -4,18 +4,24 @@ import { DeviceState, dumpDevice } from "./device/state";
 import { DriverState, dumpDriver } from "./driver/state"
 import { dumpStation, StationState } from "./station/state";
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export type Modify<T, R> = Omit<T, keyof R> & R;
 
-//TODO: Finish Implementation
 export interface EufySecurityStateSchema0 {
     driver: DriverState,
     stations: Array<StationState>,
     devices: Array<DeviceState>,
 }
 
+type EufySecurityStateSchema1 = Modify<Omit<
+EufySecurityStateSchema0, "stations" | "devices">,
+{
+    stations: Array<string>,
+    devices: Array<string>,
+}>;
+
 export type EufySecurityState = 
- | EufySecurityStateSchema0;
+ | EufySecurityStateSchema0
+ | EufySecurityStateSchema1;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const dumpState = async (driver: EufySecurity, schemaVersion: number): Promise<EufySecurityState> => {
@@ -29,5 +35,16 @@ export const dumpState = async (driver: EufySecurity, schemaVersion: number): Pr
         ),
     };
 
-    return base as EufySecurityStateSchema0;
+    if (schemaVersion < 13)
+        return base as EufySecurityStateSchema0;
+    
+    const base1 = base as unknown as EufySecurityStateSchema1;
+    base1.stations = Array.from(driver.getStations(), (station) =>
+        station.getSerial()
+    );
+    base1.devices = Array.from(await driver.getDevices(), (device) =>
+        device.getSerial()
+    );
+
+    return base1;
 };
