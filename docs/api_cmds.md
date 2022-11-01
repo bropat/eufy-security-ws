@@ -941,6 +941,109 @@ interface {
 }
 ```
 
+### Add User
+
+[compatible with schema version: 13+]
+
+```ts
+interface {
+  messageId: string;
+  command: "device.add_user";
+  serialNumber: string;
+  username: string;
+  passcode: string;
+  schedule?: Schedule;
+}
+```
+
+### Delete User
+
+[compatible with schema version: 13+]
+
+```ts
+interface {
+  messageId: string;
+  command: "device.delete_user";
+  serialNumber: string;
+  username: string;
+}
+```
+
+### Get Users
+
+[compatible with schema version: 13+]
+
+```ts
+interface {
+  messageId: string;
+  command: "device.get_users";
+  serialNumber: string;
+}
+```
+
+Returns:
+
+```ts
+interface {
+    users: Array<User>;
+}
+```
+
+### Update User Username
+
+[compatible with schema version: 13+]
+
+```ts
+interface {
+  messageId: string;
+  command: "device.update_user";
+  serialNumber: string;
+  username: string;
+  newUsername: string;
+}
+```
+
+### Update User Passcode
+
+[compatible with schema version: 13+]
+
+```ts
+interface {
+  messageId: string;
+  command: "device.update_user_passcode";
+  serialNumber: string;
+  username: string;
+  passcode: string;
+}
+```
+
+### Update User Schedule
+
+[compatible with schema version: 13+]
+
+```ts
+interface {
+  messageId: string;
+  command: "device.update_user_schedule";
+  serialNumber: string;
+  username: string;
+  schedule: Schedule;
+}
+```
+
+### Verify PIN
+
+[compatible with schema version: 13+]
+
+```ts
+interface {
+  messageId: string;
+  command: "device.verify_pin";
+  serialNumber: string;
+  pin: string;
+}
+```
+
 ### Enable/disable status led
 
 [compatible with schema version: 0-12]

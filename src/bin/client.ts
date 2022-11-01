@@ -5,17 +5,42 @@ import { Command, Option } from "commander";
 import c from "ansi-colors";
 import { Logger } from "tslog";
 import readline from "readline";
+import { EventEmitter } from "events";
 
 import { maxSchemaVersion } from "../lib/const";
 import { OutgoingEventMessage, OutgoingMessage, OutgoingResultMessageSuccess } from "../lib/outgoing_message";
 import { DriverCommand } from "../lib/driver/command";
 import { DeviceCommand } from "../lib/device/command";
 import { StationCommand } from "../lib/station/command";
-import { convertCamelCaseToSnakeCase } from "../lib/utils";
+import { convertCamelCaseToSnakeCase, waitForEvent } from "../lib/utils";
 import { OutgoingEventDeviceCommandResult } from "../lib/device/event";
 import { OutgoingEventStationCommandResult } from "../lib/station/event";
+import { IncomingCommandDeviceAddUser, IncomingCommandDeviceUpdateUser, IncomingCommandDeviceUpdateUserPasscode, IncomingCommandDeviceUpdateUserSchedule } from "../lib/device/incoming_message";
+import { IndexedProperty, Schedule } from "eufy-security-client";
 
 const commands = (Object.values(DriverCommand) as Array<string>).concat(Object.values(DeviceCommand) as Array<string>).concat(Object.values(StationCommand) as Array<string>).concat(["quit", "exit"]);
+const devicePropertiesMetadata: { [index: string]: IndexedProperty; } = {};
+const stationPropertiesMetadata: { [index: string]: IndexedProperty; } = {};
+const emitter = new EventEmitter();
+
+const parsePropertyValue = (property: string, value: string, serialNumber: string, propertiesMetadata: { [index: string]: IndexedProperty; }): number | boolean | string => {
+    try {
+        if (propertiesMetadata[serialNumber] !== undefined && propertiesMetadata[serialNumber][property] !== undefined) {
+            switch(propertiesMetadata[serialNumber][property].type) {
+                case "boolean":
+                    return value.toLowerCase() === "true" ? true : false;
+                case "number":
+                    return Number.parseInt(value);
+                case "string":
+                default:
+                    return value;
+            }
+
+        }
+    } catch (error) {
+    }
+    return value;
+};
 
 const cmdHelp = (cmd: string): void => {
     switch (cmd) {
@@ -76,7 +101,11 @@ const cmdHelp = (cmd: string): void => {
         case DeviceCommand.stopTalkback:
         case DeviceCommand.isTalkbackOngoing:
         case DeviceCommand.isDownloading:
+        case DeviceCommand.getUsers:
             console.log(`${cmd} <device_sn>`);
+            break;
+        case DeviceCommand.verifyPIN:
+            console.log(`${cmd} <device_sn> <pin>`);
             break;
         case DeviceCommand.setProperty:
             console.log(`${cmd} <device_sn> <name> <value>`);
@@ -91,7 +120,7 @@ const cmdHelp = (cmd: string): void => {
             console.log(`${cmd} <device_sn> <voiceId>`);
             break;
         case DeviceCommand.startDownload:
-            console.log(`${cmd} <device_sn> <path> <cipherId>`);
+            console.log(`${cmd} <device_sn> <path> [cipherId]`);
             break;
         case DeviceCommand.hasProperty:
         case DeviceCommand.hasCommand:
@@ -100,6 +129,16 @@ const cmdHelp = (cmd: string): void => {
         case DeviceCommand.snooze:
             console.log(`${cmd} <device_sn> <snooze_time> [snooze_chime] [snooze_motion] [snooze_homebase]`);
             break;
+        case DeviceCommand.addUser:
+            console.log(`${cmd} <device_sn> <username> <passcode> [schedule]`);
+        case DeviceCommand.deleteUser:
+            console.log(`${cmd} <device_sn> <username>`);
+        case DeviceCommand.updateUser:
+            console.log(`${cmd} <device_sn> <username> <new_username>`);
+        case DeviceCommand.updateUserSchedule:
+            console.log(`${cmd} <device_sn> <username> <schedule>`);
+        case DeviceCommand.updateUserPasscode:
+            console.log(`${cmd} <device_sn> <username> <passcode>`);
         case StationCommand.setGuardMode:
             console.log(`${cmd} <station_sn> <numeric_code>`);
             break;
@@ -146,7 +185,7 @@ const cmdHelp = (cmd: string): void => {
     }
 };
 
-const cmd = (args: Array<string>, silent = false): Array<string> => {
+const cmd = async(args: Array<string>, silent = false, internal = false): Promise<string[]> => {
     switch (args[0]) {
         case "help": 
             if (args.length <= 1 || args.length > 2) {
@@ -154,6 +193,9 @@ const cmd = (args: Array<string>, silent = false): Array<string> => {
             } else {
                 cmdHelp(args[1]);
             }
+            break;
+        case "exit":
+        case "quit":
             break;
         case DriverCommand.setVerifyCode:
             if (args.length === 2 && isNumber(args[1])) {
@@ -470,7 +512,7 @@ const cmd = (args: Array<string>, silent = false): Array<string> => {
         case DeviceCommand.getPropertiesMetadata:
             if (args.length === 2) {
                 socket.send(JSON.stringify({
-                    messageId: DeviceCommand.getPropertiesMetadata.split(".")[1],
+                    messageId: internal ? `internal_${DeviceCommand.getPropertiesMetadata}` : DeviceCommand.getPropertiesMetadata.split(".")[1],
                     command: DeviceCommand.getPropertiesMetadata,
                     serialNumber: args[1],
                 }));
@@ -495,12 +537,16 @@ const cmd = (args: Array<string>, silent = false): Array<string> => {
             break;
         case DeviceCommand.setProperty:
             if (args.length === 4) {
+                if (devicePropertiesMetadata[args[1]] === undefined) {
+                    await cmd(["device.get_properties_metadata", args[1]], false, true);
+                    await waitForEvent(emitter, `device.get_properties_metadata.${args[1]}`, 10000).catch(); //TODO: Handle better the timeout exception
+                }
                 socket.send(JSON.stringify({
                     messageId: DeviceCommand.setProperty.split(".")[1],
                     command: DeviceCommand.setProperty,
                     serialNumber: args[1],
                     name: args[2],
-                    value: args[3],
+                    value: parsePropertyValue(args[2], args[3], args[1], devicePropertiesMetadata),
                 }));
             } else {
                 cmdHelp(args[0]);
@@ -616,13 +662,14 @@ const cmd = (args: Array<string>, silent = false): Array<string> => {
             }
             break;
         case DeviceCommand.startDownload:
-            if (args.length === 4) {
+            if ((args.length === 3) ||
+                (args.length === 4 && isNumber(args[3]))) {
                 socket.send(JSON.stringify({
                     messageId: DeviceCommand.startDownload.split(".")[1],
                     command: DeviceCommand.startDownload,
                     serialNumber: args[1],
                     path: args[2],
-                    cipherId: Number.parseInt(args[3]),
+                    cipherId: args.length === 4 ? Number.parseInt(args[3]) : undefined,
                 }));
             } else {
                 cmdHelp(args[0]);
@@ -860,6 +907,115 @@ const cmd = (args: Array<string>, silent = false): Array<string> => {
                     handleShutdown(1);
             }
             break;
+        case DeviceCommand.addUser:
+            if (args.length === 4 || args.length === 5) {
+                const command: IncomingCommandDeviceAddUser = {
+                    messageId: DeviceCommand.addUser.split(".")[1],
+                    command: DeviceCommand.addUser,
+                    serialNumber: args[1],
+                    username: args[2],
+                    passcode: args[3]
+                };
+                if (args.length === 5) {
+                    //TODO: Correct type casting etc.
+                    command.schedule = args[5] as Schedule
+                }
+                socket.send(JSON.stringify(command));
+            } else {
+                cmdHelp(args[0]);
+                if (silent)
+                    handleShutdown(1);
+            }
+            break;
+        case DeviceCommand.deleteUser:
+            if (args.length === 3) {
+                socket.send(JSON.stringify({
+                    messageId: DeviceCommand.deleteUser.split(".")[1],
+                    command: DeviceCommand.deleteUser,
+                    serialNumber: args[1],
+                    username: args[2],
+                }));
+            } else {
+                cmdHelp(args[0]);
+                if (silent)
+                    handleShutdown(1);
+            }
+            break;
+        case DeviceCommand.getUsers:
+            if (args.length === 2) {
+                socket.send(JSON.stringify({
+                    messageId: DeviceCommand.getUsers.split(".")[1],
+                    command: DeviceCommand.getUsers,
+                    serialNumber: args[1],
+                }));
+            } else {
+                cmdHelp(args[0]);
+                if (silent)
+                    handleShutdown(1);
+            }
+            break;
+        case DeviceCommand.updateUser:
+            if (args.length === 4) {
+                const command: IncomingCommandDeviceUpdateUser = {
+                    messageId: DeviceCommand.updateUser.split(".")[1],
+                    command: DeviceCommand.updateUser,
+                    serialNumber: args[1],
+                    username: args[2],
+                    newUsername: args[3]
+                };
+                socket.send(JSON.stringify(command));
+            } else {
+                cmdHelp(args[0]);
+                if (silent)
+                    handleShutdown(1);
+            }
+            break;
+        case DeviceCommand.updateUserPasscode:
+            if (args.length === 4 && isNumber(args[3])) {
+                const command: IncomingCommandDeviceUpdateUserPasscode = {
+                    messageId: DeviceCommand.updateUserPasscode.split(".")[1],
+                    command: DeviceCommand.updateUserPasscode,
+                    serialNumber: args[1],
+                    username: args[2],
+                    passcode: args[3]
+                };
+                socket.send(JSON.stringify(command));
+            } else {
+                cmdHelp(args[0]);
+                if (silent)
+                    handleShutdown(1);
+            }
+            break;
+        case DeviceCommand.updateUserSchedule:
+            if (args.length === 4) {
+                const command: IncomingCommandDeviceUpdateUserSchedule = {
+                    messageId: DeviceCommand.updateUserSchedule.split(".")[1],
+                    command: DeviceCommand.updateUserSchedule,
+                    serialNumber: args[1],
+                    username: args[2],
+                    schedule: args[3] as Schedule, //TODO: Correct type casting etc.
+                };
+                socket.send(JSON.stringify(command));
+            } else {
+                cmdHelp(args[0]);
+                if (silent)
+                    handleShutdown(1);
+            }
+            break;
+        case DeviceCommand.verifyPIN:
+            if (args.length === 3) {
+                socket.send(JSON.stringify({
+                    messageId: DeviceCommand.verifyPIN.split(".")[1],
+                    command: DeviceCommand.verifyPIN,
+                    serialNumber: args[1],
+                    pin: args[2],
+                }));
+            } else {
+                cmdHelp(args[0]);
+                if (silent)
+                    handleShutdown(1);
+            }
+            break;
         case StationCommand.setGuardMode:
             if (args.length === 3 && isNumber(args[2])) {
                 socket.send(JSON.stringify({
@@ -929,7 +1085,7 @@ const cmd = (args: Array<string>, silent = false): Array<string> => {
         case StationCommand.getPropertiesMetadata:
             if (args.length === 2) {
                 socket.send(JSON.stringify({
-                    messageId: StationCommand.getPropertiesMetadata.split(".")[1],
+                    messageId: internal ? `internal_${StationCommand.getPropertiesMetadata}` : StationCommand.getPropertiesMetadata.split(".")[1],
                     command: StationCommand.getPropertiesMetadata,
                     serialNumber: args[1],
                 }));
@@ -954,12 +1110,16 @@ const cmd = (args: Array<string>, silent = false): Array<string> => {
             break;
         case StationCommand.setProperty:
             if (args.length === 4) {
+                if (stationPropertiesMetadata[args[1]] === undefined) {
+                    await cmd(["station.get_properties_metadata", args[1]], false, true);
+                    await waitForEvent(emitter, `station.get_properties_metadata.${args[1]}`, 10000).catch(); //TODO: Handle better the timeout exception
+                }
                 socket.send(JSON.stringify({
                     messageId: StationCommand.setProperty.split(".")[1],
                     command: StationCommand.setProperty,
                     serialNumber: args[1],
                     name: args[2],
-                    value: args[3],
+                    value: parsePropertyValue(args[2], args[3], args[1], stationPropertiesMetadata),
                 }));
             } else {
                 cmdHelp(args[0]);
@@ -1094,7 +1254,7 @@ if (options.verbose) {
 }
 
 const logger = new Logger({ minLevel: options.verbose ? "silly" : "info", displayDateTime: false, displayFunctionName: false, displayLogLevel: false, displayFilePath: "hidden" });
-const socket = new ws(url);
+const socket = new ws(url, { handshakeTimeout: options.timeout * 1000 });
 
 socket.on("open", function open() {
     socket.send(
@@ -1146,8 +1306,9 @@ socket.on("message", (data) => {
             }
             
         }
-    } else if (msg.type === "result" /*&& msg.success*/) {
-        switch (msg.messageId) {
+    } else if (msg.type === "result") {
+        const resultMsg = msg as OutgoingResultMessageSuccess;
+        switch (resultMsg.messageId) {
             case "start-listening-result":
             {
                 if (options.command === undefined) {
@@ -1165,14 +1326,15 @@ socket.on("message", (data) => {
                     rl.prompt(true);
 
                     rl.on("line", (line) => {
-                        const args = cmd(line.split(" "));
-                        switch (args[0]) {
-                            case "exit":
-                            case "quit":
-                                rl.close();
-                                break;
-                        }
-                        rl.prompt(true);
+                        cmd(line.split(" ")).then((args) => {
+                            switch (args[0]) {
+                                case "exit":
+                                case "quit":
+                                    rl.close();
+                                    break;
+                            }
+                            rl.prompt(true);
+                        }).catch();
                     }).on("close", () => {
                         handleShutdown();
                     });
@@ -1181,8 +1343,23 @@ socket.on("message", (data) => {
                 }
                 break;
             }
+            case `internal_${DeviceCommand.getPropertiesMetadata}`:{
+                const result = resultMsg.result as { serialNumber?: string; properties: Record<string, unknown>; };
+                if (result.serialNumber !== undefined) {
+                    devicePropertiesMetadata[result.serialNumber] = result.properties as IndexedProperty;
+                    emitter.emit(`device.get_properties_metadata.${result.serialNumber}`);
+                }
+                break;
+            }
+            case `internal_${StationCommand.getPropertiesMetadata}`:
+                const result = resultMsg.result as { serialNumber?: string; properties: Record<string, unknown>; };
+                if (result.serialNumber !== undefined) {
+                    stationPropertiesMetadata[result.serialNumber] = result.properties as IndexedProperty;
+                    emitter.emit(`station.get_properties_metadata.${result.serialNumber}`);
+                }
+                break;
             case convertCamelCaseToSnakeCase(options.command?.split(".")[1]):
-                if (msg.success) {
+                if (resultMsg.success) {
                     const msgSuccess = (msg as OutgoingResultMessageSuccess);
                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     if (msgSuccess.result && (msgSuccess.result as any).async === undefined) {
@@ -1200,19 +1377,21 @@ socket.on("message", (data) => {
         }
     }
 
-    if (options.command === undefined) {
-        if (options.verbose) {
-            if (rl)
-                console.log();
+    if ((msg.type === "result" && !msg.messageId.startsWith("internal_")) || msg.type !== "result") {
+        if (options.command === undefined) {
+            if (options.verbose) {
+                if (rl)
+                    console.log();
+                logger.info("Response:", msg);
+            } else {
+                if (rl)
+                    console.log();
+                console.dir(msg, { depth: 10 });
+            }
+            rl?.prompt(true);
+        } else if (options.verbose) {
             logger.info("Response:", msg);
-        } else {
-            if (rl)
-                console.log();
-            console.dir(msg, { depth: 10 });
         }
-        rl?.prompt(true);
-    } else if (options.verbose) {
-        logger.info("Response:", msg);
     }
 });
 

@@ -12,7 +12,7 @@ export class StationMessageHandler {
     static async handle(message: IncomingMessageStation, driver: EufySecurity, client: Client): Promise<StationResultTypes[StationCommand]> {
         const { serialNumber, command } = message;
 
-        const station = driver.getStation(serialNumber);
+        const station = await driver.getStation(serialNumber);
         switch (command) {
             case StationCommand.reboot:
                 await station.rebootHUB().catch((error) => {

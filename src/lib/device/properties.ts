@@ -27,6 +27,11 @@ export interface DevicePropertiesSchema0 {
     motionDetection: boolean;
     motionDetectionType: number;
     motionDetectionSensitivity: number;
+    motionDetectionTypeHuman: boolean;
+    motionDetectionTypeHumanRecognition: boolean;
+    motionDetectionTypePet: boolean;
+    motionDetectionTypeVehicle: boolean;
+    motionDetectionTypeAllOtherMotions: boolean;
     motionZone: string;
     motionDetectionRange: boolean;
     motionDetectionRangeStandardSensitivity: number;
@@ -196,6 +201,15 @@ export interface DevicePropertiesSchema0 {
     videoTypeStoreToNAS: number;
     snooze: boolean;
     snoozeTime: number;
+    identityPersonDetected: boolean;
+    strangerPersonDetected: boolean;
+    vehicleDetected: boolean;
+    dogDetected: boolean;
+    dogLickDetected: boolean;
+    dogPoopDetected: boolean;
+    detectionStatisticsWorkingDays: number;
+    detectionStatisticsDetectedEvents: number;
+    detectionStatisticsRecordedEvents: number;
 }
 
 export type DeviceProperties = 
@@ -230,6 +244,11 @@ export const dumpDeviceProperties = (device: Device, schemaVersion: number): Dev
         motionDetection: device.getPropertyValue(PropertyName.DeviceMotionDetection) as boolean,
         motionDetectionType: device.getPropertyValue(PropertyName.DeviceMotionDetectionType) as number,
         motionDetectionSensitivity: device.getPropertyValue(PropertyName.DeviceMotionDetectionSensitivity) as number,
+        motionDetectionTypeHuman: device.getPropertyValue(PropertyName.DeviceMotionDetectionTypeHuman) as boolean,
+        motionDetectionTypeHumanRecognition: device.getPropertyValue(PropertyName.DeviceMotionDetectionTypeHumanRecognition) as boolean,
+        motionDetectionTypePet: device.getPropertyValue(PropertyName.DeviceMotionDetectionTypePet) as boolean,
+        motionDetectionTypeVehicle: device.getPropertyValue(PropertyName.DeviceMotionDetectionTypeVehicle) as boolean,
+        motionDetectionTypeAllOtherMotions: device.getPropertyValue(PropertyName.DeviceMotionDetectionTypeAllOtherMotions) as boolean,
         motionZone: device.getPropertyValue(PropertyName.DeviceMotionZone) as string,
         motionDetectionRange: device.getPropertyValue(PropertyName.DeviceMotionDetectionRange) as boolean,
         motionDetectionRangeStandardSensitivity: device.getPropertyValue(PropertyName.DeviceMotionDetectionRangeStandardSensitivity) as number,
@@ -399,6 +418,15 @@ export const dumpDeviceProperties = (device: Device, schemaVersion: number): Dev
         videoTypeStoreToNAS: device.getPropertyValue(PropertyName.DeviceVideoTypeStoreToNAS) as number,
         snooze: device.getPropertyValue(PropertyName.DeviceSnooze) as boolean,
         snoozeTime: device.getPropertyValue(PropertyName.DeviceSnoozeTime) as number,
+        identityPersonDetected: device.getPropertyValue(PropertyName.DeviceIdentityPersonDetected) as boolean,
+        strangerPersonDetected: device.getPropertyValue(PropertyName.DeviceStrangerPersonDetected) as boolean,
+        vehicleDetected: device.getPropertyValue(PropertyName.DeviceVehicleDetected) as boolean,
+        dogDetected: device.getPropertyValue(PropertyName.DeviceDogDetected) as boolean,
+        dogLickDetected: device.getPropertyValue(PropertyName.DeviceDogLickDetected) as boolean,
+        dogPoopDetected: device.getPropertyValue(PropertyName.DeviceDogPoopDetected) as boolean,
+        detectionStatisticsWorkingDays: device.getPropertyValue(PropertyName.DeviceDetectionStatisticsWorkingDays) as number,
+        detectionStatisticsDetectedEvents: device.getPropertyValue(PropertyName.DeviceDetectionStatisticsDetectedEvents) as number,
+        detectionStatisticsRecordedEvents: device.getPropertyValue(PropertyName.DeviceDetectionStatisticsRecordedEvents) as number,
     }
 
     return base;

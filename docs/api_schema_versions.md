@@ -8,8 +8,8 @@ This document describes the changes that are introduced with each schema version
 * Modified Device event `command result` adding custom data
 * Modified Station commands `get_properties` and `get_properties_metadata` to only return supported properties (schema versioned)
 * Modified Device commands `get_properties` and `get_properties_metadata` to only return supported properties (schema versioned)
-* Added new Device events `locked`, `package delivered` , `package stranded`, `package taken`, `someone loitering`, `radar motion detected`, `alarm 911`, `shake alarm`, `wrong try-protect alarm`, `long time not close`, `low battery`, `jammed`, `talkback started` and `talkback stopped`
-* Added new commands `snooze`, `unlock`, `is_downloading`, `start_talkback`, `stop_talkback`, `is_talkback_ongoing` and `talkback_audio_data` to Device
+* Added new Device events `locked`, `package delivered` , `package stranded`, `package taken`, `someone loitering`, `radar motion detected`, `alarm 911`, `shake alarm`, `wrong try-protect alarm`, `long time not close`, `low battery`, `jammed`, `talkback started`, `talkback stopped`, `user added`, `user deleted`, `user error`, `user username updated`, `user schedule updated`, `user passcode updated` and `pin verified`
+* Added new commands `snooze`, `unlock`, `is_downloading`, `start_talkback`, `stop_talkback`, `is_talkback_ongoing`, `talkback_audio_data`, `add_user`, `delete_user`, `get_users`, `device.update_user_passcode`, `device.update_user_schedule`, `device.update_user` and `device.verify_pin` to Device
 * Removed deprecated commands `set_status_led`, `set_auto_night_vision`, `set_motion_detection`, `set_sound_detection`, `set_pet_detection`, `set_rtsp_stream`, `set_anti_theft_detection`, `set_watermark`, `enable_device` and `lock_device` to Device. Please use instead `set_property` command.
 * Changed `start_listening` response to only list station and device serial numbers (removed all properties). Please use now appropiate calls for getting properties (`get_properties` etc.)
 * Device events `device added` and `device removed` only returns the device serial number (no more all properties of the device)

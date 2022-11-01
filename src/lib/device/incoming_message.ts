@@ -1,4 +1,4 @@
-import { CommandName, PropertyName } from "eufy-security-client";
+import { CommandName, PropertyName, Schedule } from "eufy-security-client";
 import { PanTiltDirection } from "eufy-security-client/build/p2p/types";
 
 import { IncomingCommandBase } from "../incoming_message_base";
@@ -106,7 +106,7 @@ export interface IncomingCommandDeviceQuickResponse extends IncomingCommandDevic
 export interface IncomingCommandDeviceStartDownload extends IncomingCommandDeviceBase {
     command: DeviceCommand.startDownload;
     path: string;
-    cipherId: number;
+    cipherId?: number;
 }
 
 export interface IncomingCommandDeviceCancelDownload extends IncomingCommandDeviceBase {
@@ -194,6 +194,45 @@ export interface IncomingCommandDeviceSnooze extends IncomingCommandDeviceBase {
     snoozeHomebase?: boolean;
 }
 
+export interface IncomingCommandDeviceAddUser extends IncomingCommandDeviceBase {
+    command: DeviceCommand.addUser;
+    username: string;
+    passcode: string;
+    schedule?: Schedule;
+}
+
+export interface IncomingCommandDeviceDeleteUser extends IncomingCommandDeviceBase {
+    command: DeviceCommand.deleteUser;
+    username: string;
+}
+
+export interface IncomingCommandDeviceGetUsers extends IncomingCommandDeviceBase {
+    command: DeviceCommand.getUsers;
+}
+
+export interface IncomingCommandDeviceUpdateUserPasscode extends IncomingCommandDeviceBase {
+    command: DeviceCommand.updateUserPasscode;
+    username: string;
+    passcode: string;
+}
+
+export interface IncomingCommandDeviceUpdateUserSchedule extends IncomingCommandDeviceBase {
+    command: DeviceCommand.updateUserSchedule;
+    username: string;
+    schedule: Schedule;
+}
+
+export interface IncomingCommandDeviceUpdateUser extends IncomingCommandDeviceBase {
+    command: DeviceCommand.updateUser;
+    username: string;
+    newUsername: string;
+}
+
+export interface IncomingCommandDeviceVerifyPIN extends IncomingCommandDeviceBase {
+    command: DeviceCommand.verifyPIN;
+    pin: string;
+}
+
 export type IncomingMessageDevice =
   | IncomingCommandDeviceSetStatusLed
   | IncomingCommandDeviceSetAutoNightVision
@@ -234,4 +273,11 @@ export type IncomingMessageDevice =
   | IncomingCommandDeviceStopTalkback
   | IncomingCommandDeviceIsTalkbackOngoing
   | IncomingCommandDeviceTalkbackAudioData
-  | IncomingCommandDeviceSnooze;
+  | IncomingCommandDeviceSnooze
+  | IncomingCommandDeviceAddUser
+  | IncomingCommandDeviceDeleteUser
+  | IncomingCommandDeviceGetUsers
+  | IncomingCommandDeviceUpdateUserPasscode
+  | IncomingCommandDeviceUpdateUserSchedule
+  | IncomingCommandDeviceUpdateUser
+  | IncomingCommandDeviceVerifyPIN;

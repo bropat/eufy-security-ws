@@ -1,4 +1,4 @@
-import { SmartSafeAlarm911Event, SmartSafeShakeAlarmEvent } from "eufy-security-client";
+import { Schedule, SmartSafeAlarm911Event, SmartSafeShakeAlarmEvent } from "eufy-security-client";
 
 import { JSONValue, OutgoingBaseEvent } from "../outgoing_message";
 
@@ -39,6 +39,13 @@ export enum DeviceEvent {
     jammed = "jammed",
     talkbackStarted = "talkback started",
     talkbackStopped = "talkback stopped",
+    userAdded = "user added",
+    userDeleted = "user deleted",
+    userError = "user error",
+    userUsernameUpdated = "user username updated",
+    userScheduleUpdated = "user schedule updated",
+    userPasscodeUpdated = "user passcode updated",
+    pinVerified = "pin verified",
 }
 
 export interface OutgoingEventDeviceBase extends OutgoingBaseEvent {
@@ -315,6 +322,58 @@ export interface OutgoingEventDeviceTalkbackStopped extends OutgoingEventDeviceB
     serialNumber: string;
 }
 
+export interface OutgoingEventDevicePinVerified extends OutgoingEventDeviceBase {
+    source: "device";
+    event: DeviceEvent.pinVerified;
+    serialNumber: string;
+    successfull: boolean;
+}
+
+export interface OutgoingEventDeviceUserAdded extends OutgoingEventDeviceBase {
+    source: "device";
+    event: DeviceEvent.userAdded;
+    serialNumber: string;
+    username: string;
+    schedule?: Schedule;
+}
+
+export interface OutgoingEventDeviceUserDeleted extends OutgoingEventDeviceBase {
+    source: "device";
+    event: DeviceEvent.userDeleted;
+    serialNumber: string;
+    username: string;
+}
+
+export interface OutgoingEventDeviceUserError extends OutgoingEventDeviceBase {
+    source: "device";
+    event: DeviceEvent.userError;
+    serialNumber: string;
+    username: string;
+    error: Error;
+}
+
+export interface OutgoingEventDeviceUserUsernameUpdated extends OutgoingEventDeviceBase {
+    source: "device";
+    event: DeviceEvent.userUsernameUpdated;
+    serialNumber: string;
+    username: string;
+}
+
+export interface OutgoingEventDeviceUserScheduleUpdated extends OutgoingEventDeviceBase {
+    source: "device";
+    event: DeviceEvent.userScheduleUpdated;
+    serialNumber: string;
+    username: string;
+    schedule: Schedule;
+}
+
+export interface OutgoingEventDeviceUserPasscodeUpdated extends OutgoingEventDeviceBase {
+    source: "device";
+    event: DeviceEvent.userPasscodeUpdated;
+    serialNumber: string;
+    username: string;
+}
+
 export type OutgoingEventDevice =
   | OutgoingEventDeviceAdded
   | OutgoingEventDeviceRemoved
@@ -351,4 +410,11 @@ export type OutgoingEventDevice =
   | OutgoingEventDeviceLowBattery
   | OutgoingEventDeviceJammed
   | OutgoingEventDeviceTalkbackStarted
-  | OutgoingEventDeviceTalkbackStopped;
+  | OutgoingEventDeviceTalkbackStopped
+  | OutgoingEventDevicePinVerified
+  | OutgoingEventDeviceUserAdded
+  | OutgoingEventDeviceUserDeleted
+  | OutgoingEventDeviceUserError
+  | OutgoingEventDeviceUserUsernameUpdated
+  | OutgoingEventDeviceUserPasscodeUpdated
+  | OutgoingEventDeviceUserScheduleUpdated;

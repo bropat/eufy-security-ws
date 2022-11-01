@@ -29,6 +29,13 @@ export enum DeviceCommand {
     isTalkbackOngoing = "device.is_talkback_ongoing",
     talkbackAudioData = "device.talkback_audio_data",
     snooze = "device.snooze",
+    addUser = "device.add_user",
+    deleteUser = "device.delete_user",
+    getUsers = "device.get_users",
+    updateUserPasscode = "device.update_user_passcode",
+    updateUserSchedule = "device.update_user_schedule",
+    updateUser = "device.update_user",
+    verifyPIN = "device.verify_pin",
 
     // Deprecated - The following commands have been removed from schema version 13
     setStatusLed = "device.set_status_led",

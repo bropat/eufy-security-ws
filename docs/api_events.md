@@ -1417,3 +1417,132 @@ interface {
   }
 }
 ```
+
+### `user added`
+
+[compatible with schema version: 13+]
+
+This event is sent whenever a new user is successfully added to a lock device.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "device";
+    event: "user added";
+    serialNumber: string;
+    username: string;
+    schedule?: Schedule;
+  }
+}
+```
+
+### `user deleted`
+
+[compatible with schema version: 13+]
+
+This event is sent whenever a user is successfully delete from a lock device.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "device";
+    event: "user deleted";
+    serialNumber: string;
+    username: string;
+  }
+}
+```
+
+### `user error`
+
+[compatible with schema version: 13+]
+
+This event is sent whenever during a user action (add/delete/modify), for a lock device, an error occured.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "device";
+    event: "user error";
+    serialNumber: string;
+    username: string;
+    error: Error;
+  }
+}
+```
+
+### `user username updated`
+
+[compatible with schema version: 13+]
+
+This event is sent whenever a username is successfully changed for a lock device.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "device";
+    event: "user username updated";
+    serialNumber: string;
+    username: string;
+  }
+}
+```
+
+### `user schedule updated`
+
+[compatible with schema version: 13+]
+
+This event is sent whenever a user schedule is successfully changed for a lock device.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "device";
+    event: "user schedule updated";
+    serialNumber: string;
+    username: string;
+    schedule: Schedule;
+  }
+}
+```
+
+### `user passcode updated`
+
+[compatible with schema version: 13+]
+
+This event is sent whenever a user passcode is successfully changed for a lock device.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "device";
+    event: "user passcode updated";
+    serialNumber: string;
+    username: string;
+  }
+}
+```
+
+### `pin verified`
+
+[compatible with schema version: 13+]
+
+This event is sent whenever a pin verification for a smart safe was requested.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "device";
+    event: "pin verified";
+    serialNumber: string;
+    successfull: boolean;
+  }
+}
+```

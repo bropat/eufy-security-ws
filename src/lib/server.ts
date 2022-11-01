@@ -3,7 +3,7 @@ import { WebSocketServer } from "ws"
 import { Logger } from "tslog";
 import { EventEmitter, once } from "events";
 import { Server as HttpServer, createServer, IncomingMessage as HttpIncomingMessage } from "http";
-import { DeviceNotFoundError, EufySecurity, InvalidCountryCodeError, InvalidLanguageCodeError, InvalidPropertyValueError, libVersion, NotSupportedError, ReadOnlyPropertyError, StationNotFoundError, WrongStationError, PropertyNotSupportedError, InvalidPropertyError, InvalidCommandValueError, Device, LivestreamNotRunningError as EufyLivestreamNotRunningError, LivestreamAlreadyRunningError as EufyLivestreamAlreadyRunningError, InvalidPropertyError as EufyInvalidPropertyError, PropertyNotSupportedError as EufyPropertyNotSupportedError, StationConnectTimeoutError, RTSPPropertyNotEnabledError } from "eufy-security-client";
+import { DeviceNotFoundError, EufySecurity, InvalidCountryCodeError, InvalidLanguageCodeError, InvalidPropertyValueError, libVersion, NotSupportedError, ReadOnlyPropertyError, StationNotFoundError, WrongStationError, PropertyNotSupportedError, InvalidPropertyError, InvalidCommandValueError, Device, LivestreamNotRunningError as EufyLivestreamNotRunningError, LivestreamAlreadyRunningError as EufyLivestreamAlreadyRunningError, InvalidPropertyError as EufyInvalidPropertyError, PropertyNotSupportedError as EufyPropertyNotSupportedError, StationConnectTimeoutError, RTSPPropertyNotEnabledError, Station } from "eufy-security-client";
 
 import { EventForwarder } from "./forward";
 import type * as OutgoingMessages from "./outgoing_message";
@@ -377,48 +377,57 @@ export class ClientsController {
         disconnectedClients.forEach(client => {
             Object.keys(client.receiveLivestream).forEach(serialNumber => {
                 this.driver.getDevice(serialNumber).then((device: Device) => {
-                    const station = this.driver.getStation(device.getStationSerial());
-                    const streamingDevices = DeviceMessageHandler.getStreamingDevices(station.getSerial());
+                    this.driver.getStation(device.getStationSerial()).then((station: Station) => {
+                        const streamingDevices = DeviceMessageHandler.getStreamingDevices(station.getSerial());
 
-                    if (client.receiveLivestream[serialNumber] === true && streamingDevices.length === 1 && streamingDevices.includes(client)) {
-                        if (station.isLiveStreaming(device))
-                            station.stopLivestream(device);
-                    }
+                        if (client.receiveLivestream[serialNumber] === true && streamingDevices.length === 1 && streamingDevices.includes(client)) {
+                            if (station.isLiveStreaming(device))
+                                station.stopLivestream(device);
+                        }
 
-                    client.receiveLivestream[device.getSerial()] = false;
-                    DeviceMessageHandler.removeStreamingDevice(station.getSerial(), client);
+                        client.receiveLivestream[device.getSerial()] = false;
+                        DeviceMessageHandler.removeStreamingDevice(station.getSerial(), client);
+                    }).catch((error) => {
+                        this.logger.error(`Error doing livestream cleanup of client`, error);
+                    });
                 }).catch((error) => {
                     this.logger.error(`Error doing livestream cleanup of client`, error);
                 });
             });
             Object.keys(client.receiveDownloadStream).forEach(serialNumber => {
                 this.driver.getDevice(serialNumber).then((device: Device) => {
-                    const station = this.driver.getStation(device.getStationSerial());
-                    const downloadingDevices = DeviceMessageHandler.getDownloadingDevices(station.getSerial());
+                    this.driver.getStation(device.getStationSerial()).then((station: Station) => {
+                        const downloadingDevices = DeviceMessageHandler.getDownloadingDevices(station.getSerial());
 
-                    if (client.receiveDownloadStream[serialNumber] === true && downloadingDevices.length === 1 && downloadingDevices.includes(client)) {
-                        if (station.isDownloading(device))
-                            station.cancelDownload(device);
-                    }
+                        if (client.receiveDownloadStream[serialNumber] === true && downloadingDevices.length === 1 && downloadingDevices.includes(client)) {
+                            if (station.isDownloading(device))
+                                station.cancelDownload(device);
+                        }
 
-                    client.receiveDownloadStream[device.getSerial()] = false;
-                    DeviceMessageHandler.removeDownloadingDevice(station.getSerial(), client);
+                        client.receiveDownloadStream[device.getSerial()] = false;
+                        DeviceMessageHandler.removeDownloadingDevice(station.getSerial(), client);
+                    }).catch((error) => {
+                        this.logger.error(`Error doing download cleanup of client`, error);
+                    });
                 }).catch((error) => {
                     this.logger.error(`Error doing download cleanup of client`, error);
                 });
             });
             Object.keys(client.sendTalkbackStream).forEach(serialNumber => {
                 this.driver.getDevice(serialNumber).then((device: Device) => {
-                    const station = this.driver.getStation(device.getStationSerial());
-                    const talkbackingDevices = DeviceMessageHandler.getTalkbackingDevices(station.getSerial());
+                    this.driver.getStation(device.getStationSerial()).then((station: Station) => {
+                        const talkbackingDevices = DeviceMessageHandler.getTalkbackingDevices(station.getSerial());
 
-                    if (client.sendTalkbackStream[serialNumber] === true && talkbackingDevices.length === 1 && talkbackingDevices.includes(client)) {
-                        if (station.isTalkbackOngoing(device))
-                            station.stopTalkback(device);
-                    }
+                        if (client.sendTalkbackStream[serialNumber] === true && talkbackingDevices.length === 1 && talkbackingDevices.includes(client)) {
+                            if (station.isTalkbackOngoing(device))
+                                station.stopTalkback(device);
+                        }
 
-                    client.sendTalkbackStream[device.getSerial()] = false;
-                    DeviceMessageHandler.removeTalkbackingDevice(station.getSerial(), client);
+                        client.sendTalkbackStream[device.getSerial()] = false;
+                        DeviceMessageHandler.removeTalkbackingDevice(station.getSerial(), client);
+                    }).catch((error) => {
+                        this.logger.error(`Error doing download cleanup of client`, error);
+                    });
                 }).catch((error) => {
                     this.logger.error(`Error doing download cleanup of client`, error);
                 });

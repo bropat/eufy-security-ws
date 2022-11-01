@@ -6,7 +6,7 @@ import { Client } from "../server";
 import { convertCamelCaseToSnakeCase } from "../utils";
 import { DeviceCommand } from "./command";
 import { DeviceEvent } from "./event";
-import { IncomingCommandDeviceEnableDevice, IncomingCommandDeviceLockDevice, IncomingCommandDeviceSetAntiTheftDetection, IncomingCommandDeviceSetAutoNightVision, IncomingCommandDeviceSetMotionDetection, IncomingCommandDeviceSetPetDetection, IncomingCommandDeviceSetProperty, IncomingCommandDeviceSetRTSPStream, IncomingCommandDeviceSetSoundDetection, IncomingCommandDeviceSetStatusLed, IncomingCommandDeviceSetWatermark, IncomingMessageDevice, IncomingCommandDeviceTriggerAlarm, IncomingCommandDevicePanAndTilt, IncomingCommandDeviceQuickResponse, IncomingCommandDeviceStartDownload, IncomingCommandDeviceHasProperty, IncomingCommandDeviceHasCommand, IncomingCommandDeviceTalkbackAudioData, IncomingCommandDeviceSnooze } from "./incoming_message";
+import { IncomingCommandDeviceEnableDevice, IncomingCommandDeviceLockDevice, IncomingCommandDeviceSetAntiTheftDetection, IncomingCommandDeviceSetAutoNightVision, IncomingCommandDeviceSetMotionDetection, IncomingCommandDeviceSetPetDetection, IncomingCommandDeviceSetProperty, IncomingCommandDeviceSetRTSPStream, IncomingCommandDeviceSetSoundDetection, IncomingCommandDeviceSetStatusLed, IncomingCommandDeviceSetWatermark, IncomingMessageDevice, IncomingCommandDeviceTriggerAlarm, IncomingCommandDevicePanAndTilt, IncomingCommandDeviceQuickResponse, IncomingCommandDeviceStartDownload, IncomingCommandDeviceHasProperty, IncomingCommandDeviceHasCommand, IncomingCommandDeviceTalkbackAudioData, IncomingCommandDeviceSnooze, IncomingCommandDeviceAddUser, IncomingCommandDeviceDeleteUser, IncomingCommandDeviceVerifyPIN, IncomingCommandDeviceUpdateUser, IncomingCommandDeviceUpdateUserPasscode, IncomingCommandDeviceUpdateUserSchedule } from "./incoming_message";
 import { DeviceResultTypes } from "./outgoing_message";
 import { dumpDeviceProperties, dumpDevicePropertiesMetadata } from "./properties";
 
@@ -76,7 +76,7 @@ export class DeviceMessageHandler {
         const { serialNumber, command } = message;
 
         const device = await driver.getDevice(serialNumber);
-        const station = driver.getStation(device.getStationSerial());  
+        const station = await driver.getStation(device.getStationSerial());  
 
         switch (command) {
             case DeviceCommand.setStatusLed:
@@ -590,6 +590,75 @@ export class DeviceMessageHandler {
                         snooze_motion: (message as IncomingCommandDeviceSnooze).snoozeMotion,
                         snooze_homebase: (message as IncomingCommandDeviceSnooze).snoozeHomebase,
                     }).catch((error) => {
+                        throw error;
+                    });
+                    return client.schemaVersion >= 13 ? { async: true } : {};
+                } else {
+                    throw new UnknownCommandError(command);
+                }
+            case DeviceCommand.addUser:
+                if (client.schemaVersion >= 13) {
+                    const addUser = message as IncomingCommandDeviceAddUser;
+                    await driver.addUser(device.getSerial(), addUser.username, addUser.passcode, addUser.schedule).catch((error) => {
+                        throw error;
+                    });
+                    return client.schemaVersion >= 13 ? { async: true } : {};
+                } else {
+                    throw new UnknownCommandError(command);
+                }
+            case DeviceCommand.deleteUser:
+                if (client.schemaVersion >= 13) {
+                    const addUser = message as IncomingCommandDeviceDeleteUser;
+                    await driver.deleteUser(device.getSerial(), addUser.username).catch((error) => {
+                        throw error;
+                    });
+                    return client.schemaVersion >= 13 ? { async: true } : {};
+                } else {
+                    throw new UnknownCommandError(command);
+                }
+            case DeviceCommand.getUsers:
+                if (client.schemaVersion >= 13) {
+                    const users = await driver.getApi().getUsers(device.getSerial(), device.getStationSerial()).catch((error) => {
+                        throw error;
+                    });
+                    return { users: users === null ? [] : users };
+                } else {
+                    throw new UnknownCommandError(command);
+                }
+            case DeviceCommand.updateUser:
+                if (client.schemaVersion >= 13) {
+                    const addUser = message as IncomingCommandDeviceUpdateUser;
+                    await driver.updateUser(device.getSerial(), addUser.username, addUser.newUsername).catch((error) => {
+                        throw error;
+                    });
+                    return client.schemaVersion >= 13 ? { async: true } : {};
+                } else {
+                    throw new UnknownCommandError(command);
+                }
+            case DeviceCommand.updateUserPasscode:
+                if (client.schemaVersion >= 13) {
+                    const addUser = message as IncomingCommandDeviceUpdateUserPasscode;
+                    await driver.updateUserPasscode(device.getSerial(), addUser.username, addUser.passcode).catch((error) => {
+                        throw error;
+                    });
+                    return client.schemaVersion >= 13 ? { async: true } : {};
+                } else {
+                    throw new UnknownCommandError(command);
+                }
+            case DeviceCommand.updateUserSchedule:
+                if (client.schemaVersion >= 13) {
+                    const addUser = message as IncomingCommandDeviceUpdateUserSchedule;
+                    await driver.updateUserSchedule(device.getSerial(), addUser.username, addUser.schedule).catch((error) => {
+                        throw error;
+                    });
+                    return client.schemaVersion >= 13 ? { async: true } : {};
+                } else {
+                    throw new UnknownCommandError(command);
+                }
+            case DeviceCommand.verifyPIN:
+                if (client.schemaVersion >= 13) {
+                    const verifyPIN = message as IncomingCommandDeviceVerifyPIN;
+                    await station.verifyPIN(device, verifyPIN.pin).catch((error) => {
                         throw error;
                     });
                     return client.schemaVersion >= 13 ? { async: true } : {};

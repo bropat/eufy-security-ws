@@ -27,7 +27,7 @@ export type EufySecurityState =
 export const dumpState = async (driver: EufySecurity, schemaVersion: number): Promise<EufySecurityState> => {
     const base: Partial<EufySecurityStateSchema0> = {
         driver: dumpDriver(driver, schemaVersion),
-        stations: Array.from(driver.getStations(), (station) =>
+        stations: Array.from(await driver.getStations(), (station) =>
             dumpStation(station, schemaVersion)
         ),
         devices: Array.from(await driver.getDevices(), (device) =>
@@ -39,7 +39,7 @@ export const dumpState = async (driver: EufySecurity, schemaVersion: number): Pr
         return base as EufySecurityStateSchema0;
     
     const base1 = base as unknown as EufySecurityStateSchema1;
-    base1.stations = Array.from(driver.getStations(), (station) =>
+    base1.stations = Array.from(await driver.getStations(), (station) =>
         station.getSerial()
     );
     base1.devices = Array.from(await driver.getDevices(), (device) =>

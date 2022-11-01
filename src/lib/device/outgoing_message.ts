@@ -1,4 +1,4 @@
-import { Voices, CommandName } from "eufy-security-client";
+import { Voices, CommandName, User } from "eufy-security-client";
 
 import { DeviceCommand } from "./command";
 
@@ -43,4 +43,11 @@ export interface DeviceResultTypes {
     [DeviceCommand.talkbackAudioData]: Record<string, never>;
     [DeviceCommand.isTalkbackOngoing]: { serialNumber?: string; talkbackOngoing: boolean };
     [DeviceCommand.snooze]: { async?: boolean };
+    [DeviceCommand.addUser]: { async?: boolean };
+    [DeviceCommand.deleteUser]: { async?: boolean };
+    [DeviceCommand.getUsers]: { users: User[] };
+    [DeviceCommand.updateUser]: { async?: boolean };
+    [DeviceCommand.updateUserPasscode]: { async?: boolean };
+    [DeviceCommand.updateUserSchedule]: { async?: boolean };
+    [DeviceCommand.verifyPIN]: { async?: boolean };
 }

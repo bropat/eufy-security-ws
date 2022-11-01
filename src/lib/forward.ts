@@ -1,4 +1,4 @@
-import { AudioCodec, CommandResult, CommandType, Device,  ErrorCode, ParamType, PropertyValue, Station, StreamMetadata, VideoCodec, AlarmEvent, SmartSafeAlarm911Event, SmartSafeShakeAlarmEvent, TalkbackStream } from "eufy-security-client";
+import { AudioCodec, CommandResult, CommandType, Device,  ErrorCode, ParamType, PropertyValue, Station, StreamMetadata, VideoCodec, AlarmEvent, SmartSafeAlarm911Event, SmartSafeShakeAlarmEvent, TalkbackStream, Schedule } from "eufy-security-client";
 import { Readable } from "stream";
 import { Logger } from "tslog";
 
@@ -169,9 +169,11 @@ export class EventForwarder {
             });
         });
 
-        this.clients.driver.getStations().forEach(station => {
-            this.setupStation(station);
-        });
+        this.clients.driver.getStations().then((stations: Station[]) => {
+            stations.forEach(station => {
+                this.setupStation(station);
+            });
+        }).catch();
 
         this.clients.driver.getDevices().then((devices: Device[]) => {
             devices.forEach(device => {
@@ -336,6 +338,64 @@ export class EventForwarder {
                     }
                 });
         });
+
+        this.clients.driver.on("user added", (device: Device, username: string, schedule?: Schedule) => {
+            this.forwardEvent({
+                source: "device",
+                event: DeviceEvent.userAdded,
+                serialNumber: device.getSerial(),
+                username: username,
+                schedule: schedule,
+            }, 13);
+        });
+
+        this.clients.driver.on("user deleted", (device: Device, username: string) => {
+            this.forwardEvent({
+                source: "device",
+                event: DeviceEvent.userDeleted,
+                serialNumber: device.getSerial(),
+                username: username,
+            }, 13);
+        });
+
+        this.clients.driver.on("user error", (device: Device, username: string, error: Error) => {
+            this.forwardEvent({
+                source: "device",
+                event: DeviceEvent.userError,
+                serialNumber: device.getSerial(),
+                username: username,
+                error: error
+            }, 13);
+        });
+
+        this.clients.driver.on("user username updated", (device: Device, username: string) => {
+            this.forwardEvent({
+                source: "device",
+                event: DeviceEvent.userUsernameUpdated,
+                serialNumber: device.getSerial(),
+                username: username,
+            }, 13);
+        });
+
+        this.clients.driver.on("user schedule updated", (device: Device, username: string, schedule: Schedule) => {
+            this.forwardEvent({
+                source: "device",
+                event: DeviceEvent.userScheduleUpdated,
+                serialNumber: device.getSerial(),
+                username: username,
+                schedule: schedule
+            }, 13);
+        });
+
+        this.clients.driver.on("user passcode updated", (device: Device, username: string) => {
+            this.forwardEvent({
+                source: "device",
+                event: DeviceEvent.userPasscodeUpdated,
+                serialNumber: device.getSerial(),
+                username: username,
+            }, 13);
+        });
+
 
     }
 
@@ -639,6 +699,15 @@ export class EventForwarder {
                 serialNumber: station.getSerial(),
                 armDelay: armDelay
             }, 12);
+        });
+
+        station.on("device pin verified", (deviceSN: string, successfull: boolean) => {
+            this.forwardEvent({
+                source: "device",
+                event: DeviceEvent.pinVerified,
+                serialNumber: deviceSN,
+                successfull: successfull
+            }, 13);
         });
     }
 
