@@ -1232,7 +1232,7 @@ program
     .addOption(new Option("-p, --port <port>", "Port to connect to").default(3000))
     .addOption(new Option("-c, --command <command_name>", "Silent command to execute").choices(commands))
     .addOption(new Option("-a, --arguments <args...>", "Arguments for silent command if expected"))
-    .addOption(new Option("-t, --timeout <command_name>", "Silent command timeout seconds").default(30))
+    .addOption(new Option("-t, --timeout <seconds>", "Silent command timeout seconds").default(30))
     .addOption(new Option("-v, --verbose"));
 
 program.parse(process.argv);
