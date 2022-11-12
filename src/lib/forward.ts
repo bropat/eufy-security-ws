@@ -95,6 +95,14 @@ export class EventForwarder {
             );
         });
 
+        this.clients.driver.on("connection error", (error: Error) => {
+            this.forwardEvent({
+                source: "driver",
+                event: DriverEvent.connectionError,
+                error: error,
+            }, 14);
+        });
+
         this.clients.driver.on("station added", (station: Station) => {
             this.clients.clients.forEach((client) => {
                 if (client.schemaVersion <= 12) {
@@ -747,6 +755,15 @@ export class EventForwarder {
                 serialNumber: device.getSerial(),
                 state: state,
             }, 0);
+        });
+
+        device.on("vehicle detected", (device: Device, state: boolean) => {
+            this.forwardEvent({
+                source: "device",
+                event: DeviceEvent.vehicleDetected,
+                serialNumber: device.getSerial(),
+                state: state,
+            }, 14);
         });
 
         device.on("sound detected", (device: Device, state: boolean) => {

@@ -1,4 +1,5 @@
 import { Station, IndexedProperty, PropertyName } from "eufy-security-client"
+import { Modify } from "../state";
 
 export interface StationPropertiesSchema0 {
     name: string;
@@ -31,8 +32,20 @@ export interface StationPropertiesSchema0 {
     stationOffSecuritySettings: string;
 }
 
+type StationPropertiesSchema1 = Modify<
+StationPropertiesSchema0,
+{
+    alarm?: boolean;
+    alarmType?: number;
+    alarmArmed?: boolean;
+    alarmArmDelay?: number;
+    alarmDelay?: number;
+    alarmDelayType?: number;
+}>;
+
 export type StationProperties = 
-  | StationPropertiesSchema0;
+  | StationPropertiesSchema0
+  | StationPropertiesSchema1;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const dumpStationProperties = (station: Station, schemaVersion: number): StationProperties => {
@@ -67,7 +80,20 @@ export const dumpStationProperties = (station: Station, schemaVersion: number): 
         stationOffSecuritySettings: station.getPropertyValue(PropertyName.StationOffSecuritySettings) as string,
     }
 
-    return base;
+    if (schemaVersion <= 13) {
+        return base;
+    }
+
+    // All schemas >= 14
+    const stationProperties1 = base as StationPropertiesSchema1;
+    stationProperties1.alarm = station.getPropertyValue(PropertyName.StationAlarm) as boolean;
+    stationProperties1.alarmType = station.getPropertyValue(PropertyName.StationAlarmType) as number;
+    stationProperties1.alarmArmed = station.getPropertyValue(PropertyName.StationAlarmArmed) as boolean;
+    stationProperties1.alarmArmDelay = station.getPropertyValue(PropertyName.StationAlarmArmDelay) as number;
+    stationProperties1.alarmDelay = station.getPropertyValue(PropertyName.StationAlarmDelay) as number;
+    stationProperties1.alarmDelayType = station.getPropertyValue(PropertyName.StationAlarmDelayType) as number;
+
+    return stationProperties1;
 }
 
 export const dumpStationPropertiesMetadata = (station: Station, schemaVersion: number): IndexedProperty => {

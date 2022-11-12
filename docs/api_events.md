@@ -184,6 +184,23 @@ interface {
 }
 ```
 
+### `connection error`
+
+[compatible with schema version: 14+]
+
+This event is sent whenever a connection/authentication error to the cloud occurs.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "driver";
+    event: "connection error";
+    error: Error;
+  }
+}
+```
+
 ## Station level events
 
 ### `station added`
@@ -905,6 +922,24 @@ interface {
   event: {
     source: "device";
     event: "pet detected";
+    serialNumber: string;
+    state: boolean;
+  }
+}
+```
+
+### `vehicle detected`
+
+[compatible with schema version: 14+]
+
+This event is sent whenever a vehicle is detected on the device (the cooldown is determined by the `eventDurationSeconds` param).
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "device";
+    event: "vehicle detected";
     serialNumber: string;
     state: boolean;
   }

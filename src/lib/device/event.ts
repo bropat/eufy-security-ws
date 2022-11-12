@@ -10,6 +10,7 @@ export enum DeviceEvent {
     cryingDetected = "crying detected",
     soundDetected = "sound detected",
     petDetected = "pet detected",
+    vehicleDetected = "vehicle detected",
     rings = "rings",
     sensorOpen = "sensor open",
     gotRtspUrl = "got rtsp url",
@@ -98,6 +99,13 @@ export interface OutgoingEventDeviceSoundDetected extends OutgoingEventDeviceBas
 export interface OutgoingEventDevicePetDetected extends OutgoingEventDeviceBase {
     source: "device";
     event: DeviceEvent.petDetected;
+    state: boolean;
+    serialNumber: string;
+}
+
+export interface OutgoingEventDeviceVehicleDetected extends OutgoingEventDeviceBase {
+    source: "device";
+    event: DeviceEvent.vehicleDetected;
     state: boolean;
     serialNumber: string;
 }
@@ -382,6 +390,7 @@ export type OutgoingEventDevice =
   | OutgoingEventDeviceCryingDetected
   | OutgoingEventDeviceSoundDetected
   | OutgoingEventDevicePetDetected
+  | OutgoingEventDeviceVehicleDetected
   | OutgoingEventDeviceRings
   | OutgoingEventDeviceSensorOpen
   | OutgoingEventDeviceGotRtspUrl

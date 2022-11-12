@@ -6,6 +6,7 @@ export enum DriverEvent {
     verifyCode = "verify code",
     captchaRequest = "captcha request",
     connected = "connected",
+    connectionError = "connectionError",
     disconnected = "disconnected",
     pushConnected = "push connected",
     pushDisconnected = "push disconnected",
@@ -22,24 +23,31 @@ export interface OutgoingEventDriverBase extends OutgoingBaseEvent {
 
 export interface OutgoingEventDriverCaptchaRequest extends OutgoingEventDriverBase {
     source: "driver";
-    event: DriverEvent;
+    event: DriverEvent.captchaRequest;
     captchaId: string;
     captcha: string;
 }
 
 export interface OutgoingEventDriverLogLevelChanged extends OutgoingBaseEvent {
     source: "driver";
-    event: DriverEvent;
+    event: DriverEvent.logLevelChanged;
     level: TLogLevelName;
 }
 
 export interface OutgoingEventDriverLogging extends OutgoingBaseEvent {
     source: "driver";
-    event: DriverEvent;
+    event: DriverEvent.logging;
     message: ILogObject;
+}
+
+export interface OutgoingEventDriverConnectionError extends OutgoingEventDriverBase {
+    source: "driver";
+    event: DriverEvent.connectionError;
+    error: Error;
 }
 
 export type OutgoingEventDriver =
   | OutgoingEventDriverCaptchaRequest
   | OutgoingEventDriverLogLevelChanged
-  | OutgoingEventDriverLogging;
+  | OutgoingEventDriverLogging
+  | OutgoingEventDriverConnectionError;

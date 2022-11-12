@@ -2,6 +2,12 @@
 
 This document describes the changes that are introduced with each schema version.
 
+## Schema 14
+
+* Added new property `alarm`, `alarmType`, `alarmArmed`, `alarmArmDelay`, `alarmDelay` and `alarmDelayType` to Station
+* Added new Device event `vehicle detected`
+* Added new Driver event `connection error`
+
 ## Schema 13
 
 * Modified Station event `command result` adding custom data
