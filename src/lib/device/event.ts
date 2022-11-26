@@ -11,6 +11,10 @@ export enum DeviceEvent {
     soundDetected = "sound detected",
     petDetected = "pet detected",
     vehicleDetected = "vehicle detected",
+    dogDetected = "dog detected",
+    dogLickDetected = "dog lick detected",
+    dogPoopDetected = "dog poop detected",
+    strangerPersonDetected = "stranger person detected",
     rings = "rings",
     sensorOpen = "sensor open",
     gotRtspUrl = "got rtsp url",
@@ -382,6 +386,34 @@ export interface OutgoingEventDeviceUserPasscodeUpdated extends OutgoingEventDev
     username: string;
 }
 
+export interface OutgoingEventDeviceStrangerPersonDetected extends OutgoingEventDeviceBase {
+    source: "device";
+    event: DeviceEvent.strangerPersonDetected;
+    serialNumber: string;
+    state: boolean;
+}
+
+export interface OutgoingEventDeviceDogDetected extends OutgoingEventDeviceBase {
+    source: "device";
+    event: DeviceEvent.dogDetected;
+    serialNumber: string;
+    state: boolean;
+}
+
+export interface OutgoingEventDeviceDogLickDetected extends OutgoingEventDeviceBase {
+    source: "device";
+    event: DeviceEvent.dogLickDetected;
+    serialNumber: string;
+    state: boolean;
+}
+
+export interface OutgoingEventDeviceDogPoopDetected extends OutgoingEventDeviceBase {
+    source: "device";
+    event: DeviceEvent.dogPoopDetected;
+    serialNumber: string;
+    state: boolean;
+}
+
 export type OutgoingEventDevice =
   | OutgoingEventDeviceAdded
   | OutgoingEventDeviceRemoved
@@ -426,4 +458,8 @@ export type OutgoingEventDevice =
   | OutgoingEventDeviceUserError
   | OutgoingEventDeviceUserUsernameUpdated
   | OutgoingEventDeviceUserPasscodeUpdated
-  | OutgoingEventDeviceUserScheduleUpdated;
+  | OutgoingEventDeviceUserScheduleUpdated
+  | OutgoingEventDeviceStrangerPersonDetected
+  | OutgoingEventDeviceDogDetected
+  | OutgoingEventDeviceDogLickDetected
+  | OutgoingEventDeviceDogPoopDetected;

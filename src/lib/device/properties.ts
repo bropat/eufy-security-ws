@@ -1,4 +1,5 @@
 import { Device, IndexedProperty, PropertyName } from "eufy-security-client"
+import { Modify } from "../state";
 
 export interface DevicePropertiesSchema0 {
     name: string;
@@ -212,8 +213,19 @@ export interface DevicePropertiesSchema0 {
     detectionStatisticsRecordedEvents: number;
 }
 
+type DevicePropertiesSchema1 = Modify<
+DevicePropertiesSchema0,
+{
+    snoozeStartTime: number;
+    snoozeHomebase: boolean;
+    snoozeMotion: boolean;
+    snoozeChime: boolean;
+}
+>;
+
 export type DeviceProperties = 
-  | DevicePropertiesSchema0;
+  | DevicePropertiesSchema0
+  | DevicePropertiesSchema1;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const dumpDeviceProperties = (device: Device, schemaVersion: number): DeviceProperties => {
@@ -429,7 +441,18 @@ export const dumpDeviceProperties = (device: Device, schemaVersion: number): Dev
         detectionStatisticsRecordedEvents: device.getPropertyValue(PropertyName.DeviceDetectionStatisticsRecordedEvents) as number,
     }
 
-    return base;
+    if (schemaVersion <= 14) {
+        return base;
+    }
+
+    // All schemas >= 15
+    const device1 = base as DevicePropertiesSchema1;
+    device1.snoozeStartTime = device.getPropertyValue(PropertyName.DeviceSnoozeStartTime) as number;
+    device1.snoozeHomebase = device.getPropertyValue(PropertyName.DeviceSnoozeHomebase) as boolean;
+    device1.snoozeMotion = device.getPropertyValue(PropertyName.DeviceSnoozeMotion) as boolean;
+    device1.snoozeChime = device.getPropertyValue(PropertyName.DeviceSnoozeChime) as boolean;
+
+    return device1;
 }
 
 export const dumpDevicePropertiesMetadata = (device: Device, schemaVersion: number): IndexedProperty => {

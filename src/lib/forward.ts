@@ -912,6 +912,42 @@ export class EventForwarder {
             }, 0);
         });
 
+        device.on("stranger person detected", (device: Device, state: boolean) => {
+            this.forwardEvent({
+                source: "device",
+                event: DeviceEvent.strangerPersonDetected,
+                serialNumber: device.getSerial(),
+                state: state,
+            }, 15);
+        });
+
+        device.on("dog detected", (device: Device, state: boolean) => {
+            this.forwardEvent({
+                source: "device",
+                event: DeviceEvent.dogDetected,
+                serialNumber: device.getSerial(),
+                state: state,
+            }, 15);
+        });
+
+        device.on("dog lick detected", (device: Device, state: boolean) => {
+            this.forwardEvent({
+                source: "device",
+                event: DeviceEvent.dogLickDetected,
+                serialNumber: device.getSerial(),
+                state: state,
+            }, 15);
+        });
+
+        device.on("dog poop detected", (device: Device, state: boolean) => {
+            this.forwardEvent({
+                source: "device",
+                event: DeviceEvent.dogPoopDetected,
+                serialNumber: device.getSerial(),
+                state: state,
+            }, 15);
+        });
+
         device.on("property changed", (device: Device, name: string, value: PropertyValue) => {
             this.forwardEvent({
                 source: "device",

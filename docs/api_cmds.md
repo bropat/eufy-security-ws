@@ -507,6 +507,21 @@ interface {
 }
 ```
 
+### Chime
+
+[compatible with schema version: 15+]
+
+Only supported if no doorbell device is registered at the station where the chime is to be performed.
+
+```ts
+interface {
+    messageId: string;
+    command: "station.chime";
+    serialNumber: string;
+    ringtone?: number;
+}
+```
+
 ## Device level commands
 
 ### Get properties metadata

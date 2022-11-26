@@ -2,6 +2,12 @@
 
 This document describes the changes that are introduced with each schema version.
 
+## Schema 15
+
+* Added new property `snoozeStartTime`, `snoozeHomebase`, `snoozeMotion` and `snoozeChime` to Device
+* Added new Device events `stranger person detected`, `dog detected`, `dog lick detected` and `dog poop detected`
+* Added new command `chime` to Station
+
 ## Schema 14
 
 * Added new property `alarm`, `alarmType`, `alarmArmed`, `alarmArmDelay`, `alarmDelay` and `alarmDelayType` to Station

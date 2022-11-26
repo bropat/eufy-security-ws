@@ -11,6 +11,7 @@ export enum StationCommand {
     resetAlarm = "station.reset_alarm",
     getCommands = "station.get_commands",
     hasCommand = "station.has_command",
+    chime = "station.chime",
     //    getCameraInfo = "station.get_camera_info",
     //    getStorageInfo = "station.get_storage_info",
 

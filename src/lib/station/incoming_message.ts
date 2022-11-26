@@ -65,6 +65,11 @@ export interface IncomingCommandGetCommands extends IncomingCommandStationBase {
     command: StationCommand.getCommands;
 }
 
+export interface IncomingCommandChime extends IncomingCommandStationBase {
+    command: StationCommand.chime;
+    ringtone?: number;
+}
+
 /*export interface IncomingCommandGetCameraInfo extends IncomingCommandStationBase {
     command: StationCommand.getCameraInfo;
 }
@@ -86,6 +91,7 @@ export type IncomingMessageStation =
   | IncomingCommandResetAlarm
   | IncomingCommandHasProperty
   | IncomingCommandHasCommand
-  | IncomingCommandGetCommands;
+  | IncomingCommandGetCommands
+  | IncomingCommandChime;
 /*  | IncomingCommandGetCameraInfo
   | IncomingCommandGetStorageInfo;*/

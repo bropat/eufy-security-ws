@@ -1,5 +1,4 @@
-import type WebSocket from "ws";
-import { WebSocketServer } from "ws"
+import { WebSocket, WebSocketServer } from "ws"
 import { Logger } from "tslog";
 import { EventEmitter, once } from "events";
 import { Server as HttpServer, createServer, IncomingMessage as HttpIncomingMessage } from "http";

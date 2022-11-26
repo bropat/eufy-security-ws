@@ -3,7 +3,7 @@ import { EufySecurity } from "eufy-security-client";
 import { UnknownCommandError } from "../error";
 import { Client } from "../server";
 import { StationCommand } from "./command";
-import { IncomingCommandSetProperty, IncomingCommandTriggerAlarm, IncomingCommandSetGuardMode, IncomingMessageStation, IncomingCommandHasCommand, IncomingCommandHasProperty } from "./incoming_message";
+import { IncomingCommandSetProperty, IncomingCommandTriggerAlarm, IncomingCommandSetGuardMode, IncomingMessageStation, IncomingCommandHasCommand, IncomingCommandHasProperty, IncomingCommandChime } from "./incoming_message";
 import { StationResultTypes } from "./outgoing_message";
 import { dumpStationProperties, dumpStationPropertiesMetadata } from "./properties";
 
@@ -186,6 +186,16 @@ export class StationMessageHandler {
                     throw new UnknownCommandError(command);
                 }
             }
+            case StationCommand.chime:
+                if (client.schemaVersion >= 15) {
+                    const ringtone = (message as IncomingCommandChime).ringtone;
+                    await station.chimeHombase(ringtone !== undefined ? ringtone : 0).catch((error: Error) => {
+                        throw error;
+                    });
+                    return { async: true };
+                } else {
+                    throw new UnknownCommandError(command);
+                }
             default:
                 throw new UnknownCommandError(command);
         }

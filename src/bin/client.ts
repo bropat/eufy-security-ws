@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 
-import ws from "ws";
+import { WebSocket } from "ws";
 import { Command, Option } from "commander";
-import c from "ansi-colors";
+import * as c from "ansi-colors";
 import { Logger } from "tslog";
-import readline from "readline";
+import * as readline from "readline";
 import { EventEmitter } from "events";
 
 import { maxSchemaVersion } from "../lib/const";
@@ -17,6 +17,7 @@ import { OutgoingEventDeviceCommandResult } from "../lib/device/event";
 import { OutgoingEventStationCommandResult } from "../lib/station/event";
 import { IncomingCommandDeviceAddUser, IncomingCommandDeviceUpdateUser, IncomingCommandDeviceUpdateUserPasscode, IncomingCommandDeviceUpdateUserSchedule } from "../lib/device/incoming_message";
 import { IndexedProperty, Schedule } from "eufy-security-client";
+import { IncomingCommandChime } from "../lib/station/incoming_message";
 
 const commands = (Object.values(DriverCommand) as Array<string>).concat(Object.values(DeviceCommand) as Array<string>).concat(Object.values(StationCommand) as Array<string>).concat(["quit", "exit"]);
 const devicePropertiesMetadata: { [index: string]: IndexedProperty; } = {};
@@ -163,6 +164,9 @@ const cmdHelp = (cmd: string): void => {
         case StationCommand.hasProperty:
         case StationCommand.hasCommand:
             console.log(`${cmd} <station_sn> <name>`);
+            break;
+        case StationCommand.chime:
+            console.log(`${cmd} <station_sn> [ringtone]`);
             break;
         /*case StationCommand.getCameraInfo:
         case StationCommand.getStorageInfo:
@@ -1195,6 +1199,23 @@ const cmd = async(args: Array<string>, silent = false, internal = false): Promis
                     handleShutdown(1);
             }
             break;
+        case StationCommand.chime:
+            if (args.length === 2 || (args.length === 3 && isNumber(args[2]))) {
+                const command: IncomingCommandChime = {
+                    messageId: StationCommand.chime.split(".")[1],
+                    command: StationCommand.chime,
+                    serialNumber: args[1],
+                };
+                if (args.length === 3) {
+                    command.ringtone = Number.parseInt(args[2]);
+                }
+                socket.send(JSON.stringify(command));
+            } else {
+                cmdHelp(args[0]);
+                if (silent)
+                    handleShutdown(1);
+            }
+            break;
         /*case StationCommand.getCameraInfo:
         case StationCommand.getStorageInfo:
             console.log("Command not implemented.");
@@ -1254,7 +1275,7 @@ if (options.verbose) {
 }
 
 const logger = new Logger({ minLevel: options.verbose ? "silly" : "info", displayDateTime: false, displayFunctionName: false, displayLogLevel: false, displayFilePath: "hidden" });
-const socket = new ws(url, { handshakeTimeout: options.timeout * 1000 });
+const socket = new WebSocket(url, { handshakeTimeout: options.timeout * 1000 });
 
 socket.on("open", function open() {
     socket.send(

@@ -874,6 +874,24 @@ interface {
 }
 ```
 
+### `stranger person detected`
+
+[compatible with schema version: 15+]
+
+This event is sent whenever a stranger person is detected on the device (the cooldown is determined by the `eventDurationSeconds` param).
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "device";
+    event: "stranger person detected";
+    serialNumber: string;
+    state: boolean;
+  }
+}
+```
+
 ### `crying detected`
 
 [compatible with schema version: 0+]
@@ -940,6 +958,60 @@ interface {
   event: {
     source: "device";
     event: "vehicle detected";
+    serialNumber: string;
+    state: boolean;
+  }
+}
+```
+
+### `dog detected`
+
+[compatible with schema version: 15+]
+
+This event is sent whenever a dog is detected on the device (the cooldown is determined by the `eventDurationSeconds` param).
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "device";
+    event: "dog detected";
+    serialNumber: string;
+    state: boolean;
+  }
+}
+```
+
+### `dog lick detected`
+
+[compatible with schema version: 15+]
+
+This event is sent whenever a dog lick is detected on the device (the cooldown is determined by the `eventDurationSeconds` param).
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "device";
+    event: "dog lick detected";
+    serialNumber: string;
+    state: boolean;
+  }
+}
+```
+
+### `dog poop detected`
+
+[compatible with schema version: 15+]
+
+This event is sent whenever a dog poop is detected on the device (the cooldown is determined by the `eventDurationSeconds` param).
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "device";
+    event: "dog poop detected";
     serialNumber: string;
     state: boolean;
   }
