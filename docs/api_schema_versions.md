@@ -2,6 +2,10 @@
 
 This document describes the changes that are introduced with each schema version.
 
+## Schema 16
+
+* Added new property `cellularRSSI`, `cellularSignalLevel`, `cellularSignal`, `cellularBand`, `cellularIMEI` and `cellularICCID` to Device
+
 ## Schema 15
 
 * Added new property `snoozeStartTime`, `snoozeHomebase`, `snoozeMotion` and `snoozeChime` to Device

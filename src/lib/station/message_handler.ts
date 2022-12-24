@@ -189,7 +189,7 @@ export class StationMessageHandler {
             case StationCommand.chime:
                 if (client.schemaVersion >= 15) {
                     const ringtone = (message as IncomingCommandChime).ringtone;
-                    await station.chimeHombase(ringtone !== undefined ? ringtone : 0).catch((error: Error) => {
+                    await station.chimeHomebase(ringtone !== undefined ? ringtone : 0).catch((error: Error) => {
                         throw error;
                     });
                     return { async: true };

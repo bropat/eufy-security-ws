@@ -223,6 +223,18 @@ DevicePropertiesSchema0,
 }
 >;
 
+type DevicePropertiesSchema2 = Modify<
+DevicePropertiesSchema1,
+{
+    cellularRSSI: number;
+    cellularSignalLevel: number;
+    cellularSignal: string;
+    cellularBand: string;
+    cellularIMEI: string;
+    cellularICCID: string;
+}
+>;
+
 export type DeviceProperties = 
   | DevicePropertiesSchema0
   | DevicePropertiesSchema1;
@@ -445,14 +457,26 @@ export const dumpDeviceProperties = (device: Device, schemaVersion: number): Dev
         return base;
     }
 
-    // All schemas >= 15
     const device1 = base as DevicePropertiesSchema1;
     device1.snoozeStartTime = device.getPropertyValue(PropertyName.DeviceSnoozeStartTime) as number;
     device1.snoozeHomebase = device.getPropertyValue(PropertyName.DeviceSnoozeHomebase) as boolean;
     device1.snoozeMotion = device.getPropertyValue(PropertyName.DeviceSnoozeMotion) as boolean;
     device1.snoozeChime = device.getPropertyValue(PropertyName.DeviceSnoozeChime) as boolean;
 
-    return device1;
+    if (schemaVersion <= 15) {
+        return device1;
+    }
+
+    // All schemas >= 16
+    const device2 = base as DevicePropertiesSchema2;
+    device2.cellularRSSI = device.getPropertyValue(PropertyName.DeviceCellularRSSI) as number;
+    device2.cellularSignalLevel = device.getPropertyValue(PropertyName.DeviceCellularSignalLevel) as number;
+    device2.cellularSignal = device.getPropertyValue(PropertyName.DeviceCellularSignal) as string;
+    device2.cellularBand = device.getPropertyValue(PropertyName.DeviceCellularBand) as string;
+    device2.cellularIMEI = device.getPropertyValue(PropertyName.DeviceCellularIMEI) as string;
+    device2.cellularICCID = device.getPropertyValue(PropertyName.DeviceCellularICCID) as string;
+
+    return device2;
 }
 
 export const dumpDevicePropertiesMetadata = (device: Device, schemaVersion: number): IndexedProperty => {
