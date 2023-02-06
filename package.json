@@ -48,7 +48,7 @@
     "commander": "^9.4.1",
     "eufy-security-client": "^2.4.0",
     "fs-extra": "^11.1.0",
-    "tslog": "~3.3.4",
+    "tslog": "~4.7.2",
     "ws": "^8.11.0"
   },
   "devDependencies": {
