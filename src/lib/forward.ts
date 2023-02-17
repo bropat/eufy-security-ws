@@ -404,6 +404,36 @@ export class EventForwarder {
             }, 13);
         });
 
+        this.clients.driver.on("station talkback start", (station: Station, device: Device, talkbackStream: TalkbackStream) => {
+            const serialNumber = device.getSerial();
+            this.clients.clients.filter((cl) => cl.sendTalkbackStream[serialNumber] === true && cl.isConnected)
+                .forEach((client) => {
+                    if (client.schemaVersion >= 13) {
+                        client.sendEvent({
+                            source: "device",
+                            event: DeviceEvent.talkbackStarted,
+                            serialNumber: serialNumber
+                        });
+                    }
+                });
+            DeviceMessageHandler.talkbackStream = talkbackStream;
+        });
+
+        this.clients.driver.on("station talkback stop", (station: Station, device: Device) => {
+            const serialNumber = device.getSerial();
+            this.clients.clients.filter((cl) => cl.sendTalkbackStream[serialNumber] === true && cl.isConnected)
+                .forEach((client) => {
+                    if (client.schemaVersion >= 13) {
+                        client.sendEvent({
+                            source: "device",
+                            event: DeviceEvent.talkbackStopped,
+                            serialNumber: serialNumber
+                        });
+                    }
+                    client.sendTalkbackStream[serialNumber] = false;
+                    DeviceMessageHandler.removeTalkbackingDevice(station.getSerial(), client);
+                });
+        });
 
     }
 
@@ -964,37 +994,6 @@ export class EventForwarder {
                 name: name,
                 value: value as JSONValue,
             }, 10);
-        });
-
-        this.clients.driver.on("station talkback start", (station: Station, device: Device, talkbackStream: TalkbackStream) => {
-            const serialNumber = device.getSerial();
-            this.clients.clients.filter((cl) => cl.sendTalkbackStream[serialNumber] === true && cl.isConnected)
-                .forEach((client) => {
-                    if (client.schemaVersion >= 13) {
-                        client.sendEvent({
-                            source: "device",
-                            event: DeviceEvent.talkbackStarted,
-                            serialNumber: serialNumber
-                        });
-                    }
-                });
-            DeviceMessageHandler.talkbackStream = talkbackStream;
-        });
-
-        this.clients.driver.on("station talkback stop", (station: Station, device: Device) => {
-            const serialNumber = device.getSerial();
-            this.clients.clients.filter((cl) => cl.sendTalkbackStream[serialNumber] === true && cl.isConnected)
-                .forEach((client) => {
-                    if (client.schemaVersion >= 13) {
-                        client.sendEvent({
-                            source: "device",
-                            event: DeviceEvent.talkbackStopped,
-                            serialNumber: serialNumber
-                        });
-                    }
-                    client.sendTalkbackStream[serialNumber] = false;
-                    DeviceMessageHandler.removeTalkbackingDevice(station.getSerial(), client);
-                });
         });
     }
 
