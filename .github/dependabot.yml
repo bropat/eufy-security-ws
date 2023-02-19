@@ -8,3 +8,6 @@ updates:
       - "npm dependencies"
     allow:
       - dependency-type: "production"
+    ignore:
+      - dependency-name: "tslog"
+        versions: [">=4.x"]
