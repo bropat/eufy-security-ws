@@ -26,16 +26,36 @@ You can specify a configuration file with `--config`. This can be a JSON file or
 
 ```ts
 export interface EufySecurityConfig {
-    username: string;                       // Eufy Account Username (required)
-    password: string;                       // Eufy Account Password (required)
-    country?: string;                       // ISO 3166-1 Alpha-2 country code (default: US)
-    language?: string;                      // ISO 639 language code (default: en)
-    trustedDeviceName?: string;             // Label of the trusted devices (viewable with 2fa activated in Eufy App; default: eufyclient)
-    persistentDir?: string;                 // Directory in which the persistent information is saved (default: module path)
-    p2pConnectionSetup: number;             // P2P connection setup (default: 2 ; Quickest connection)
-    pollingIntervalMinutes: number;         // Polling intervall for data refresh from Eufy Cloud (default: 10 min.)
-    eventDurationSeconds: number;           // Duration in seconds before an event is reset E.g. motion event (default: 10 sec.)
-    acceptInvitations?: booleam;            // Automatically accept device invitations (default: false)
+    username: string;                         // Eufy Account Username (required)
+    password: string;                         // Eufy Account Password (required)
+    country?: string;                         // ISO 3166-1 Alpha-2 country code (default: US)
+    language?: string;                        // ISO 639 language code (default: en)
+    trustedDeviceName?: string;               // Label of the trusted devices (viewable with 2fa activated in Eufy App; default: eufyclient)
+    persistentDir?: string;                   // Directory in which the persistent information is saved (default: module path)
+    p2pConnectionSetup: number;               // P2P connection setup (default: 2 ; Quickest connection)
+    pollingIntervalMinutes: number;           // Polling intervall for data refresh from Eufy Cloud (default: 10 min.)
+    eventDurationSeconds: number;             // Duration in seconds before an event is reset E.g. motion event (default: 10 sec.)
+    acceptInvitations?: boolean;              // Automatically accept device invitations (default: false)
+    stationIPAddresses?: StationIPAddresses;  // Suggested IP addresses for a stations (default: unset)
+}
+```
+
+Example config file content:
+
+```json
+{
+    "username": "address@mail.com",
+    "password": "password",
+    "country": "US",
+    "language": "en",
+    "trustedDeviceName": "oneplus10pro",
+    "acceptInvitations": true,
+    "pollingIntervalMinutes": 10,
+    "p2pConnectionSetup": 2,
+    "stationIPAddresses": {
+        "T8010PXXXXXXXXXX": "10.0.1.10",
+        "T8410PXXXXXXXXXX": "10.0.1.11"
+    }
 }
 ```
 
