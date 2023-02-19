@@ -30,7 +30,7 @@ tsconfig.tsbuildinfo
 package-lock.json
 
 # config files
-config.json
+config.json*
 
 # docker
 docker/

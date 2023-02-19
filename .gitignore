@@ -1,6 +1,7 @@
 node_modules
-config.json
+config.json*
 /dist/
 .vscode/*
 tsconfig.tsbuildinfo
 persistent.json
+*.tgz
