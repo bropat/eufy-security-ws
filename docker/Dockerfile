@@ -11,6 +11,7 @@ COPY --from=build /tmp/package.json ./package.json
 COPY --from=build /tmp/package-lock.json ./package-lock.json
 RUN apk add --no-cache jq \
   && npm ci --only=production
+RUN apk add --no-cache bash
 EXPOSE 3000
 VOLUME ["/data"]
 CMD [ "/usr/src/app/run.sh" ]
