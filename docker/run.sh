@@ -7,53 +7,53 @@ fi
 
 RE='^[0-9]+$'
 
-COUNTRY_ARG=""
 COUNTRY_JQ=""
 if [ -n "${COUNTRY}" ]; then
-    COUNTRY_ARG="--arg country $COUNTRY"
     COUNTRY_JQ="country: \$country,"
+else
+    COUNTRY=null
 fi
 
-EVENT_DURATION_SECONDS_ARG=""
 EVENT_DURATION_SECONDS_JQ=""
 if [ -n "${EVENT_DURATION_SECONDS}" ]; then
-    EVENT_DURATION_SECONDS_ARG="--arg event_duration_seconds $EVENT_DURATION_SECONDS"
-    EVENT_DURATION_SECONDS_JQ="eventDurationSeconds: \$event_duration_seconds,"
+    EVENT_DURATION_SECONDS_JQ="eventDurationSeconds: \$event_duration_seconds|tonumber,"
+else
+    EVENT_DURATION_SECONDS=null
 fi
 
-LANGUAGE_ARG=""
 LANGUAGE_JQ=""
 if [ -n "${LANGUAGE}" ]; then
-    LANGUAGE_ARG="--arg language $LANGUAGE"
     LANGUAGE_JQ="language: \$language,"
+else
+    LANGUAGE=null
 fi
 
-P2P_CONNECTION_SETUP_ARG=""
 P2P_CONNECTION_SETUP_JQ=""
 if [ -n "${P2P_CONNECTION_SETUP}" ]; then
-    P2P_CONNECTION_SETUP_ARG="--arg p2p_connection_setup $P2P_CONNECTION_SETUP"
-    P2P_CONNECTION_SETUP_JQ="p2pConnectionSetup: \$p2p_connection_setup,"
+    P2P_CONNECTION_SETUP_JQ="p2pConnectionSetup: \$p2p_connection_setup|tonumber,"
+else
+    P2P_CONNECTION_SETUP=null
 fi
 
-POLLING_INTERVAL_MINUTES_ARG=""
 POLLING_INTERVAL_MINUTES_JQ=""
 if [ -n "${POLLING_INTERVAL_MINUTES}" ]; then
-    POLLING_INTERVAL_MINUTES_ARG="--arg polling_interval_minutes $POLLING_INTERVAL_MINUTES"
-    POLLING_INTERVAL_MINUTES_JQ="pollingIntervalMinutes: \$polling_interval_minutes,"
+    POLLING_INTERVAL_MINUTES_JQ="pollingIntervalMinutes: \$polling_interval_minutes|tonumber,"
+else
+    POLLING_INTERVAL_MINUTES=null
 fi
 
-ACCEPT_INVITATIONS_ARG=""
 ACCEPT_INVITATIONS_JQ=""
 if [ -n "${ACCEPT_INVITATIONS}" ]; then
-    ACCEPT_INVITATIONS_ARG="--arg accept_invitations $ACCEPT_INVITATIONS"
     ACCEPT_INVITATIONS_JQ="acceptInvitations: \$accept_invitations,"
+else
+    ACCEPT_INVITATIONS=null
 fi
 
-TRUSTED_DEVICE_NAME_ARG=""
 TRUSTED_DEVICE_NAME_JQ=""
 if [ -n "${TRUSTED_DEVICE_NAME}" ]; then
-    TRUSTED_DEVICE_NAME_ARG="--arg trusted_device_name ${TRUSTED_DEVICE_NAME}"
     TRUSTED_DEVICE_NAME_JQ="trustedDeviceName: \$trusted_device_name,"
+else
+    TRUSTED_DEVICE_NAME=null
 fi
 
 STATION_IP_ADDRESSES_ARG=""
@@ -105,14 +105,14 @@ fi
 JSON_STRING="$( jq -n \
   --arg username "$USERNAME" \
   --arg password "$PASSWORD" \
-  $COUNTRY_ARG \
-  $EVENT_DURATION_SECONDS_ARG \
-  $LANGUAGE_ARG \
-  $P2P_CONNECTION_SETUP_ARG \
-  $POLLING_INTERVAL_MINUTES_ARG \
-  $TRUSTED_DEVICE_NAME_ARG \
-  $ACCEPT_INVITATIONS_ARG \
-  $STATION_IP_ADDRESSES_ARG \
+  --arg country "$COUNTRY" \
+  --arg event_duration_seconds "$EVENT_DURATION_SECONDS" \
+  --arg language "$LANGUAGE" \
+  --arg p2p_connection_setup "$P2P_CONNECTION_SETUP" \
+  --arg polling_interval_minutes "$POLLING_INTERVAL_MINUTES" \
+  --arg accept_invitations "$ACCEPT_INVITATIONS" \
+  --arg trusted_device_name "$TRUSTED_DEVICE_NAME" \
+  $STATION_IP_ADDRESSES \
     "{
       username: \$username,
       password: \$password,
