@@ -128,5 +128,5 @@ JSON_STRING="$( jq -n \
     }"
   )"
 
-echo "$JSON_STRING" > /etc/eufy-security-ws-config.json
-/usr/local/bin/node /usr/src/app/dist/bin/server.js --host 0.0.0.0 --config /etc/eufy-security-ws-config.json $DEBUG_OPTION $PORT_OPTION
+echo "$JSON_STRING" > /dev/shm/eufy-security-ws-config.json
+/usr/local/bin/node /usr/src/app/dist/bin/server.js --host 0.0.0.0 --config /dev/shm/eufy-security-ws-config.json $DEBUG_OPTION $PORT_OPTION
