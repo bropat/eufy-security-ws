@@ -65,7 +65,7 @@ if [ -n "${STATION_IP_ADDRESSES}" ]; then
         if [ $index -eq 0 ]; then
             STATION_IP_ADDRESSES_ARG="--arg ${TMP_DATA[0]} ${TMP_DATA[1]}"
             if [ $((${#STATION_DATA[@]}-1)) -gt 0 ]; then
-	          STATION_IP_ADDRESSES_JQ="stationIPAddresses: { \$${TMP_DATA[0]}"
+                STATION_IP_ADDRESSES_JQ="stationIPAddresses: { \$${TMP_DATA[0]}"
             else
                 STATION_IP_ADDRESSES_JQ="stationIPAddresses: { \$${TMP_DATA[0]} }"
             fi
@@ -112,7 +112,7 @@ JSON_STRING="$( jq -n \
   --arg polling_interval_minutes "$POLLING_INTERVAL_MINUTES" \
   --arg accept_invitations "$ACCEPT_INVITATIONS" \
   --arg trusted_device_name "$TRUSTED_DEVICE_NAME" \
-  $STATION_IP_ADDRESSES \
+  $STATION_IP_ADDRESSES_ARG \
     "{
       username: \$username,
       password: \$password,
