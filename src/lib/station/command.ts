@@ -12,6 +12,7 @@ export enum StationCommand {
     getCommands = "station.get_commands",
     hasCommand = "station.has_command",
     chime = "station.chime",
+    downloadImage = "station.download_image",
     //    getCameraInfo = "station.get_camera_info",
     //    getStorageInfo = "station.get_storage_info",
 

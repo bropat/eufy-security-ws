@@ -473,6 +473,25 @@ interface {
 }
 ```
 
+### `image downloaded`
+
+[compatible with schema version: 17+]
+
+This event is sent whenever an image was successfully downloaded.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "station";
+    event: "image downloaded";
+    serialNumber: string;
+    file: string;
+    image: Picture;
+  }
+}
+```
+
 ## Device level events
 
 ### `device added`

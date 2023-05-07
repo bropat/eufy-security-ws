@@ -17,6 +17,7 @@ export interface StationResultTypes {
     [StationCommand.hasCommand]: { serialNumber?: string; exists: boolean };
     [StationCommand.getCommands]: { serialNumber?: string; commands: Array<CommandName>; };
     [StationCommand.chime]: { async?: boolean };
+    [StationCommand.downloadImage]: { async?: boolean };
     /*[StationCommand.getCameraInfo]: { async?: boolean };
     [StationCommand.getStorageInfo]: { async?: boolean };*/
 

@@ -1,4 +1,4 @@
-import { Device, IndexedProperty, PropertyName } from "eufy-security-client"
+import { Device, IndexedProperty, Picture, PropertyName } from "eufy-security-client"
 import { Modify } from "../state";
 
 export interface DevicePropertiesSchema0 {
@@ -50,7 +50,7 @@ export interface DevicePropertiesSchema0 {
     rtspStream: boolean;
     rtspStreamUrl: string;
     watermark: number;
-    pictureUrl: string;
+    pictureUrl?: string;
     state: number;
     petDetection: boolean;
     petDetected: boolean;
@@ -235,9 +235,20 @@ DevicePropertiesSchema1,
 }
 >;
 
+type DevicePropertiesSchema3 = Omit<
+Modify<
+DevicePropertiesSchema2,
+{
+    picture: Picture;
+}>,
+"pictureUrl"
+>;
+
 export type DeviceProperties = 
   | DevicePropertiesSchema0
-  | DevicePropertiesSchema1;
+  | DevicePropertiesSchema1
+  | DevicePropertiesSchema2
+  | DevicePropertiesSchema3;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const dumpDeviceProperties = (device: Device, schemaVersion: number): DeviceProperties => {
@@ -290,7 +301,7 @@ export const dumpDeviceProperties = (device: Device, schemaVersion: number): Dev
         rtspStream: device.getPropertyValue(PropertyName.DeviceRTSPStream) as boolean,
         rtspStreamUrl: device.getPropertyValue(PropertyName.DeviceRTSPStreamUrl) as string,
         watermark: device.getPropertyValue(PropertyName.DeviceWatermark) as number,
-        pictureUrl: device.getPropertyValue(PropertyName.DevicePictureUrl) as string,
+        pictureUrl: device.hasProperty(PropertyName.DevicePictureUrl) ? device.getPropertyValue(PropertyName.DevicePictureUrl) as string : "",
         state: device.getPropertyValue(PropertyName.DeviceState) as number,
         petDetection: device.getPropertyValue(PropertyName.DevicePetDetection) as boolean,
         petDetected: device.getPropertyValue(PropertyName.DevicePetDetected) as boolean,
@@ -467,8 +478,7 @@ export const dumpDeviceProperties = (device: Device, schemaVersion: number): Dev
         return device1;
     }
 
-    // All schemas >= 16
-    const device2 = base as DevicePropertiesSchema2;
+    const device2 = device1 as DevicePropertiesSchema2;
     device2.cellularRSSI = device.getPropertyValue(PropertyName.DeviceCellularRSSI) as number;
     device2.cellularSignalLevel = device.getPropertyValue(PropertyName.DeviceCellularSignalLevel) as number;
     device2.cellularSignal = device.getPropertyValue(PropertyName.DeviceCellularSignal) as string;
@@ -476,7 +486,16 @@ export const dumpDeviceProperties = (device: Device, schemaVersion: number): Dev
     device2.cellularIMEI = device.getPropertyValue(PropertyName.DeviceCellularIMEI) as string;
     device2.cellularICCID = device.getPropertyValue(PropertyName.DeviceCellularICCID) as string;
 
-    return device2;
+    if (schemaVersion <= 16) {
+        return device2;
+    }
+
+    // All schemas >= 17
+    delete device2["pictureUrl"];
+    const device3 = device2 as DevicePropertiesSchema3;
+    device3.picture = device.getPropertyValue(PropertyName.DevicePicture) as Picture;
+    
+    return device3;
 }
 
 export const dumpDevicePropertiesMetadata = (device: Device, schemaVersion: number): IndexedProperty => {

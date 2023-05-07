@@ -1,4 +1,4 @@
-import { AlarmEvent, CustomData } from "eufy-security-client";
+import { AlarmEvent, CustomData, Picture } from "eufy-security-client";
 
 import { JSONValue, OutgoingBaseEvent } from "../outgoing_message";
 
@@ -16,6 +16,7 @@ export enum StationEvent {
     alarmDelayEvent = "alarm delay event",
     alarmArmedEvent = "alarm armed event",
     alarmArmDelayEvent = "alarm arm delay event",
+    imageDownloaded = "image downloaded"
 }
 
 export interface OutgoingEventStationBase extends OutgoingBaseEvent {
@@ -115,6 +116,14 @@ export interface OutgoingEventStationConnectionError extends OutgoingEventStatio
     serialNumber: string;
 }
 
+export interface OutgoingEventStationImageDownloaded extends OutgoingEventStationBase {
+    source: "station";
+    event: StationEvent.imageDownloaded;
+    serialNumber: string;
+    file: string;
+    image: Picture;
+}
+
 export type OutgoingEventStation =
   | OutgoingEventStationAdded
   | OutgoingEventStationRemoved
@@ -128,4 +137,5 @@ export type OutgoingEventStation =
   | OutgoingEventStationAlarmDelayEvent
   | OutgoingEventStationAlarmArmedEvent
   | OutgoingEventStationAlarmArmDelayEvent
-  | OutgoingEventStationConnectionError;
+  | OutgoingEventStationConnectionError
+  | OutgoingEventStationImageDownloaded;

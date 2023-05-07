@@ -522,6 +522,19 @@ interface {
 }
 ```
 
+### Download image
+
+[compatible with schema version: 17+]
+
+```ts
+interface {
+    messageId: string;
+    command: "station.download_image";
+    serialNumber: string;
+    file: string;
+}
+```
+
 ## Device level commands
 
 ### Get properties metadata

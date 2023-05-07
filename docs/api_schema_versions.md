@@ -2,6 +2,13 @@
 
 This document describes the changes that are introduced with each schema version.
 
+## Schema 17
+
+* Added new property `picture` to Device
+* Removed property `pictureUrl`from Device
+* Added new command `downloadImage` to Station
+* Added new Station event `image downloaded`
+
 ## Schema 16
 
 * Added new property `cellularRSSI`, `cellularSignalLevel`, `cellularSignal`, `cellularBand`, `cellularIMEI` and `cellularICCID` to Device

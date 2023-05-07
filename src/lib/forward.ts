@@ -1,4 +1,4 @@
-import { AudioCodec, CommandResult, CommandType, Device,  ErrorCode, ParamType, PropertyValue, Station, StreamMetadata, VideoCodec, AlarmEvent, SmartSafeAlarm911Event, SmartSafeShakeAlarmEvent, TalkbackStream, Schedule } from "eufy-security-client";
+import { AudioCodec, CommandResult, CommandType, Device,  ErrorCode, ParamType, PropertyValue, Station, StreamMetadata, VideoCodec, AlarmEvent, SmartSafeAlarm911Event, SmartSafeShakeAlarmEvent, TalkbackStream, Schedule, Picture } from "eufy-security-client";
 import { Readable } from "stream";
 import { Logger } from "tslog";
 
@@ -103,25 +103,6 @@ export class EventForwarder {
             }, 14);
         });
 
-        this.clients.driver.on("station added", (station: Station) => {
-            this.clients.clients.forEach((client) => {
-                if (client.schemaVersion <= 12) {
-                    this.sendEvent(client, {
-                        source: "station",
-                        event: StationEvent.stationAdded,
-                        station: dumpStation(station, client.schemaVersion) as JSONValue,
-                    });
-                } else {
-                    this.sendEvent(client, {
-                        source: "station",
-                        event: StationEvent.stationAdded,
-                        station: station.getSerial(),
-                    });
-                }
-            });
-            this.setupStation(station);
-        });
-
         this.clients.driver.on("station removed", (station: Station) => {
             this.clients.clients.forEach((client) => {
                 if (client.schemaVersion <= 12) {
@@ -138,25 +119,6 @@ export class EventForwarder {
                     });
                 }
             });
-        });
-
-        this.clients.driver.on("device added", (device: Device) => {
-            this.clients.clients.forEach((client) => {
-                if (client.schemaVersion <= 12) {
-                    this.sendEvent(client, {
-                        source: "device",
-                        event: DeviceEvent.deviceAdded,
-                        device: dumpDevice(device, client.schemaVersion) as JSONValue,
-                    });
-                } else {
-                    this.sendEvent(client, {
-                        source: "device",
-                        event: DeviceEvent.deviceAdded,
-                        device: device.getSerial(),
-                    });
-                }
-            });
-            this.setupDevice(device);
         });
 
         this.clients.driver.on("device removed", (device: Device) => {
@@ -181,13 +143,51 @@ export class EventForwarder {
             stations.forEach(station => {
                 this.setupStation(station);
             });
-        }).catch();
+        }).catch().finally(() => {
+            this.clients.driver.on("station added", (station: Station) => {
+                this.clients.clients.forEach((client) => {
+                    if (client.schemaVersion <= 12) {
+                        this.sendEvent(client, {
+                            source: "station",
+                            event: StationEvent.stationAdded,
+                            station: dumpStation(station, client.schemaVersion) as JSONValue,
+                        });
+                    } else {
+                        this.sendEvent(client, {
+                            source: "station",
+                            event: StationEvent.stationAdded,
+                            station: station.getSerial(),
+                        });
+                    }
+                });
+                this.setupStation(station);
+            });
+        });
 
         this.clients.driver.getDevices().then((devices: Device[]) => {
             devices.forEach(device => {
                 this.setupDevice(device);
             });
-        }).catch();
+        }).catch().finally(() => {
+            this.clients.driver.on("device added", (device: Device) => {
+                this.clients.clients.forEach((client) => {
+                    if (client.schemaVersion <= 12) {
+                        this.sendEvent(client, {
+                            source: "device",
+                            event: DeviceEvent.deviceAdded,
+                            device: dumpDevice(device, client.schemaVersion) as JSONValue,
+                        });
+                    } else {
+                        this.sendEvent(client, {
+                            source: "device",
+                            event: DeviceEvent.deviceAdded,
+                            device: device.getSerial(),
+                        });
+                    }
+                });
+                this.setupDevice(device);
+            });
+        });
 
         this.clients.driver.on("station livestream start", (station: Station, device: Device, metadata: StreamMetadata, videostream: Readable, audiostream: Readable) => {
             const serialNumber = device.getSerial();
@@ -435,6 +435,15 @@ export class EventForwarder {
                 });
         });
 
+        this.clients.driver.on("station image download", (station: Station, file: string, image: Picture) => {
+            this.forwardEvent({
+                source: "station",
+                event: StationEvent.imageDownloaded,
+                serialNumber: station.getSerial(),
+                file: file,
+                image: image
+            }, 17);
+        });
     }
 
     private forwardEvent(data: OutgoingEvent, minSchemaVersion: number, maxSchemaVersion: number = internalSchemaVersion): void {
@@ -863,15 +872,6 @@ export class EventForwarder {
             this.forwardEvent({
                 source: "device",
                 event: DeviceEvent.sensorOpen,
-                serialNumber: device.getSerial(),
-                state: state,
-            }, 0);
-        });
-        
-        device.on("motion detected", (device: Device, state: boolean) => {
-            this.forwardEvent({
-                source: "device",
-                event: DeviceEvent.motionDetected,
                 serialNumber: device.getSerial(),
                 state: state,
             }, 0);

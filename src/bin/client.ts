@@ -17,7 +17,7 @@ import { OutgoingEventDeviceCommandResult } from "../lib/device/event";
 import { OutgoingEventStationCommandResult } from "../lib/station/event";
 import { IncomingCommandDeviceAddUser, IncomingCommandDeviceUpdateUser, IncomingCommandDeviceUpdateUserPasscode, IncomingCommandDeviceUpdateUserSchedule } from "../lib/device/incoming_message";
 import { IndexedProperty, Schedule } from "eufy-security-client";
-import { IncomingCommandChime } from "../lib/station/incoming_message";
+import { IncomingCommandChime, IncomingCommandDownloadImage } from "../lib/station/incoming_message";
 
 const commands = (Object.values(DriverCommand) as Array<string>).concat(Object.values(DeviceCommand) as Array<string>).concat(Object.values(StationCommand) as Array<string>).concat(["quit", "exit"]);
 const devicePropertiesMetadata: { [index: string]: IndexedProperty; } = {};
@@ -167,6 +167,9 @@ const cmdHelp = (cmd: string): void => {
             break;
         case StationCommand.chime:
             console.log(`${cmd} <station_sn> [ringtone]`);
+            break;
+        case StationCommand.downloadImage:
+            console.log(`${cmd} <station_sn> <file>`);
             break;
         /*case StationCommand.getCameraInfo:
         case StationCommand.getStorageInfo:
@@ -1209,6 +1212,21 @@ const cmd = async(args: Array<string>, silent = false, internal = false): Promis
                 if (args.length === 3) {
                     command.ringtone = Number.parseInt(args[2]);
                 }
+                socket.send(JSON.stringify(command));
+            } else {
+                cmdHelp(args[0]);
+                if (silent)
+                    handleShutdown(1);
+            }
+            break;
+        case StationCommand.downloadImage:
+            if (args.length === 3) {
+                const command: IncomingCommandDownloadImage = {
+                    messageId: StationCommand.downloadImage.split(".")[1],
+                    command: StationCommand.downloadImage,
+                    serialNumber: args[1],
+                    file: args[2]
+                };
                 socket.send(JSON.stringify(command));
             } else {
                 cmdHelp(args[0]);

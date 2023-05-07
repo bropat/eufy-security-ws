@@ -70,6 +70,11 @@ export interface IncomingCommandChime extends IncomingCommandStationBase {
     ringtone?: number;
 }
 
+export interface IncomingCommandDownloadImage extends IncomingCommandStationBase {
+    command: StationCommand.downloadImage;
+    file: string;
+}
+
 /*export interface IncomingCommandGetCameraInfo extends IncomingCommandStationBase {
     command: StationCommand.getCameraInfo;
 }
@@ -92,6 +97,7 @@ export type IncomingMessageStation =
   | IncomingCommandHasProperty
   | IncomingCommandHasCommand
   | IncomingCommandGetCommands
-  | IncomingCommandChime;
+  | IncomingCommandChime
+  | IncomingCommandDownloadImage;
 /*  | IncomingCommandGetCameraInfo
   | IncomingCommandGetStorageInfo;*/
