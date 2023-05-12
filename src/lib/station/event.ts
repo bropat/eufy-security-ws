@@ -1,4 +1,4 @@
-import { AlarmEvent, CustomData, Picture } from "eufy-security-client";
+import { AlarmEvent, CustomData, DatabaseCountByDate, DatabaseQueryLatestInfo, DatabaseQueryLocal, DatabaseReturnCode, Picture } from "eufy-security-client";
 
 import { JSONValue, OutgoingBaseEvent } from "../outgoing_message";
 
@@ -16,7 +16,11 @@ export enum StationEvent {
     alarmDelayEvent = "alarm delay event",
     alarmArmedEvent = "alarm armed event",
     alarmArmDelayEvent = "alarm arm delay event",
-    imageDownloaded = "image downloaded"
+    imageDownloaded = "image downloaded",
+    databaseQueryLatest = "database query latest",
+    databaseQueryLocal = "database query local",
+    databaseCountByDate = "database count by date",
+    databaseDelete = "database delete",
 }
 
 export interface OutgoingEventStationBase extends OutgoingBaseEvent {
@@ -124,6 +128,38 @@ export interface OutgoingEventStationImageDownloaded extends OutgoingEventStatio
     image: Picture;
 }
 
+export interface OutgoingEventStationDatabaseQueryLatest extends OutgoingEventStationBase {
+    source: "station";
+    event: StationEvent.databaseQueryLatest;
+    serialNumber: string;
+    returnCode: DatabaseReturnCode;
+    data: Array<DatabaseQueryLatestInfo>
+}
+
+export interface OutgoingEventStationDatabaseQueryLocal extends OutgoingEventStationBase {
+    source: "station";
+    event: StationEvent.databaseQueryLocal;
+    serialNumber: string;
+    returnCode: DatabaseReturnCode;
+    data: Array<DatabaseQueryLocal>
+}
+
+export interface OutgoingEventStationDatabaseCountByDate extends OutgoingEventStationBase {
+    source: "station";
+    event: StationEvent.databaseCountByDate;
+    serialNumber: string;
+    returnCode: DatabaseReturnCode;
+    data: Array<DatabaseCountByDate>
+}
+
+export interface OutgoingEventStationDatabaseDelete extends OutgoingEventStationBase {
+    source: "station";
+    event: StationEvent.databaseDelete;
+    serialNumber: string;
+    returnCode: DatabaseReturnCode;
+    failedIds: Array<unknown>;
+}
+
 export type OutgoingEventStation =
   | OutgoingEventStationAdded
   | OutgoingEventStationRemoved
@@ -138,4 +174,8 @@ export type OutgoingEventStation =
   | OutgoingEventStationAlarmArmedEvent
   | OutgoingEventStationAlarmArmDelayEvent
   | OutgoingEventStationConnectionError
-  | OutgoingEventStationImageDownloaded;
+  | OutgoingEventStationImageDownloaded
+  | OutgoingEventStationDatabaseQueryLatest
+  | OutgoingEventStationDatabaseQueryLocal
+  | OutgoingEventStationDatabaseCountByDate
+  | OutgoingEventStationDatabaseDelete;

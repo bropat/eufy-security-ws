@@ -1,4 +1,4 @@
-import { AudioCodec, CommandResult, CommandType, Device,  ErrorCode, ParamType, PropertyValue, Station, StreamMetadata, VideoCodec, AlarmEvent, SmartSafeAlarm911Event, SmartSafeShakeAlarmEvent, TalkbackStream, Schedule, Picture } from "eufy-security-client";
+import { AudioCodec, CommandResult, CommandType, Device,  ErrorCode, ParamType, PropertyValue, Station, StreamMetadata, VideoCodec, AlarmEvent, SmartSafeAlarm911Event, SmartSafeShakeAlarmEvent, TalkbackStream, Schedule, Picture, DatabaseReturnCode, DatabaseQueryLatestInfo, DatabaseQueryLocal, DatabaseCountByDate } from "eufy-security-client";
 import { Readable } from "stream";
 import { Logger } from "tslog";
 
@@ -665,7 +665,8 @@ export class EventForwarder {
                             source: "device",
                             event: DeviceEvent.commandResult,
                             serialNumber: device.getSerial(),
-                            command: command?.split(".")[1],
+                            // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                            command: command!.split(".")[1],
                             returnCode: result.return_code,
                             returnCodeName: ErrorCode[result.return_code] !== undefined ? ErrorCode[result.return_code] : "UNKNOWN",
                         }, 0, 12);
@@ -703,22 +704,24 @@ export class EventForwarder {
             }
         });
 
-        station.on("property changed", (station: Station, name: string, value: PropertyValue) => {
-            this.forwardEvent({
-                source: "station",
-                event: StationEvent.propertyChanged,
-                serialNumber: station.getSerial(),
-                name: name,
-                value: value as JSONValue,
-                timestamp: +new Date
-            }, 0, 9);
-            this.forwardEvent({
-                source: "station",
-                event: StationEvent.propertyChanged,
-                serialNumber: station.getSerial(),
-                name: name,
-                value: value as JSONValue,
-            }, 10);
+        station.on("property changed", (station: Station, name: string, value: PropertyValue, ready: boolean) => {
+            if (ready && !name.startsWith("hidden-")) {
+                this.forwardEvent({
+                    source: "station",
+                    event: StationEvent.propertyChanged,
+                    serialNumber: station.getSerial(),
+                    name: name,
+                    value: value as JSONValue,
+                    timestamp: +new Date
+                }, 0, 9);
+                this.forwardEvent({
+                    source: "station",
+                    event: StationEvent.propertyChanged,
+                    serialNumber: station.getSerial(),
+                    name: name,
+                    value: value as JSONValue,
+                }, 10);
+            }
         });
 
         station.on("alarm delay event", (station: Station, alarmDelayEvent: AlarmEvent, alarmDelay: number) => {
@@ -755,6 +758,46 @@ export class EventForwarder {
                 serialNumber: deviceSN,
                 successfull: successfull
             }, 13);
+        });
+
+        station.on("database query latest", (station: Station, returnCode: DatabaseReturnCode, data: Array<DatabaseQueryLatestInfo>) => {
+            this.forwardEvent({
+                source: "station",
+                event: StationEvent.databaseQueryLatest,
+                serialNumber: station.getSerial(),
+                returnCode: returnCode,
+                data: data
+            }, 18);
+        });
+        
+        station.on("database query local", (station: Station, returnCode: DatabaseReturnCode, data: Array<DatabaseQueryLocal>) => {
+            this.forwardEvent({
+                source: "station",
+                event: StationEvent.databaseQueryLocal,
+                serialNumber: station.getSerial(),
+                returnCode: returnCode,
+                data: data
+            }, 18);
+        });
+
+        station.on("database count by date", (station: Station, returnCode: DatabaseReturnCode, data: Array<DatabaseCountByDate>) => {
+            this.forwardEvent({
+                source: "station",
+                event: StationEvent.databaseCountByDate,
+                serialNumber: station.getSerial(),
+                returnCode: returnCode,
+                data: data
+            }, 18);
+        });
+
+        station.on("database delete", (station: Station, returnCode: DatabaseReturnCode, failedIds: Array<unknown>) => {
+            this.forwardEvent({
+                source: "station",
+                event: StationEvent.databaseDelete,
+                serialNumber: station.getSerial(),
+                returnCode: returnCode,
+                failedIds: failedIds
+            }, 18);
         });
     }
 
@@ -978,22 +1021,24 @@ export class EventForwarder {
             }, 15);
         });
 
-        device.on("property changed", (device: Device, name: string, value: PropertyValue) => {
-            this.forwardEvent({
-                source: "device",
-                event: DeviceEvent.propertyChanged,
-                serialNumber: device.getSerial(),
-                name: name,
-                value: value as JSONValue,
-                timestamp: +new Date
-            }, 0, 9);
-            this.forwardEvent({
-                source: "device",
-                event: DeviceEvent.propertyChanged,
-                serialNumber: device.getSerial(),
-                name: name,
-                value: value as JSONValue,
-            }, 10);
+        device.on("property changed", (device: Device, name: string, value: PropertyValue, ready: boolean) => {
+            if (ready && !name.startsWith("hidden-")) {
+                this.forwardEvent({
+                    source: "device",
+                    event: DeviceEvent.propertyChanged,
+                    serialNumber: device.getSerial(),
+                    name: name,
+                    value: value as JSONValue,
+                    timestamp: +new Date
+                }, 0, 9);
+                this.forwardEvent({
+                    source: "device",
+                    event: DeviceEvent.propertyChanged,
+                    serialNumber: device.getSerial(),
+                    name: name,
+                    value: value as JSONValue,
+                }, 10);
+            }
         });
     }
 

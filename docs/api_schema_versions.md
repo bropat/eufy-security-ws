@@ -2,6 +2,11 @@
 
 This document describes the changes that are introduced with each schema version.
 
+## Schema 18
+
+* Added new commands `database_query_latest_info`, `database_query_local` , `database_count_by_date` and `database_delete` to Station
+* Added new Station events `database query latest`, `database query local`, `station.database_count_by_date` and `station.database_delete`
+
 ## Schema 17
 
 * Added new property `picture` to Device

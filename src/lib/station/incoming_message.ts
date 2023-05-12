@@ -1,4 +1,4 @@
-import { CommandName, PropertyName } from "eufy-security-client";
+import { CommandName, FilterDetectType, FilterEventType, FilterStorageType, PropertyName } from "eufy-security-client";
 
 import { IncomingCommandBase } from "../incoming_message_base";
 import { StationCommand } from "./command";
@@ -75,13 +75,30 @@ export interface IncomingCommandDownloadImage extends IncomingCommandStationBase
     file: string;
 }
 
-/*export interface IncomingCommandGetCameraInfo extends IncomingCommandStationBase {
-    command: StationCommand.getCameraInfo;
+export interface IncomingCommandDatabaseQueryLatest extends IncomingCommandStationBase {
+    command: StationCommand.databaseQueryLatestInfo;
 }
 
-export interface IncomingCommandGetStorageInfo extends IncomingCommandStationBase {
-    command: StationCommand.getStorageInfo;
-}*/
+export interface IncomingCommandDatabaseQueryLocal extends IncomingCommandStationBase {
+    command: StationCommand.databaseQueryLocal;
+    serialNumbers: Array<string>;
+    startDate: string;
+    endDate: string;
+    eventType?: FilterEventType;
+    detectionType?: FilterDetectType;
+    storageType?: FilterStorageType;
+}
+
+export interface IncomingCommandDatabaseCountByDate extends IncomingCommandStationBase {
+    command: StationCommand.databaseCountByDate;
+    startDate: string;
+    endDate: string;
+}
+
+export interface IncomingCommandDatabaseDelete extends IncomingCommandStationBase {
+    command: StationCommand.databaseDelete;
+    ids: Array<number>;
+}
 
 export type IncomingMessageStation =
   | IncomingCommandStationReboot
@@ -98,6 +115,8 @@ export type IncomingMessageStation =
   | IncomingCommandHasCommand
   | IncomingCommandGetCommands
   | IncomingCommandChime
-  | IncomingCommandDownloadImage;
-/*  | IncomingCommandGetCameraInfo
-  | IncomingCommandGetStorageInfo;*/
+  | IncomingCommandDownloadImage
+  | IncomingCommandDatabaseQueryLatest
+  | IncomingCommandDatabaseQueryLocal
+  | IncomingCommandDatabaseCountByDate
+  | IncomingCommandDatabaseDelete;

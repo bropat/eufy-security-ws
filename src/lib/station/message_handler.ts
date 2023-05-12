@@ -1,9 +1,10 @@
 import { EufySecurity } from "eufy-security-client";
+import date from "date-and-time";
 
 import { UnknownCommandError } from "../error";
 import { Client } from "../server";
 import { StationCommand } from "./command";
-import { IncomingCommandSetProperty, IncomingCommandTriggerAlarm, IncomingCommandSetGuardMode, IncomingMessageStation, IncomingCommandHasCommand, IncomingCommandHasProperty, IncomingCommandChime, IncomingCommandDownloadImage } from "./incoming_message";
+import { IncomingCommandSetProperty, IncomingCommandTriggerAlarm, IncomingCommandSetGuardMode, IncomingMessageStation, IncomingCommandHasCommand, IncomingCommandHasProperty, IncomingCommandChime, IncomingCommandDownloadImage, IncomingCommandDatabaseQueryLocal, IncomingCommandDatabaseCountByDate, IncomingCommandDatabaseDelete } from "./incoming_message";
 import { StationResultTypes } from "./outgoing_message";
 import { dumpStationProperties, dumpStationPropertiesMetadata } from "./properties";
 
@@ -200,6 +201,51 @@ export class StationMessageHandler {
                 if (client.schemaVersion >= 17) {
                     const file = (message as IncomingCommandDownloadImage).file;
                     await station.downloadImage(file).catch((error: Error) => {
+                        throw error;
+                    });
+                    return { async: true };
+                } else {
+                    throw new UnknownCommandError(command);
+                }
+            case StationCommand.databaseQueryLatestInfo:
+                if (client.schemaVersion >= 18) {
+                    await station.databaseQueryLatestInfo().catch((error: Error) => {
+                        throw error;
+                    });
+                    return { async: true };
+                } else {
+                    throw new UnknownCommandError(command);
+                }
+            case StationCommand.databaseQueryLocal:
+                if (client.schemaVersion >= 18) {
+                    const serialNumbers = (message as IncomingCommandDatabaseQueryLocal).serialNumbers;
+                    const startDate = date.parse((message as IncomingCommandDatabaseQueryLocal).startDate, "YYYYMMDD");
+                    const endDate = date.parse((message as IncomingCommandDatabaseQueryLocal).endDate, "YYYYMMDD");
+                    const eventType = (message as IncomingCommandDatabaseQueryLocal).eventType;
+                    const detectionType = (message as IncomingCommandDatabaseQueryLocal).detectionType;
+                    const storageType = (message as IncomingCommandDatabaseQueryLocal).storageType;
+                    await station.databaseQueryLocal(serialNumbers, startDate, endDate, eventType, detectionType, storageType).catch((error: Error) => {
+                        throw error;
+                    });
+                    return { async: true };
+                } else {
+                    throw new UnknownCommandError(command);
+                }
+            case StationCommand.databaseCountByDate:
+                if (client.schemaVersion >= 18) {
+                    const startDate = date.parse((message as IncomingCommandDatabaseCountByDate).startDate, "YYYYMMDD");
+                    const endDate = date.parse((message as IncomingCommandDatabaseCountByDate).endDate, "YYYYMMDD");
+                    await station.databaseCountByDate(startDate, endDate).catch((error: Error) => {
+                        throw error;
+                    });
+                    return { async: true };
+                } else {
+                    throw new UnknownCommandError(command);
+                }
+            case StationCommand.databaseDelete:
+                if (client.schemaVersion >= 18) {
+                    const ids = (message as IncomingCommandDatabaseDelete).ids;
+                    await station.databaseDelete(ids).catch((error: Error) => {
                         throw error;
                     });
                     return { async: true };

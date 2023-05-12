@@ -6,6 +6,7 @@ import * as c from "ansi-colors";
 import { Logger } from "tslog";
 import * as readline from "readline";
 import { EventEmitter } from "events";
+import date from "date-and-time";
 
 import { maxSchemaVersion } from "../lib/const";
 import { OutgoingEventMessage, OutgoingMessage, OutgoingResultMessageSuccess } from "../lib/outgoing_message";
@@ -17,7 +18,7 @@ import { OutgoingEventDeviceCommandResult } from "../lib/device/event";
 import { OutgoingEventStationCommandResult } from "../lib/station/event";
 import { IncomingCommandDeviceAddUser, IncomingCommandDeviceUpdateUser, IncomingCommandDeviceUpdateUserPasscode, IncomingCommandDeviceUpdateUserSchedule } from "../lib/device/incoming_message";
 import { IndexedProperty, Schedule } from "eufy-security-client";
-import { IncomingCommandChime, IncomingCommandDownloadImage } from "../lib/station/incoming_message";
+import { IncomingCommandChime, IncomingCommandDatabaseQueryLocal, IncomingCommandDownloadImage } from "../lib/station/incoming_message";
 
 const commands = (Object.values(DriverCommand) as Array<string>).concat(Object.values(DeviceCommand) as Array<string>).concat(Object.values(StationCommand) as Array<string>).concat(["quit", "exit"]);
 const devicePropertiesMetadata: { [index: string]: IndexedProperty; } = {};
@@ -171,10 +172,18 @@ const cmdHelp = (cmd: string): void => {
         case StationCommand.downloadImage:
             console.log(`${cmd} <station_sn> <file>`);
             break;
-        /*case StationCommand.getCameraInfo:
-        case StationCommand.getStorageInfo:
-            console.log("Command not implemented.");
-            break;*/
+        case StationCommand.databaseQueryLatestInfo:
+            console.log(`${cmd} <station_sn>`);
+            break;
+        case StationCommand.databaseQueryLocal:
+            console.log(`${cmd} <station_sn> <device_sn1,device_sn2,...> <startDate (YYYYMMDD)> <endDate (YYYYMMDD)> [eventType] [detectionType] [storageType]`);
+            break;
+        case StationCommand.databaseCountByDate:
+            console.log(`${cmd} <station_sn> <startDate (YYYYMMDD)> <endDate (YYYYMMDD)>`);
+            break;
+        case StationCommand.databaseDelete:
+            console.log(`${cmd} <station_sn> <id1> [<id2> ...]`);
+            break;
         default:
             console.log(`Type HELP "command name" to display more information about a specific command.`);
             Object.values(DriverCommand).forEach((cmd) => {
@@ -1234,10 +1243,93 @@ const cmd = async(args: Array<string>, silent = false, internal = false): Promis
                     handleShutdown(1);
             }
             break;
-        /*case StationCommand.getCameraInfo:
-        case StationCommand.getStorageInfo:
-            console.log("Command not implemented.");
-            break;*/
+        case StationCommand.databaseQueryLatestInfo:
+            if (args.length === 2) {
+                socket.send(JSON.stringify({
+                    messageId: StationCommand.databaseQueryLatestInfo.split(".")[1],
+                    command: StationCommand.databaseQueryLatestInfo,
+                    serialNumber: args[1],
+                }));
+            } else {
+                cmdHelp(args[0]);
+                if (silent)
+                    handleShutdown(1);
+            }
+            break;
+        case StationCommand.databaseQueryLocal:
+            if ((args.length === 5 && isDate(args[3]) && isDate(args[4])) ||
+                (args.length === 6 && isDate(args[3]) && isDate(args[4]) && isNumber(args[5])) ||
+                (args.length === 7 && isDate(args[3]) && isDate(args[4]) && isNumber(args[5]) && isNumber(args[6])) ||
+                (args.length === 8 && isDate(args[3]) && isDate(args[4]) && isNumber(args[5]) && isNumber(args[6]) && isNumber(args[7]))) {
+                const command: IncomingCommandDatabaseQueryLocal = {
+                    messageId: StationCommand.databaseQueryLocal.split(".")[1],
+                    command: StationCommand.databaseQueryLocal,
+                    serialNumber: args[1],
+                    serialNumbers: args[2].split(","),
+                    startDate: args[3],
+                    endDate: args[4]
+                };
+                if (args.length === 6) {
+                    command.eventType = Number.parseInt(args[5]);
+                }
+                if (args.length === 7) {
+                    command.detectionType = Number.parseInt(args[6]);
+                }
+                if (args.length === 8) {
+                    command.storageType = Number.parseInt(args[7]);
+                }
+                socket.send(JSON.stringify(command));
+            } else {
+                cmdHelp(args[0]);
+                if (silent)
+                    handleShutdown(1);
+            }
+            break;
+        case StationCommand.databaseCountByDate:
+            if (args.length === 4 && isDate(args[2]) && isDate(args[3])) {
+                socket.send(JSON.stringify({
+                    messageId: StationCommand.databaseCountByDate.split(".")[1],
+                    command: StationCommand.databaseCountByDate,
+                    serialNumber: args[1],
+                    startDate: args[2],
+                    endDate: args[3]
+                }));
+            } else {
+                cmdHelp(args[0]);
+                if (silent)
+                    handleShutdown(1);
+            }
+            break;
+        case StationCommand.databaseDelete:
+            if (args.length >= 3) {
+                let argsOk = true;
+                const ids: Array<number> = [];
+                for(const arg of args.slice(2)) {
+                    if (!isNumber(arg)) {
+                        argsOk = false;
+                        break;
+                    } else {
+                        ids.push(Number.parseInt(arg));
+                    }
+                }
+                if (argsOk) {
+                    socket.send(JSON.stringify({
+                        messageId: StationCommand.databaseDelete.split(".")[1],
+                        command: StationCommand.databaseDelete,
+                        serialNumber: args[1],
+                        ids: ids
+                    }));
+                } else {
+                    cmdHelp(args[0]);
+                    if (silent)
+                        handleShutdown(1);
+                }
+            } else {
+                cmdHelp(args[0]);
+                if (silent)
+                    handleShutdown(1);
+            }
+            break;
         default:
             if (args[0] !== "")
                 cmdHelp("");
@@ -1262,6 +1354,10 @@ const isTrueFalse = (value: string): boolean => {
         return true;
     }
     return false;
+}
+
+const isDate = (value: string): boolean => {
+    return !isNaN(date.parse(value, "YYYYMMDD").getTime());
 }
 
 const program = new Command();

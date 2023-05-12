@@ -535,6 +535,62 @@ interface {
 }
 ```
 
+### Database Query Latest Info
+
+[compatible with schema version: 18+]
+
+```ts
+interface {
+    messageId: string;
+    command: "station.database_query_latest_info";
+    serialNumber: string;
+}
+```
+
+### Database Query Local
+
+[compatible with schema version: 18+]
+
+```ts
+interface {
+    messageId: string;
+    command: "station.database_query_local";
+    serialNumber: string;
+    startDate: Date;
+    endDate: Date;
+    eventType?: FilterEventType;
+    detectionType?: FilterDetectType;
+    storageType?: FilterStorageType;
+}
+```
+
+### Database Count By Date
+
+[compatible with schema version: 18+]
+
+```ts
+interface {
+    messageId: string;
+    command: "station.database_count_by_date";
+    serialNumber: string;
+    startDate: Date;
+    endDate: Date;
+}
+```
+
+### Database Delete
+
+[compatible with schema version: 18+]
+
+```ts
+interface {
+    messageId: string;
+    command: "station.database_delete";
+    serialNumber: string;
+    ids: Array<number>;
+}
+```
+
 ## Device level commands
 
 ### Get properties metadata

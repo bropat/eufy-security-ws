@@ -18,8 +18,10 @@ export interface StationResultTypes {
     [StationCommand.getCommands]: { serialNumber?: string; commands: Array<CommandName>; };
     [StationCommand.chime]: { async?: boolean };
     [StationCommand.downloadImage]: { async?: boolean };
-    /*[StationCommand.getCameraInfo]: { async?: boolean };
-    [StationCommand.getStorageInfo]: { async?: boolean };*/
+    [StationCommand.databaseQueryLatestInfo]: { async?: boolean };
+    [StationCommand.databaseQueryLocal]: { async?: boolean };
+    [StationCommand.databaseCountByDate]: { async?: boolean };
+    [StationCommand.databaseDelete]: { async?: boolean };
 
     //Legacy
     [StationCommand.isConnectedLegacy]: { connected: boolean };

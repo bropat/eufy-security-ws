@@ -13,8 +13,10 @@ export enum StationCommand {
     hasCommand = "station.has_command",
     chime = "station.chime",
     downloadImage = "station.download_image",
-    //    getCameraInfo = "station.get_camera_info",
-    //    getStorageInfo = "station.get_storage_info",
+    databaseQueryLatestInfo = "station.database_query_latest_info",
+    databaseQueryLocal = "station.database_query_local",
+    databaseCountByDate = "station.database_count_by_date",
+    databaseDelete = "station.database_delete",
 
     //Deprecated
     setGuardMode = "station.set_guard_mode",

@@ -1,4 +1,4 @@
-import { Schedule, SmartSafeAlarm911Event, SmartSafeShakeAlarmEvent } from "eufy-security-client";
+import { CustomData, Schedule, SmartSafeAlarm911Event, SmartSafeShakeAlarmEvent } from "eufy-security-client";
 
 import { JSONValue, OutgoingBaseEvent } from "../outgoing_message";
 
@@ -143,6 +143,7 @@ export interface OutgoingEventDeviceCommandResult extends OutgoingEventDeviceBas
     command: string;
     returnCode: number;
     returnCodeName: string;
+    customData?: CustomData;
 }
 
 export interface OutgoingEventDevicePropertyChanged extends OutgoingEventDeviceBase {

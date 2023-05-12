@@ -492,6 +492,82 @@ interface {
 }
 ```
 
+### `database query latest`
+
+[compatible with schema version: 18+]
+
+This event is sent as a result of the command `station.database_query_latest_info`.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "station";
+    event: "database query latest";
+    serialNumber: string;
+    returnCode: DatabaseReturnCode;
+    data: Array<DatabaseQueryLatestInfo>
+  }
+}
+```
+
+### `database query local`
+
+[compatible with schema version: 18+]
+
+This event is sent as a result of the command `station.database_query_local`.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "station";
+    event: "database query local";
+    serialNumber: string;
+    returnCode: DatabaseReturnCode;
+    data: Array<DatabaseQueryLocal>
+  }
+}
+```
+
+### `database count by date`
+
+[compatible with schema version: 18+]
+
+This event is sent as a result of the command `station.database_count_by_date`.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "station";
+    event: "database count by date";
+    serialNumber: string;
+    returnCode: DatabaseReturnCode;
+    data: Array<DatabaseCountByDate>
+  }
+}
+```
+
+### `database delete`
+
+[compatible with schema version: 18+]
+
+This event is sent as a result of the command `station.database_delete`.
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "station";
+    event: "database delete";
+    serialNumber: string;
+    returnCode: DatabaseReturnCode;
+    failedIds: Array<unknown>;
+  }
+}
+```
+
 ## Device level events
 
 ### `device added`
