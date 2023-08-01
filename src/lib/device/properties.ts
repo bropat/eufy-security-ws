@@ -1,4 +1,4 @@
-import { Device, IndexedProperty, Picture, PropertyName } from "eufy-security-client"
+import { Device, DynamicLighting, IndexedProperty, Picture, PropertyName, RGBColor } from "eufy-security-client"
 import { Modify } from "../state";
 
 export interface DevicePropertiesSchema0 {
@@ -244,11 +244,49 @@ DevicePropertiesSchema2,
 "pictureUrl"
 >;
 
+type DevicePropertiesSchema4 = Modify<
+DevicePropertiesSchema3,
+{
+    lightSettingsManualLightingActiveMode: number;
+    lightSettingsManualDailyLighting: number;
+    lightSettingsManualColoredLighting: RGBColor;
+    lightSettingsManualDynamicLighting: number;
+    lightSettingsMotionLightingActiveMode: number;
+    lightSettingsMotionDailyLighting: number;
+    lightSettingsMotionColoredLighting: RGBColor;
+    lightSettingsMotionDynamicLighting: number;
+    lightSettingsScheduleLightingActiveMode: number;
+    lightSettingsScheduleDailyLighting: number;
+    lightSettingsScheduleColoredLighting: RGBColor;
+    lightSettingsScheduleDynamicLighting: number;
+    lightSettingsColoredLightingColors: RGBColor[];
+    lightSettingsDynamicLightingThemes: DynamicLighting[];
+    doorControlWarning: boolean;
+    door1Open: boolean;
+    door2Open: boolean;
+    doorSensor1Status: number;
+    doorSensor2Status: number;
+    doorSensor1MacAddress: string;
+    doorSensor2MacAddress: string;
+    doorSensor1Name: string;
+    doorSensor2Name: string;
+    doorSensor1SerialNumber: string;
+    doorSensor2SerialNumber: string;
+    doorSensor1Version: string;
+    doorSensor2Version: string;
+    doorSensor1LowBattery: boolean;
+    doorSensor2LowBattery: boolean;
+    doorSensor1BatteryLevel: number;
+    doorSensor2BatteryLevel: number;
+}
+>;
+
 export type DeviceProperties = 
   | DevicePropertiesSchema0
   | DevicePropertiesSchema1
   | DevicePropertiesSchema2
-  | DevicePropertiesSchema3;
+  | DevicePropertiesSchema3
+  | DevicePropertiesSchema4;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const dumpDeviceProperties = (device: Device, schemaVersion: number): DeviceProperties => {
@@ -490,12 +528,49 @@ export const dumpDeviceProperties = (device: Device, schemaVersion: number): Dev
         return device2;
     }
 
-    // All schemas >= 17
     delete device2["pictureUrl"];
     const device3 = device2 as DevicePropertiesSchema3;
     device3.picture = device.getPropertyValue(PropertyName.DevicePicture) as Picture;
     
-    return device3;
+    if (schemaVersion <= 18) {
+        return device3;
+    }
+
+    // All schemas >= 19
+    const device4 = device3 as DevicePropertiesSchema4;
+    device4.lightSettingsManualLightingActiveMode = device.getPropertyValue(PropertyName.DeviceLightSettingsManualLightingActiveMode) as number;
+    device4.lightSettingsManualDailyLighting = device.getPropertyValue(PropertyName.DeviceLightSettingsManualDailyLighting) as number;
+    device4.lightSettingsManualColoredLighting = device.getPropertyValue(PropertyName.DeviceLightSettingsManualColoredLighting) as RGBColor;
+    device4.lightSettingsManualDynamicLighting = device.getPropertyValue(PropertyName.DeviceLightSettingsManualDynamicLighting) as number;
+    device4.lightSettingsMotionLightingActiveMode = device.getPropertyValue(PropertyName.DeviceLightSettingsMotionLightingActiveMode) as number;
+    device4.lightSettingsMotionDailyLighting = device.getPropertyValue(PropertyName.DeviceLightSettingsMotionDailyLighting) as number;
+    device4.lightSettingsMotionColoredLighting = device.getPropertyValue(PropertyName.DeviceLightSettingsMotionColoredLighting) as RGBColor;
+    device4.lightSettingsMotionDynamicLighting = device.getPropertyValue(PropertyName.DeviceLightSettingsMotionDynamicLighting) as number;
+    device4.lightSettingsScheduleLightingActiveMode = device.getPropertyValue(PropertyName.DeviceLightSettingsScheduleLightingActiveMode) as number;
+    device4.lightSettingsScheduleDailyLighting = device.getPropertyValue(PropertyName.DeviceLightSettingsScheduleDailyLighting) as number;
+    device4.lightSettingsScheduleColoredLighting = device.getPropertyValue(PropertyName.DeviceLightSettingsScheduleColoredLighting) as RGBColor;
+    device4.lightSettingsScheduleDynamicLighting = device.getPropertyValue(PropertyName.DeviceLightSettingsScheduleDynamicLighting) as number;
+    device4.lightSettingsColoredLightingColors = device.getPropertyValue(PropertyName.DeviceLightSettingsColoredLightingColors) as RGBColor[];
+    device4.lightSettingsDynamicLightingThemes = device.getPropertyValue(PropertyName.DeviceLightSettingsDynamicLightingThemes) as DynamicLighting[];
+    device4.doorControlWarning = device.getPropertyValue(PropertyName.DeviceDoorControlWarning) as boolean;
+    device4.door1Open = device.getPropertyValue(PropertyName.DeviceDoor1Open) as boolean;
+    device4.door2Open = device.getPropertyValue(PropertyName.DeviceDoor2Open) as boolean;
+    device4.doorSensor1Status = device.getPropertyValue(PropertyName.DeviceDoorSensor1Status) as number;
+    device4.doorSensor2Status = device.getPropertyValue(PropertyName.DeviceDoorSensor2Status) as number;
+    device4.doorSensor1MacAddress = device.getPropertyValue(PropertyName.DeviceDoorSensor1MacAddress) as string;
+    device4.doorSensor2MacAddress = device.getPropertyValue(PropertyName.DeviceDoorSensor2MacAddress) as string;
+    device4.doorSensor1Name = device.getPropertyValue(PropertyName.DeviceDoorSensor1Name) as string;
+    device4.doorSensor2Name = device.getPropertyValue(PropertyName.DeviceDoorSensor2Name) as string;
+    device4.doorSensor1SerialNumber = device.getPropertyValue(PropertyName.DeviceDoorSensor1SerialNumber) as string;
+    device4.doorSensor2SerialNumber = device.getPropertyValue(PropertyName.DeviceDoorSensor2SerialNumber) as string;
+    device4.doorSensor1Version = device.getPropertyValue(PropertyName.DeviceDoorSensor1Version) as string;
+    device4.doorSensor2Version = device.getPropertyValue(PropertyName.DeviceDoorSensor2Version) as string;
+    device4.doorSensor1LowBattery = device.getPropertyValue(PropertyName.DeviceDoorSensor1LowBattery) as boolean;
+    device4.doorSensor2LowBattery = device.getPropertyValue(PropertyName.DeviceDoorSensor2LowBattery) as boolean;
+    device4.doorSensor1BatteryLevel = device.getPropertyValue(PropertyName.DeviceDoorSensor1BatteryLevel) as number;
+    device4.doorSensor2BatteryLevel = device.getPropertyValue(PropertyName.DeviceDoorSensor2BatteryLevel) as number;
+    
+    return device4;
 }
 
 export const dumpDevicePropertiesMetadata = (device: Device, schemaVersion: number): IndexedProperty => {

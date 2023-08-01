@@ -307,7 +307,7 @@ interface {
 ```ts
 interface {
     messageId: string;
-    command: "station.isConnected";
+    command: "station.is_connected";
     serialNumber: string;
 }
 ```
@@ -329,6 +329,7 @@ interface {
 interface {
     messageId: string;
     command: "station.connect";
+    serialNumber: string;
 }
 ```
 

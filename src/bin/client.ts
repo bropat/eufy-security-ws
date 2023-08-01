@@ -33,6 +33,8 @@ const parsePropertyValue = (property: string, value: string, serialNumber: strin
                     return value.toLowerCase() === "true" ? true : false;
                 case "number":
                     return Number.parseInt(value);
+                case "object":
+                    return JSON.parse(value);
                 case "string":
                 default:
                     return value;
@@ -40,6 +42,7 @@ const parsePropertyValue = (property: string, value: string, serialNumber: strin
 
         }
     } catch (error) {
+        console.log("ERROR", error);
     }
     return value;
 };
@@ -110,7 +113,7 @@ const cmdHelp = (cmd: string): void => {
             console.log(`${cmd} <device_sn> <pin>`);
             break;
         case DeviceCommand.setProperty:
-            console.log(`${cmd} <device_sn> <name> <value>`);
+            console.log(`${cmd} <device_sn> <name> <value>|<json_string>`);
             break;
         case DeviceCommand.triggerAlarm:
             console.log(`${cmd} <device_sn> <seconds>`);

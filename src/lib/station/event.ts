@@ -84,6 +84,7 @@ export interface OutgoingEventStationPropertyChanged extends OutgoingEventStatio
     serialNumber: string;
     name: string;
     value: JSONValue;
+    timestamp?: number;     // for backward compatibility
 }
 
 export interface OutgoingEventStationAlarmEvent extends OutgoingEventStationBase {

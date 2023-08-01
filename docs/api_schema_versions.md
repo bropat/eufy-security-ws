@@ -2,6 +2,11 @@
 
 This document describes the changes that are introduced with each schema version.
 
+## Schema 19
+
+* Added new property `lightSettingsManualLightingActiveMode`, `lightSettingsManualDailyLighting`, `lightSettingsManualColoredLighting`, `lightSettingsManualDynamicLighting`, `lightSettingsMotionLightingActiveMode`, `lightSettingsMotionDailyLighting`, `lightSettingsMotionColoredLighting`, `lightSettingsMotionDynamicLighting`, `lightSettingsScheduleLightingActiveMode`, `lightSettingsScheduleDailyLighting`, `lightSettingsScheduleColoredLighting`, `lightSettingsScheduleDynamicLighting`, `lightSettingsColoredLightingColors`, `lightSettingsDynamicLightingThemes`, `doorControlWarning`, `door1Open`, `door2Open`, `doorSensor1Status`, `doorSensor2Status`, `doorSensor1MacAddress`, `doorSensor2MacAddress`, `doorSensor1Name`, `doorSensor2Name`, `doorSensor1SerialNumber`, `doorSensor2SerialNumber`, `doorSensor1Version`, `doorSensor2Version`, `doorSensor1LowBattery`, `doorSensor2LowBattery`, `doorSensor1BatteryLevel`, 
+and `doorSensor2BatteryLevel` to Device
+
 ## Schema 18
 
 * Added new commands `database_query_latest_info`, `database_query_local` , `database_count_by_date` and `database_delete` to Station
