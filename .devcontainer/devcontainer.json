@@ -2,7 +2,7 @@
 // https://github.com/microsoft/vscode-dev-containers/tree/v0.158.0/containers/typescript-node
 {
   "name": "Eufy Security WS Server",
-  "image": "mcr.microsoft.com/vscode/devcontainers/javascript-node:16",
+  "image": "mcr.microsoft.com/vscode/devcontainers/javascript-node:18",
   "context": "..",
   "postCreateCommand": "npm install",
   "forwardPorts": [3000],
