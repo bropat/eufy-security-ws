@@ -27,24 +27,24 @@ export type EufySecurityState =
 export const dumpState = async (driver: EufySecurity, schemaVersion: number): Promise<EufySecurityState> => {
     const base: Partial<EufySecurityStateSchema0> = {
         driver: dumpDriver(driver, schemaVersion),
-        stations: Array.from(await driver.getStations(), (station) =>
+        stations: driver.isConnected() ? Array.from(await driver.getStations(), (station) =>
             dumpStation(station, schemaVersion)
-        ),
-        devices: Array.from(await driver.getDevices(), (device) =>
+        ) : [],
+        devices: driver.isConnected() ? Array.from(await driver.getDevices(), (device) =>
             dumpDevice(device, schemaVersion)
-        ),
+        ) : [],
     };
 
     if (schemaVersion < 13)
         return base as EufySecurityStateSchema0;
     
     const base1 = base as unknown as EufySecurityStateSchema1;
-    base1.stations = Array.from(await driver.getStations(), (station) =>
+    base1.stations = driver.isConnected() ? Array.from(await driver.getStations(), (station) =>
         station.getSerial()
-    );
-    base1.devices = Array.from(await driver.getDevices(), (device) =>
+    ) : [];
+    base1.devices = driver.isConnected() ? Array.from(await driver.getDevices(), (device) =>
         device.getSerial()
-    );
+    ) : [];
 
     return base1;
 };
