@@ -460,14 +460,14 @@ interface EufySecurityServerOptions {
     logger?: Logger;
 }
 
-export interface  EufySecurityServer {
+export interface  IEufySecurityServer {
     start(): void;
     destroy(): void;
     on(event: "listening", listener: () => void): this;
     on(event: "error", listener: (error: Error) => void): this;
 }
 
-export class  EufySecurityServer extends EventEmitter {
+export class  EufySecurityServer extends EventEmitter implements IEufySecurityServer {
 
     private server?: HttpServer;
     private wsServer?: WebSocketServer;
