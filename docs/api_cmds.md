@@ -784,6 +784,18 @@ interface {
 }
 ```
 
+### Calibrate pan and tilt camera
+
+[compatible with schema version: 10+]
+
+```ts
+interface {
+  messageId: string;
+  command: "device.calibrate";
+  serialNumber: string;
+}
+```
+
 ### Doorbell quick response
 
 [compatible with schema version: 3+]
