@@ -2,6 +2,10 @@
 
 This document describes the changes that are introduced with each schema version.
 
+## Schema 20
+
+* Added new property `locationCoordinates`, `locationAddress`, `locationLastUpdate`, `trackerType`, `leftBehindAlarm`, and `findPhone` to Device
+
 ## Schema 19
 
 * Added new property `lightSettingsManualLightingActiveMode`, `lightSettingsManualDailyLighting`, `lightSettingsManualColoredLighting`, `lightSettingsManualDynamicLighting`, `lightSettingsMotionLightingActiveMode`, `lightSettingsMotionDailyLighting`, `lightSettingsMotionColoredLighting`, `lightSettingsMotionDynamicLighting`, `lightSettingsScheduleLightingActiveMode`, `lightSettingsScheduleDailyLighting`, `lightSettingsScheduleColoredLighting`, `lightSettingsScheduleDynamicLighting`, `lightSettingsColoredLightingColors`, `lightSettingsDynamicLightingThemes`, `doorControlWarning`, `door1Open`, `door2Open`, `doorSensor1Status`, `doorSensor2Status`, `doorSensor1MacAddress`, `doorSensor2MacAddress`, `doorSensor1Name`, `doorSensor2Name`, `doorSensor1SerialNumber`, `doorSensor2SerialNumber`, `doorSensor1Version`, `doorSensor2Version`, `doorSensor1LowBattery`, `doorSensor2LowBattery`, `doorSensor1BatteryLevel`, 

@@ -281,12 +281,25 @@ DevicePropertiesSchema3,
 }
 >;
 
+type DevicePropertiesSchema5 = Modify<
+DevicePropertiesSchema4,
+{
+    locationCoordinates: string;
+    locationAddress: string;
+    locationLastUpdate: number;
+    trackerType: number;
+    leftBehindAlarm: boolean;
+    findPhone: boolean;
+}
+>;
+
 export type DeviceProperties = 
   | DevicePropertiesSchema0
   | DevicePropertiesSchema1
   | DevicePropertiesSchema2
   | DevicePropertiesSchema3
-  | DevicePropertiesSchema4;
+  | DevicePropertiesSchema4
+  | DevicePropertiesSchema5;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const dumpDeviceProperties = (device: Device, schemaVersion: number): DeviceProperties => {
@@ -536,7 +549,6 @@ export const dumpDeviceProperties = (device: Device, schemaVersion: number): Dev
         return device3;
     }
 
-    // All schemas >= 19
     const device4 = device3 as DevicePropertiesSchema4;
     device4.lightSettingsManualLightingActiveMode = device.getPropertyValue(PropertyName.DeviceLightSettingsManualLightingActiveMode) as number;
     device4.lightSettingsManualDailyLighting = device.getPropertyValue(PropertyName.DeviceLightSettingsManualDailyLighting) as number;
@@ -569,8 +581,21 @@ export const dumpDeviceProperties = (device: Device, schemaVersion: number): Dev
     device4.doorSensor2LowBattery = device.getPropertyValue(PropertyName.DeviceDoorSensor2LowBattery) as boolean;
     device4.doorSensor1BatteryLevel = device.getPropertyValue(PropertyName.DeviceDoorSensor1BatteryLevel) as number;
     device4.doorSensor2BatteryLevel = device.getPropertyValue(PropertyName.DeviceDoorSensor2BatteryLevel) as number;
+
+    if (schemaVersion <= 19) {
+        return device4;
+    }
+
+    // All schemas >= 20
+    const device5 = device4 as DevicePropertiesSchema5;
+    device5.locationCoordinates = device.getPropertyValue(PropertyName.DeviceLocationCoordinates) as string;
+    device5.locationAddress = device.getPropertyValue(PropertyName.DeviceLocationAddress) as string;
+    device5.locationLastUpdate = device.getPropertyValue(PropertyName.DeviceLocationLastUpdate) as number;
+    device5.trackerType = device.getPropertyValue(PropertyName.DeviceTrackerType) as number;
+    device5.leftBehindAlarm = device.getPropertyValue(PropertyName.DeviceLeftBehindAlarm) as boolean;
+    device5.findPhone = device.getPropertyValue(PropertyName.DeviceFindPhone) as boolean;
     
-    return device4;
+    return device5;
 }
 
 export const dumpDevicePropertiesMetadata = (device: Device, schemaVersion: number): IndexedProperty => {
