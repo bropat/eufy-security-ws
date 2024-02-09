@@ -81,90 +81,70 @@ export class DeviceMessageHandler {
         switch (command) {
             case DeviceCommand.setStatusLed:
                 if (client.schemaVersion <= 12) {
-                    await station.setStatusLed(device, (message as IncomingCommandDeviceSetStatusLed).value).catch((error) => {
-                        throw error;
-                    });
+                    station.setStatusLed(device, (message as IncomingCommandDeviceSetStatusLed).value);
                     return { };
                 } else {
                     throw new UnknownCommandError(command);
                 }
             case DeviceCommand.setAutoNightVision:
                 if (client.schemaVersion <= 12) {
-                    await station.setAutoNightVision(device, (message as IncomingCommandDeviceSetAutoNightVision).value).catch((error) => {
-                        throw error;
-                    });
+                    station.setAutoNightVision(device, (message as IncomingCommandDeviceSetAutoNightVision).value);
                     return { };
                 } else {
                     throw new UnknownCommandError(command);
                 }
             case DeviceCommand.setMotionDetection:
                 if (client.schemaVersion <= 12) {
-                    await station.setMotionDetection(device, (message as IncomingCommandDeviceSetMotionDetection).value).catch((error) => {
-                        throw error;
-                    });
+                    station.setMotionDetection(device, (message as IncomingCommandDeviceSetMotionDetection).value);
                     return { };
                 } else {
                     throw new UnknownCommandError(command);
                 }
             case DeviceCommand.setSoundDetection:
                 if (client.schemaVersion <= 12) {
-                    await station.setSoundDetection(device, (message as IncomingCommandDeviceSetSoundDetection).value).catch((error) => {
-                        throw error;
-                    });
+                    station.setSoundDetection(device, (message as IncomingCommandDeviceSetSoundDetection).value);
                     return { };
                 } else {
                     throw new UnknownCommandError(command);
                 }
             case DeviceCommand.setPetDetection:
                 if (client.schemaVersion <= 12) {
-                    await station.setPetDetection(device, (message as IncomingCommandDeviceSetPetDetection).value).catch((error) => {
-                        throw error;
-                    });
+                    station.setPetDetection(device, (message as IncomingCommandDeviceSetPetDetection).value);
                     return { };
                 } else {
                     throw new UnknownCommandError(command);
                 }
             case DeviceCommand.setRTSPStream:
                 if (client.schemaVersion <= 12) {
-                    await station.setRTSPStream(device, (message as IncomingCommandDeviceSetRTSPStream).value).catch((error) => {
-                        throw error;
-                    });
+                    station.setRTSPStream(device, (message as IncomingCommandDeviceSetRTSPStream).value);
                     return { };
                 } else {
                     throw new UnknownCommandError(command);
                 }
             case DeviceCommand.setAntiTheftDetection:
                 if (client.schemaVersion <= 12) {
-                    await station.setAntiTheftDetection(device, (message as IncomingCommandDeviceSetAntiTheftDetection).value).catch((error) => {
-                        throw error;
-                    });
+                    station.setAntiTheftDetection(device, (message as IncomingCommandDeviceSetAntiTheftDetection).value);
                     return { };
                 } else {
                     throw new UnknownCommandError(command);
                 }
             case DeviceCommand.setWatermark:
                 if (client.schemaVersion <= 12) {
-                    await station.setWatermark(device, (message as IncomingCommandDeviceSetWatermark).value).catch((error) => {
-                        throw error;
-                    });
+                    station.setWatermark(device, (message as IncomingCommandDeviceSetWatermark).value);
                     return { };
                 } else {
                     throw new UnknownCommandError(command);
                 }
             case DeviceCommand.enableDevice:
                 if (client.schemaVersion <= 12) {
-                    await station.enableDevice(device, (message as IncomingCommandDeviceEnableDevice).value).catch((error) => {
-                        throw error;
-                    });
+                    station.enableDevice(device, (message as IncomingCommandDeviceEnableDevice).value);
                     return { };
                 } else {
                     throw new UnknownCommandError(command);
                 }
             case DeviceCommand.lockDevice:
                 if (client.schemaVersion <= 12) {
-                    await station.lockDevice(device, (message as IncomingCommandDeviceLockDevice).value).catch((error) => {
-                        throw error;
-                    });
+                    station.lockDevice(device, (message as IncomingCommandDeviceLockDevice).value);
                     return { };
                 } else {
                     throw new UnknownCommandError(command);
@@ -213,9 +193,7 @@ export class DeviceMessageHandler {
             case DeviceCommand.startLivestream:
                 if (client.schemaVersion >= 2) {
                     if (!station.isLiveStreaming(device)) {
-                        await station.startLivestream(device).catch((error) => {
-                            throw error;
-                        });
+                        station.startLivestream(device);
                         client.receiveLivestream[serialNumber] = true;
                         DeviceMessageHandler.addStreamingDevice(station.getSerial(), client);
                     } else if (client.receiveLivestream[serialNumber] !== true) {
@@ -245,9 +223,7 @@ export class DeviceMessageHandler {
                     if (DeviceMessageHandler.streamingDevices[station.getSerial()] !== undefined && DeviceMessageHandler.streamingDevices[station.getSerial()].includes(client)) {
                         if (DeviceMessageHandler.streamingDevices[station.getSerial()].length === 1) {
                             DeviceMessageHandler.removeStreamingDevice(station.getSerial(), client);
-                            await station.stopLivestream(device).catch((error) => {
-                                throw error;
-                            });
+                            station.stopLivestream(device);
                         } else {
                             client.receiveLivestream[serialNumber] = false;
                             DeviceMessageHandler.removeStreamingDevice(station.getSerial(), client);
@@ -281,36 +257,28 @@ export class DeviceMessageHandler {
             }
             case DeviceCommand.triggerAlarm:
                 if (client.schemaVersion >= 3) {
-                    await station.triggerDeviceAlarmSound(device, (message as IncomingCommandDeviceTriggerAlarm).seconds).catch((error) => {
-                        throw error;
-                    });
+                    station.triggerDeviceAlarmSound(device, (message as IncomingCommandDeviceTriggerAlarm).seconds);
                     return client.schemaVersion >= 13 ? { async: true } : {};
                 } else {
                     throw new UnknownCommandError(command);
                 }
             case DeviceCommand.resetAlarm:
                 if (client.schemaVersion >= 3) {
-                    await station.resetDeviceAlarmSound(device).catch((error) => {
-                        throw error;
-                    });
+                    station.resetDeviceAlarmSound(device);
                     return client.schemaVersion >= 13 ? { async: true } : {};
                 } else {
                     throw new UnknownCommandError(command);
                 }
             case DeviceCommand.panAndTilt:
                 if (client.schemaVersion >= 3) {
-                    await station.panAndTilt(device, (message as IncomingCommandDevicePanAndTilt).direction).catch((error) => {
-                        throw error;
-                    });
+                    station.panAndTilt(device, (message as IncomingCommandDevicePanAndTilt).direction);
                     return client.schemaVersion >= 13 ? { async: true } : {};
                 } else {
                     throw new UnknownCommandError(command);
                 }
             case DeviceCommand.quickResponse:
                 if (client.schemaVersion >= 3) {
-                    await station.quickResponse(device, (message as IncomingCommandDeviceQuickResponse).voiceId).catch((error) => {
-                        throw error;
-                    });
+                    station.quickResponse(device, (message as IncomingCommandDeviceQuickResponse).voiceId);
                     return client.schemaVersion >= 13 ? { async: true } : {};
                 } else {
                     throw new UnknownCommandError(command);
@@ -343,9 +311,7 @@ export class DeviceMessageHandler {
                     if (DeviceMessageHandler.downloadingDevices[station.getSerial()] !== undefined && DeviceMessageHandler.downloadingDevices[station.getSerial()].includes(client)) {
                         if (DeviceMessageHandler.downloadingDevices[station.getSerial()].length === 1) {
                             DeviceMessageHandler.removeDownloadingDevice(station.getSerial(), client);
-                            await station.cancelDownload(device).catch((error) => {
-                                throw error;
-                            });
+                            station.cancelDownload(device);
                         }
                     }
                     return client.schemaVersion >= 13 ? { async: true } : {};
@@ -442,18 +408,14 @@ export class DeviceMessageHandler {
             }
             case DeviceCommand.startRTSPLivestream:
                 if (client.schemaVersion >= 6) {
-                    await station.startRTSPStream(device).catch((error) => {
-                        throw error;
-                    });
+                    station.startRTSPStream(device);
                     return { };
                 } else {
                     throw new UnknownCommandError(command);
                 }
             case DeviceCommand.stopRTSPLivestream:
                 if (client.schemaVersion >= 6) {
-                    await station.stopRTSPStream(device).catch((error) => {
-                        throw error;
-                    });
+                    station.stopRTSPStream(device);
                     return { };
                 } else {
                     throw new UnknownCommandError(command);
@@ -472,45 +434,35 @@ export class DeviceMessageHandler {
             }
             case DeviceCommand.calibrateLock:
                 if (client.schemaVersion >= 9) {
-                    await station.calibrateLock(device).catch((error) => {
-                        throw error;
-                    });
+                    station.calibrateLock(device);
                     return client.schemaVersion >= 13 ? { async: true } : {};
                 } else {
                     throw new UnknownCommandError(command);
                 }
             case DeviceCommand.calibrate:
                 if (client.schemaVersion >= 10) {
-                    await station.calibrate(device).catch((error) => {
-                        throw error;
-                    });
+                    station.calibrate(device);
                     return client.schemaVersion >= 13 ? { async: true } : {};
                 } else {
                     throw new UnknownCommandError(command);
                 }
             case DeviceCommand.setDefaultAngle:
                 if (client.schemaVersion >= 10) {
-                    await station.setDefaultAngle(device).catch((error) => {
-                        throw error;
-                    });
+                    station.setDefaultAngle(device);
                     return client.schemaVersion >= 13 ? { async: true } : {};
                 } else {
                     throw new UnknownCommandError(command);
                 }
             case DeviceCommand.setPrivacyAngle:
                 if (client.schemaVersion >= 10) {
-                    await station.setPrivacyAngle(device).catch((error) => {
-                        throw error;
-                    });
+                    station.setPrivacyAngle(device);
                     return client.schemaVersion >= 13 ? { async: true } : {};
                 } else {
                     throw new UnknownCommandError(command);
                 }
             case DeviceCommand.unlock:
                 if (client.schemaVersion >= 13) {
-                    await station.unlock(device).catch((error) => {
-                        throw error;
-                    });
+                    station.unlock(device);
                     return client.schemaVersion >= 13 ? { async: true } : {};
                 } else {
                     throw new UnknownCommandError(command);
@@ -518,9 +470,7 @@ export class DeviceMessageHandler {
             case DeviceCommand.startTalkback:
                 if (client.schemaVersion >= 13) {
                     if (!station.isTalkbackOngoing(device)) {
-                        await station.startTalkback(device).catch((error) => {
-                            throw error;
-                        });
+                        station.startTalkback(device);
                         client.sendTalkbackStream[serialNumber] = true;
                         DeviceMessageHandler.addTalkbackingDevice(station.getSerial(), client);
                     } else if (client.sendTalkbackStream[serialNumber] !== true) {
@@ -545,9 +495,7 @@ export class DeviceMessageHandler {
                             DeviceMessageHandler.talkbackStream?.end();
                             DeviceMessageHandler.talkbackStream = undefined;
                             DeviceMessageHandler.removeTalkbackingDevice(station.getSerial(), client);
-                            await station.stopTalkback(device).catch((error) => {
-                                throw error;
-                            });
+                            station.stopTalkback(device);
                         }
                     }
                     return client.schemaVersion >= 13 ? { async: true } : {};
@@ -584,13 +532,11 @@ export class DeviceMessageHandler {
                 }
             case DeviceCommand.snooze:
                 if (client.schemaVersion >= 13) {
-                    await station.snooze(device, {
+                    station.snooze(device, {
                         snooze_time: (message as IncomingCommandDeviceSnooze).snoozeTime,
                         snooze_chime: (message as IncomingCommandDeviceSnooze).snoozeChime,
                         snooze_motion: (message as IncomingCommandDeviceSnooze).snoozeMotion,
                         snooze_homebase: (message as IncomingCommandDeviceSnooze).snoozeHomebase,
-                    }).catch((error) => {
-                        throw error;
                     });
                     return client.schemaVersion >= 13 ? { async: true } : {};
                 } else {
@@ -658,9 +604,7 @@ export class DeviceMessageHandler {
             case DeviceCommand.verifyPIN:
                 if (client.schemaVersion >= 13) {
                     const verifyPIN = message as IncomingCommandDeviceVerifyPIN;
-                    await station.verifyPIN(device, verifyPIN.pin).catch((error) => {
-                        throw error;
-                    });
+                    station.verifyPIN(device, verifyPIN.pin);
                     return client.schemaVersion >= 13 ? { async: true } : {};
                 } else {
                     throw new UnknownCommandError(command);

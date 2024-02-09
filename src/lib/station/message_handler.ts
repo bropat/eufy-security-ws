@@ -16,15 +16,11 @@ export class StationMessageHandler {
         const station = await driver.getStation(serialNumber);
         switch (command) {
             case StationCommand.reboot:
-                await station.rebootHUB().catch((error) => {
-                    throw error;
-                });
+                station.rebootHUB();
                 return client.schemaVersion >= 13 ? { async: true } : {};
             case StationCommand.setGuardMode:
                 if (client.schemaVersion <= 12) {
-                    await station.setGuardMode((message as IncomingCommandSetGuardMode).mode).catch((error) => {
-                        throw error;
-                    });
+                    station.setGuardMode((message as IncomingCommandSetGuardMode).mode);
                     return { };
                 } else {
                     throw new UnknownCommandError(command);
@@ -114,18 +110,14 @@ export class StationMessageHandler {
                 return client.schemaVersion >= 13 ? { async: true } : {};
             case StationCommand.triggerAlarm:
                 if (client.schemaVersion >= 3) {
-                    await station.triggerStationAlarmSound((message as IncomingCommandTriggerAlarm).seconds).catch((error) => {
-                        throw error;
-                    });
+                    station.triggerStationAlarmSound((message as IncomingCommandTriggerAlarm).seconds);
                     return client.schemaVersion >= 13 ? { async: true } : {};
                 } else {
                     throw new UnknownCommandError(command);
                 }
             case StationCommand.resetAlarm:
                 if (client.schemaVersion >= 3) {
-                    await station.resetStationAlarmSound().catch((error) => {
-                        throw error;
-                    });
+                    station.resetStationAlarmSound();
                     return client.schemaVersion >= 13 ? { async: true } : {};
                 } else {
                     throw new UnknownCommandError(command);
@@ -190,9 +182,7 @@ export class StationMessageHandler {
             case StationCommand.chime:
                 if (client.schemaVersion >= 15) {
                     const ringtone = (message as IncomingCommandChime).ringtone;
-                    await station.chimeHomebase(ringtone !== undefined ? ringtone : 0).catch((error: Error) => {
-                        throw error;
-                    });
+                    station.chimeHomebase(ringtone !== undefined ? ringtone : 0);
                     return { async: true };
                 } else {
                     throw new UnknownCommandError(command);
@@ -200,18 +190,14 @@ export class StationMessageHandler {
             case StationCommand.downloadImage:
                 if (client.schemaVersion >= 17) {
                     const file = (message as IncomingCommandDownloadImage).file;
-                    await station.downloadImage(file).catch((error: Error) => {
-                        throw error;
-                    });
+                    station.downloadImage(file);
                     return { async: true };
                 } else {
                     throw new UnknownCommandError(command);
                 }
             case StationCommand.databaseQueryLatestInfo:
                 if (client.schemaVersion >= 18) {
-                    await station.databaseQueryLatestInfo().catch((error: Error) => {
-                        throw error;
-                    });
+                    station.databaseQueryLatestInfo();
                     return { async: true };
                 } else {
                     throw new UnknownCommandError(command);
@@ -224,9 +210,7 @@ export class StationMessageHandler {
                     const eventType = (message as IncomingCommandDatabaseQueryLocal).eventType;
                     const detectionType = (message as IncomingCommandDatabaseQueryLocal).detectionType;
                     const storageType = (message as IncomingCommandDatabaseQueryLocal).storageType;
-                    await station.databaseQueryLocal(serialNumbers, startDate, endDate, eventType, detectionType, storageType).catch((error: Error) => {
-                        throw error;
-                    });
+                    station.databaseQueryLocal(serialNumbers, startDate, endDate, eventType, detectionType, storageType);
                     return { async: true };
                 } else {
                     throw new UnknownCommandError(command);
@@ -235,9 +219,7 @@ export class StationMessageHandler {
                 if (client.schemaVersion >= 18) {
                     const startDate = date.parse((message as IncomingCommandDatabaseCountByDate).startDate, "YYYYMMDD");
                     const endDate = date.parse((message as IncomingCommandDatabaseCountByDate).endDate, "YYYYMMDD");
-                    await station.databaseCountByDate(startDate, endDate).catch((error: Error) => {
-                        throw error;
-                    });
+                    station.databaseCountByDate(startDate, endDate);
                     return { async: true };
                 } else {
                     throw new UnknownCommandError(command);
@@ -245,9 +227,7 @@ export class StationMessageHandler {
             case StationCommand.databaseDelete:
                 if (client.schemaVersion >= 18) {
                     const ids = (message as IncomingCommandDatabaseDelete).ids;
-                    await station.databaseDelete(ids).catch((error: Error) => {
-                        throw error;
-                    });
+                    station.databaseDelete(ids);
                     return { async: true };
                 } else {
                     throw new UnknownCommandError(command);
