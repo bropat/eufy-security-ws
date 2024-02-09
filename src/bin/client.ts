@@ -136,14 +136,19 @@ const cmdHelp = (cmd: string): void => {
             break;
         case DeviceCommand.addUser:
             console.log(`${cmd} <device_sn> <username> <passcode> [schedule]`);
+            break;
         case DeviceCommand.deleteUser:
             console.log(`${cmd} <device_sn> <username>`);
+            break;
         case DeviceCommand.updateUser:
             console.log(`${cmd} <device_sn> <username> <new_username>`);
+            break;
         case DeviceCommand.updateUserSchedule:
             console.log(`${cmd} <device_sn> <username> <schedule>`);
+            break;
         case DeviceCommand.updateUserPasscode:
             console.log(`${cmd} <device_sn> <username> <passcode>`);
+            break;
         case StationCommand.setGuardMode:
             console.log(`${cmd} <station_sn> <numeric_code>`);
             break;
