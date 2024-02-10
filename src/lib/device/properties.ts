@@ -599,6 +599,7 @@ export const dumpDeviceProperties = (device: Device, schemaVersion: number): Dev
 }
 
 export const dumpDevicePropertiesMetadata = (device: Device, schemaVersion: number): IndexedProperty => {
+    //TODO: Change behaviour. This should check schemaversion and so on and dumpDeviceProperties should do what does this
     const properties = dumpDeviceProperties(device, schemaVersion);
     const metadata = device.getPropertiesMetadata();
 

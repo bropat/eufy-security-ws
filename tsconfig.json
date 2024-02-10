@@ -1,8 +1,9 @@
 {
     "compilerOptions": {
-        "target": "ES2020",
-        "module": "CommonJS",
-        "moduleResolution": "node",
+        "lib": ["ES2022"],
+        "target": "ES2022",
+        "module": "Node16",
+        "moduleResolution": "Node16",
         "declaration": true,
         //"composite": true,
         "declarationMap": true,
@@ -15,5 +16,8 @@
         "strict": true,
         "sourceMap": true,
         "noEmit": false,
+        "paths": {
+            "got": ["./node_modules/got/dist/source"]
+        }
     }
 }

@@ -3,7 +3,7 @@
 import { resolve } from "path";
 import { Command, Option } from "commander";
 import { Logger } from "tslog";
-import { EufySecurity, EufySecurityConfig } from "eufy-security-client"
+import { EufySecurity, EufySecurityConfig, LogLevel } from "eufy-security-client"
 
 import { EufySecurityServer } from "../lib/server";
 
@@ -49,6 +49,12 @@ const args = program.opts();
     } else {
         console.error(`Error: failed loading config file ${configPath}`);
         return;
+    }
+
+    if (args.verbose) {
+        config.logging = {
+            level: LogLevel.Debug
+        };
     }
 
     const logger = new Logger({
