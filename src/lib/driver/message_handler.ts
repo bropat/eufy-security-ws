@@ -1,12 +1,13 @@
 import { EufySecurity, LoginOptions } from "eufy-security-client";
-import { Logger } from "tslog";
+import { ILogObj, Logger } from "tslog";
 
-import { UnknownCommandError } from "../error";
-import { Client, ClientsController } from "../server";
-import { DriverCommand } from "./command";
-import { DriverEvent } from "./event";
-import { IncomingMessageDriver, IncomingCommandSetVerifyCode, IncomingCommandGetVideoEvents, IncomingCommandSetCaptcha, IncomingCommandSetLogLevel, IncomingCommandGetAlarmEvents, IncomingCommandGetHistoryEvents } from "./incoming_message";
-import { DriverResultTypes } from "./outgoing_message";
+import { UnknownCommandError } from "../error.js";
+import { Client, ClientsController } from "../server.js";
+import { DriverCommand } from "./command.js";
+import { DriverEvent } from "./event.js";
+import { IncomingMessageDriver, IncomingCommandSetVerifyCode, IncomingCommandGetVideoEvents, IncomingCommandSetCaptcha, IncomingCommandSetLogLevel, IncomingCommandGetAlarmEvents, IncomingCommandGetHistoryEvents } from "./incoming_message.js";
+import { DriverResultTypes } from "./outgoing_message.js";
+import { LogLevel, LogLevelName, convertLogLevel } from "../logging.js";
 
 export class DriverMessageHandler {
 
@@ -14,7 +15,7 @@ export class DriverMessageHandler {
     public static captcha: string | null = null;
     public static tfa = false;
 
-    static async handle(message: IncomingMessageDriver, driver: EufySecurity, client: Client, clientsController: ClientsController, logger: Logger): Promise<DriverResultTypes[DriverCommand]> {
+    static async handle(message: IncomingMessageDriver, driver: EufySecurity, client: Client, clientsController: ClientsController, logger: Logger<ILogObj>): Promise<DriverResultTypes[DriverCommand]> {
         const { command } = message;
         switch (command) {
             case DriverCommand.setVerifyCode:
@@ -147,13 +148,17 @@ export class DriverMessageHandler {
                 }
             }
             case DriverCommand.getLogLevel:
-                return { level: logger.settings.minLevel };
+                return { level: LogLevel[logger.settings.minLevel] as LogLevelName };
             case DriverCommand.setLogLevel:
                 // If the logging event forwarder is enabled, we need to restart
                 // it so that it picks up the new config.
-                logger.setSettings({
-                    minLevel: (message as IncomingCommandSetLogLevel).level
-                });
+                //TODO: Finish migration to new tslog
+                //TODO: throw error
+                /*if (LogLevel[(message as IncomingCommandSetLogLevel).level] === undefined) {
+                    throw error
+                }*/
+                logger.settings.minLevel = LogLevel[(message as IncomingCommandSetLogLevel).level];
+                driver.updateLogging("all", convertLogLevel((message as IncomingCommandSetLogLevel).level));
                 clientsController.restartLoggingEventForwarderIfNeeded();
                 clientsController.clients.forEach((client) => {
                     client.sendEvent({

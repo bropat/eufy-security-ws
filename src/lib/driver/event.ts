@@ -1,6 +1,7 @@
-import { ILogObject, TLogLevelName } from "tslog";
+import { ILogObj } from "tslog";
 
-import { OutgoingBaseEvent } from "../outgoing_message";
+import { OutgoingBaseEvent } from "../outgoing_message.js";
+import { LogLevelName } from "../logging.js";
 
 export enum DriverEvent {
     verifyCode = "verify code",
@@ -31,13 +32,13 @@ export interface OutgoingEventDriverCaptchaRequest extends OutgoingEventDriverBa
 export interface OutgoingEventDriverLogLevelChanged extends OutgoingBaseEvent {
     source: "driver";
     event: DriverEvent.logLevelChanged;
-    level: TLogLevelName;
+    level: LogLevelName;
 }
 
 export interface OutgoingEventDriverLogging extends OutgoingBaseEvent {
     source: "driver";
     event: DriverEvent.logging;
-    message: ILogObject;
+    message: ILogObj;
 }
 
 export interface OutgoingEventDriverConnectionError extends OutgoingEventDriverBase {

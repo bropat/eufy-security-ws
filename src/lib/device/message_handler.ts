@@ -1,14 +1,13 @@
-import { CommandName, EufySecurity } from "eufy-security-client";
-import { TalkbackStream } from "eufy-security-client/build/p2p/talkback";
+import { CommandName, EufySecurity, TalkbackStream } from "eufy-security-client";
 
-import { DownloadAlreadyRunningError, DownloadNotRunningError, DownloadOnlyOneAtATimeError, LivestreamAlreadyRunningError, LivestreamNotRunningError, TalkbackAlreadyRunningError, TalkbackNotRunningError, TalkbackOnlyOneAtATimeError, UnknownCommandError } from "../error";
-import { Client } from "../server";
-import { convertCamelCaseToSnakeCase } from "../utils";
-import { DeviceCommand } from "./command";
-import { DeviceEvent } from "./event";
-import { IncomingCommandDeviceEnableDevice, IncomingCommandDeviceLockDevice, IncomingCommandDeviceSetAntiTheftDetection, IncomingCommandDeviceSetAutoNightVision, IncomingCommandDeviceSetMotionDetection, IncomingCommandDeviceSetPetDetection, IncomingCommandDeviceSetProperty, IncomingCommandDeviceSetRTSPStream, IncomingCommandDeviceSetSoundDetection, IncomingCommandDeviceSetStatusLed, IncomingCommandDeviceSetWatermark, IncomingMessageDevice, IncomingCommandDeviceTriggerAlarm, IncomingCommandDevicePanAndTilt, IncomingCommandDeviceQuickResponse, IncomingCommandDeviceStartDownload, IncomingCommandDeviceHasProperty, IncomingCommandDeviceHasCommand, IncomingCommandDeviceTalkbackAudioData, IncomingCommandDeviceSnooze, IncomingCommandDeviceAddUser, IncomingCommandDeviceDeleteUser, IncomingCommandDeviceVerifyPIN, IncomingCommandDeviceUpdateUser, IncomingCommandDeviceUpdateUserPasscode, IncomingCommandDeviceUpdateUserSchedule } from "./incoming_message";
-import { DeviceResultTypes } from "./outgoing_message";
-import { dumpDeviceProperties, dumpDevicePropertiesMetadata } from "./properties";
+import { DownloadAlreadyRunningError, DownloadNotRunningError, DownloadOnlyOneAtATimeError, LivestreamAlreadyRunningError, LivestreamNotRunningError, TalkbackAlreadyRunningError, TalkbackNotRunningError, TalkbackOnlyOneAtATimeError, UnknownCommandError } from "../error.js";
+import { Client } from "../server.js";
+import { convertCamelCaseToSnakeCase } from "../utils.js";
+import { DeviceCommand } from "./command.js";
+import { DeviceEvent } from "./event.js";
+import { IncomingCommandDeviceEnableDevice, IncomingCommandDeviceLockDevice, IncomingCommandDeviceSetAntiTheftDetection, IncomingCommandDeviceSetAutoNightVision, IncomingCommandDeviceSetMotionDetection, IncomingCommandDeviceSetPetDetection, IncomingCommandDeviceSetProperty, IncomingCommandDeviceSetRTSPStream, IncomingCommandDeviceSetSoundDetection, IncomingCommandDeviceSetStatusLed, IncomingCommandDeviceSetWatermark, IncomingMessageDevice, IncomingCommandDeviceTriggerAlarm, IncomingCommandDevicePanAndTilt, IncomingCommandDeviceQuickResponse, IncomingCommandDeviceStartDownload, IncomingCommandDeviceHasProperty, IncomingCommandDeviceHasCommand, IncomingCommandDeviceTalkbackAudioData, IncomingCommandDeviceSnooze, IncomingCommandDeviceAddUser, IncomingCommandDeviceDeleteUser, IncomingCommandDeviceVerifyPIN, IncomingCommandDeviceUpdateUser, IncomingCommandDeviceUpdateUserPasscode, IncomingCommandDeviceUpdateUserSchedule, IncomingCommandDevicePresetPosition, IncomingCommandDeviceSavePresetPosition, IncomingCommandDeviceDeletePresetPosition } from "./incoming_message.js";
+import { DeviceResultTypes } from "./outgoing_message.js";
+import { dumpDeviceProperties, dumpDevicePropertiesMetadata } from "./properties.js";
 
 export class DeviceMessageHandler {
 
@@ -463,7 +462,7 @@ export class DeviceMessageHandler {
             case DeviceCommand.unlock:
                 if (client.schemaVersion >= 13) {
                     station.unlock(device);
-                    return client.schemaVersion >= 13 ? { async: true } : {};
+                    return { async: true };
                 } else {
                     throw new UnknownCommandError(command);
                 }
@@ -478,7 +477,7 @@ export class DeviceMessageHandler {
                     } else {
                         throw new TalkbackAlreadyRunningError(`Talkback for device ${serialNumber} is already running`);
                     }
-                    return client.schemaVersion >= 13 ? { async: true } : {};
+                    return { async: true };
                 } else {
                     throw new UnknownCommandError(command);
                 }
@@ -498,7 +497,7 @@ export class DeviceMessageHandler {
                             station.stopTalkback(device);
                         }
                     }
-                    return client.schemaVersion >= 13 ? { async: true } : {};
+                    return { async: true };
                 } else {
                     throw new UnknownCommandError(command);
                 }
@@ -538,7 +537,7 @@ export class DeviceMessageHandler {
                         snooze_motion: (message as IncomingCommandDeviceSnooze).snoozeMotion,
                         snooze_homebase: (message as IncomingCommandDeviceSnooze).snoozeHomebase,
                     });
-                    return client.schemaVersion >= 13 ? { async: true } : {};
+                    return { async: true };
                 } else {
                     throw new UnknownCommandError(command);
                 }
@@ -548,7 +547,7 @@ export class DeviceMessageHandler {
                     await driver.addUser(device.getSerial(), addUser.username, addUser.passcode, addUser.schedule).catch((error) => {
                         throw error;
                     });
-                    return client.schemaVersion >= 13 ? { async: true } : {};
+                    return { async: true };
                 } else {
                     throw new UnknownCommandError(command);
                 }
@@ -558,7 +557,7 @@ export class DeviceMessageHandler {
                     await driver.deleteUser(device.getSerial(), addUser.username).catch((error) => {
                         throw error;
                     });
-                    return client.schemaVersion >= 13 ? { async: true } : {};
+                    return { async: true };
                 } else {
                     throw new UnknownCommandError(command);
                 }
@@ -577,7 +576,7 @@ export class DeviceMessageHandler {
                     await driver.updateUser(device.getSerial(), addUser.username, addUser.newUsername).catch((error) => {
                         throw error;
                     });
-                    return client.schemaVersion >= 13 ? { async: true } : {};
+                    return { async: true };
                 } else {
                     throw new UnknownCommandError(command);
                 }
@@ -587,7 +586,7 @@ export class DeviceMessageHandler {
                     await driver.updateUserPasscode(device.getSerial(), addUser.username, addUser.passcode).catch((error) => {
                         throw error;
                     });
-                    return client.schemaVersion >= 13 ? { async: true } : {};
+                    return { async: true };
                 } else {
                     throw new UnknownCommandError(command);
                 }
@@ -597,7 +596,7 @@ export class DeviceMessageHandler {
                     await driver.updateUserSchedule(device.getSerial(), addUser.username, addUser.schedule).catch((error) => {
                         throw error;
                     });
-                    return client.schemaVersion >= 13 ? { async: true } : {};
+                    return { async: true };
                 } else {
                     throw new UnknownCommandError(command);
                 }
@@ -605,7 +604,31 @@ export class DeviceMessageHandler {
                 if (client.schemaVersion >= 13) {
                     const verifyPIN = message as IncomingCommandDeviceVerifyPIN;
                     station.verifyPIN(device, verifyPIN.pin);
-                    return client.schemaVersion >= 13 ? { async: true } : {};
+                    return { async: true };
+                } else {
+                    throw new UnknownCommandError(command);
+                }
+            case DeviceCommand.presetPosition:
+                if (client.schemaVersion >= 21) {
+                    const presetPosition = message as IncomingCommandDevicePresetPosition;
+                    station.presetPosition(device, presetPosition.position);
+                    return { async: true };
+                } else {
+                    throw new UnknownCommandError(command);
+                }
+            case DeviceCommand.savePresetPosition:
+                if (client.schemaVersion >= 21) {
+                    const savePresetPosition = message as IncomingCommandDeviceSavePresetPosition;
+                    station.savePresetPosition(device, savePresetPosition.position);
+                    return { async: true };
+                } else {
+                    throw new UnknownCommandError(command);
+                }
+            case DeviceCommand.deletePresetPosition:
+                if (client.schemaVersion >= 21) {
+                    const deletePresetPosition = message as IncomingCommandDeviceDeletePresetPosition;
+                    station.deletePresetPosition(device, deletePresetPosition.position);
+                    return { async: true };
                 } else {
                     throw new UnknownCommandError(command);
                 }

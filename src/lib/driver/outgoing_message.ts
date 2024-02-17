@@ -1,7 +1,7 @@
 import { EventRecordResponse } from "eufy-security-client";
-import { TLogLevelName } from "tslog";
 
-import { DriverCommand } from "./command";
+import { DriverCommand } from "./command.js";
+import { LogLevelName } from "../logging.js";
 
 export interface DriverResultTypes {
     [DriverCommand.setVerifyCode]: { result?: boolean };
@@ -15,7 +15,7 @@ export interface DriverResultTypes {
     [DriverCommand.getAlarmEvents]: { events: Array<EventRecordResponse> };
     [DriverCommand.getHistoryEvents]: { events: Array<EventRecordResponse> };
     [DriverCommand.setLogLevel]: Record<string, never>;
-    [DriverCommand.getLogLevel]: { level: TLogLevelName };
+    [DriverCommand.getLogLevel]: { level: LogLevelName };
     [DriverCommand.startListeningLogs]: Record<string, never>;
     [DriverCommand.stopListeningLogs]: Record<string, never>;
     [DriverCommand.isMqttConnected]: { connected: boolean };

@@ -1,11 +1,11 @@
-import { StationResultTypes } from "./station/outgoing_message";
-import { DeviceResultTypes } from "./device/outgoing_message";
-import { ServerCommand } from "./command";
-import { DriverResultTypes } from "./driver/outgoing_message";
-import { DeviceEvent, OutgoingEventDevice } from "./device/event";
-import { OutgoingEventStation, StationEvent } from "./station/event";
-import { DriverEvent, OutgoingEventDriver } from "./driver/event";
-import { ServerEvent, OutgoingEventServer } from "./event";
+import { StationResultTypes } from "./station/outgoing_message.js";
+import { DeviceResultTypes } from "./device/outgoing_message.js";
+import { ServerCommand } from "./command.js";
+import { DriverResultTypes } from "./driver/outgoing_message.js";
+import { DeviceEvent, OutgoingEventDevice } from "./device/event.js";
+import { OutgoingEventStation, StationEvent } from "./station/event.js";
+import { DriverEvent, OutgoingEventDriver } from "./driver/event.js";
+import { ServerEvent, OutgoingEventServer } from "./event.js";
 
 // https://github.com/microsoft/TypeScript/issues/1897#issuecomment-822032151
 export type JSONValue =

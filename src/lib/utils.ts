@@ -1,4 +1,5 @@
 import { EventEmitter } from "events";
+import { inspect } from "util";
 
 export const convertCamelCaseToSnakeCase = function (value: string): string {
     return value !== undefined ? value.replace(/[A-Z]/g, (letter, index) => {
@@ -31,4 +32,18 @@ export const waitForEvent = function <T>(emitter: EventEmitter, event: string, t
             }, timeout);
         }
     });
+}
+
+export const initializeInspectStyles = function(): void {
+    inspect.styles.special = "cyan";
+    inspect.styles.number = "green";
+    inspect.styles.bigint = "green";
+    inspect.styles.boolean = "yellow";
+    inspect.styles.undefined = "grey";
+    inspect.styles.null = "bold";
+    inspect.styles.string = "red";
+    inspect.styles.symbol = "green";
+    inspect.styles.date = "magenta";
+    inspect.styles.regexp = "red";
+    inspect.styles.module = "underline";
 }

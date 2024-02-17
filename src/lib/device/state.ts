@@ -1,6 +1,6 @@
 import { Device, DeviceType, PropertyName } from "eufy-security-client"
 
-import { Modify } from "../state";
+import { Modify } from "../state.js";
 
 export interface DeviceStateSchema0 {
     name: string;

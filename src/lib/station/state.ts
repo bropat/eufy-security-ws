@@ -1,6 +1,6 @@
 import { DeviceType, PropertyName, Station } from "eufy-security-client"
 
-import { Modify } from "../state";
+import { Modify } from "../state.js";
 
 export interface StationStateSchema0 {
     name: string;

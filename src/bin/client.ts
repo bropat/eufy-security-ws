@@ -2,28 +2,31 @@
 
 import { WebSocket } from "ws";
 import { Command, Option } from "commander";
-import * as c from "ansi-colors";
+import ansi_colors from 'ansi-colors';
 import { Logger } from "tslog";
 import * as readline from "readline";
 import { EventEmitter } from "events";
 import date from "date-and-time";
 
-import { maxSchemaVersion } from "../lib/const";
-import { OutgoingEventMessage, OutgoingMessage, OutgoingResultMessageSuccess } from "../lib/outgoing_message";
-import { DriverCommand } from "../lib/driver/command";
-import { DeviceCommand } from "../lib/device/command";
-import { StationCommand } from "../lib/station/command";
-import { convertCamelCaseToSnakeCase, waitForEvent } from "../lib/utils";
-import { OutgoingEventDeviceCommandResult } from "../lib/device/event";
-import { OutgoingEventStationCommandResult } from "../lib/station/event";
-import { IncomingCommandDeviceAddUser, IncomingCommandDeviceUpdateUser, IncomingCommandDeviceUpdateUserPasscode, IncomingCommandDeviceUpdateUserSchedule } from "../lib/device/incoming_message";
+import { maxSchemaVersion } from "../lib/const.js";
+import { OutgoingEventMessage, OutgoingMessage, OutgoingResultMessageSuccess } from "../lib/outgoing_message.js";
+import { DriverCommand } from "../lib/driver/command.js";
+import { DeviceCommand } from "../lib/device/command.js";
+import { StationCommand } from "../lib/station/command.js";
+import { convertCamelCaseToSnakeCase, initializeInspectStyles, waitForEvent } from "../lib/utils.js";
+import { OutgoingEventDeviceCommandResult } from "../lib/device/event.js";
+import { OutgoingEventStationCommandResult } from "../lib/station/event.js";
+import { IncomingCommandDeviceAddUser, IncomingCommandDeviceUpdateUser, IncomingCommandDeviceUpdateUserPasscode, IncomingCommandDeviceUpdateUserSchedule } from "../lib/device/incoming_message.js";
 import { IndexedProperty, Schedule } from "eufy-security-client";
-import { IncomingCommandChime, IncomingCommandDatabaseQueryLocal, IncomingCommandDownloadImage } from "../lib/station/incoming_message";
+import { IncomingCommandChime, IncomingCommandDatabaseQueryLocal, IncomingCommandDownloadImage } from "../lib/station/incoming_message.js";
 
+const { cyan } = ansi_colors;
 const commands = (Object.values(DriverCommand) as Array<string>).concat(Object.values(DeviceCommand) as Array<string>).concat(Object.values(StationCommand) as Array<string>).concat(["quit", "exit"]);
 const devicePropertiesMetadata: { [index: string]: IndexedProperty; } = {};
 const stationPropertiesMetadata: { [index: string]: IndexedProperty; } = {};
 const emitter = new EventEmitter();
+
+initializeInspectStyles();
 
 const parsePropertyValue = (property: string, value: string, serialNumber: string, propertiesMetadata: { [index: string]: IndexedProperty; }): number | boolean | string => {
     try {
@@ -148,6 +151,11 @@ const cmdHelp = (cmd: string): void => {
             break;
         case DeviceCommand.updateUserPasscode:
             console.log(`${cmd} <device_sn> <username> <passcode>`);
+            break;
+        case DeviceCommand.presetPosition:
+        case DeviceCommand.savePresetPosition:
+        case DeviceCommand.deletePresetPosition:
+            console.log(`${cmd} <device_sn> <position>`);
             break;
         case StationCommand.setGuardMode:
             console.log(`${cmd} <station_sn> <numeric_code>`);
@@ -1040,6 +1048,48 @@ const cmd = async(args: Array<string>, silent = false, internal = false): Promis
                     handleShutdown(1);
             }
             break;
+        case DeviceCommand.presetPosition:
+            if (args.length === 3 && isNumber(args[2])) {
+                socket.send(JSON.stringify({
+                    messageId: DeviceCommand.presetPosition.split(".")[1],
+                    command: DeviceCommand.presetPosition,
+                    serialNumber: args[1],
+                    position: Number.parseInt(args[2]),
+                }));
+            } else {
+                cmdHelp(args[0]);
+                if (silent)
+                    handleShutdown(1);
+            }
+            break;
+        case DeviceCommand.savePresetPosition:
+            if (args.length === 3 && isNumber(args[2])) {
+                socket.send(JSON.stringify({
+                    messageId: DeviceCommand.savePresetPosition.split(".")[1],
+                    command: DeviceCommand.savePresetPosition,
+                    serialNumber: args[1],
+                    position: Number.parseInt(args[2]),
+                }));
+            } else {
+                cmdHelp(args[0]);
+                if (silent)
+                    handleShutdown(1);
+            }
+            break;
+        case DeviceCommand.deletePresetPosition:
+            if (args.length === 3 && isNumber(args[2])) {
+                socket.send(JSON.stringify({
+                    messageId: DeviceCommand.deletePresetPosition.split(".")[1],
+                    command: DeviceCommand.deletePresetPosition,
+                    serialNumber: args[1],
+                    position: Number.parseInt(args[2]),
+                }));
+            } else {
+                cmdHelp(args[0]);
+                if (silent)
+                    handleShutdown(1);
+            }
+            break;
         case StationCommand.setGuardMode:
             if (args.length === 3 && isNumber(args[2])) {
                 socket.send(JSON.stringify({
@@ -1396,7 +1446,11 @@ if (options.verbose) {
     console.info("Connecting to", url);
 }
 
-const logger = new Logger({ minLevel: options.verbose ? "silly" : "info", displayDateTime: false, displayFunctionName: false, displayLogLevel: false, displayFilePath: "hidden" });
+const logger = new Logger({
+    minLevel: options.verbose ? 0 : 3,
+    hideLogPositionForProduction: true,
+    prettyLogTemplate: "",
+});
 const socket = new WebSocket(url, { handshakeTimeout: options.timeout * 1000 });
 
 socket.on("open", function open() {
@@ -1459,7 +1513,7 @@ socket.on("message", (data) => {
                         input: process.stdin,
                         output: process.stdout,
                         terminal: true,
-                        prompt: c.cyan.bold("eufy-security> "),
+                        prompt: cyan.bold("eufy-security> "),
                         completer: (line: string) => {
                             const hits = commands.filter((c) => c.startsWith(line) && line.substring(c.length) === "");
                             return [ hits, line]

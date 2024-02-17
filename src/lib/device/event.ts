@@ -1,6 +1,6 @@
 import { CustomData, Schedule, SmartSafeAlarm911Event, SmartSafeShakeAlarmEvent } from "eufy-security-client";
 
-import { JSONValue, OutgoingBaseEvent } from "../outgoing_message";
+import { JSONValue, OutgoingBaseEvent } from "../outgoing_message.js";
 
 export enum DeviceEvent {
     deviceAdded = "device added",

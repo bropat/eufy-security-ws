@@ -1,26 +1,26 @@
 import { WebSocket, WebSocketServer } from "ws"
-import { Logger } from "tslog";
+import { ILogObj, Logger } from "tslog";
 import { EventEmitter, once } from "events";
 import { Server as HttpServer, createServer, IncomingMessage as HttpIncomingMessage } from "http";
 import { DeviceNotFoundError, EufySecurity, InvalidCountryCodeError, InvalidLanguageCodeError, InvalidPropertyValueError, libVersion, NotSupportedError, ReadOnlyPropertyError, StationNotFoundError, WrongStationError, PropertyNotSupportedError, InvalidPropertyError, InvalidCommandValueError, Device, LivestreamNotRunningError as EufyLivestreamNotRunningError, LivestreamAlreadyRunningError as EufyLivestreamAlreadyRunningError, InvalidPropertyError as EufyInvalidPropertyError, PropertyNotSupportedError as EufyPropertyNotSupportedError, StationConnectTimeoutError, RTSPPropertyNotEnabledError, Station } from "eufy-security-client";
 
-import { EventForwarder } from "./forward";
-import type * as OutgoingMessages from "./outgoing_message";
-import { IncomingMessage } from "./incoming_message";
-import { version, minSchemaVersion, maxSchemaVersion } from "./const";
-import { DeviceMessageHandler } from "./device/message_handler";
-import { StationMessageHandler } from "./station/message_handler";
-import { IncomingMessageStation } from "./station/incoming_message";
-import { BaseError, DownloadAlreadyRunningError, DownloadNotRunningError, DownloadOnlyOneAtATimeError, ErrorCode, LivestreamAlreadyRunningError, LivestreamNotRunningError, SchemaIncompatibleError, TalkbackAlreadyRunningError, TalkbackNotRunningError, TalkbackOnlyOneAtATimeError, UnknownCommandError } from "./error";
-import { Instance } from "./instance";
-import { IncomingMessageDevice } from "./device/incoming_message";
-import { ServerCommand } from "./command";
-import { DriverMessageHandler } from "./driver/message_handler";
-import { IncomingMessageDriver } from "./driver/incoming_message";
-import { dumpState } from "./state";
-import { LoggingEventForwarder } from "./logging";
-import { ServerEvent } from "./event";
-import { DriverEvent } from "./driver/event";
+import { EventForwarder } from "./forward.js";
+import type * as OutgoingMessages from "./outgoing_message.js";
+import { IncomingMessage } from "./incoming_message.js";
+import { version, minSchemaVersion, maxSchemaVersion } from "./const.js";
+import { DeviceMessageHandler } from "./device/message_handler.js";
+import { StationMessageHandler } from "./station/message_handler.js";
+import { IncomingMessageStation } from "./station/incoming_message.js";
+import { BaseError, DownloadAlreadyRunningError, DownloadNotRunningError, DownloadOnlyOneAtATimeError, ErrorCode, LivestreamAlreadyRunningError, LivestreamNotRunningError, SchemaIncompatibleError, TalkbackAlreadyRunningError, TalkbackNotRunningError, TalkbackOnlyOneAtATimeError, UnknownCommandError } from "./error.js";
+import { Instance } from "./instance.js";
+import { IncomingMessageDevice } from "./device/incoming_message.js";
+import { ServerCommand } from "./command.js";
+import { DriverMessageHandler } from "./driver/message_handler.js";
+import { IncomingMessageDriver } from "./driver/incoming_message.js";
+import { dumpState } from "./state.js";
+import { LoggingEventForwarder } from "./logging.js";
+import { ServerEvent } from "./event.js";
+import { DriverEvent } from "./driver/event.js";
 
 export class Client {
 
@@ -61,7 +61,7 @@ export class Client {
             ),
     };
 
-    constructor(private socket: WebSocket, private driver: EufySecurity, private logger: Logger, private clientsController: ClientsController) {
+    constructor(private socket: WebSocket, private driver: EufySecurity, private logger: Logger<ILogObj>, private clientsController: ClientsController) {
         socket.on("pong", () => {
             this._outstandingPing = false;
         });
@@ -301,7 +301,7 @@ export class ClientsController {
         1015: "TLS handshake failure"
     }
 
-    constructor(public driver: EufySecurity, private logger: Logger) {
+    constructor(public driver: EufySecurity, private logger: Logger<ILogObj>) {
         this.eventForwarder = new EventForwarder(this, logger);
         this.eventForwarder.start();
     }
@@ -457,7 +457,7 @@ export class ClientsController {
 interface EufySecurityServerOptions {
     host: string;
     port: number;
-    logger?: Logger;
+    logger?: Logger<ILogObj>;
 }
 
 export interface  IEufySecurityServer {
@@ -472,7 +472,7 @@ export class  EufySecurityServer extends EventEmitter implements IEufySecuritySe
     private server?: HttpServer;
     private wsServer?: WebSocketServer;
     private sockets?: ClientsController;
-    private logger: Logger;
+    private logger: Logger<ILogObj>;
 
     constructor(private driver: EufySecurity, private options:  EufySecurityServerOptions) {
         super();

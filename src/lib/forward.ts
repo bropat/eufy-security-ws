@@ -1,24 +1,24 @@
 import { AudioCodec, CommandResult, CommandType, Device,  ErrorCode, ParamType, PropertyValue, Station, StreamMetadata, VideoCodec, AlarmEvent, SmartSafeAlarm911Event, SmartSafeShakeAlarmEvent, TalkbackStream, Schedule, Picture, DatabaseReturnCode, DatabaseQueryLatestInfo, DatabaseQueryLocal, DatabaseCountByDate } from "eufy-security-client";
 import { Readable } from "stream";
-import { Logger } from "tslog";
+import { ILogObj, Logger } from "tslog";
 
-import { JSONValue, OutgoingEvent } from "./outgoing_message";
-import { dumpStation } from "./station/state";
-import { StationEvent } from "./station/event";
-import { dumpDevice } from "./device/state";
-import { DeviceEvent } from "./device/event";
-import { DriverEvent } from "./driver/event";
-import { Client, ClientsController } from "./server";
-import { StationCommand } from "./station/command";
-import { DeviceCommand } from "./device/command";
-import { maxSchemaVersion as internalSchemaVersion } from "./const";
-import { DeviceMessageHandler } from "./device/message_handler";
-import { DriverMessageHandler } from "./driver/message_handler";
-import { convertCamelCaseToSnakeCase } from "./utils";
+import { JSONValue, OutgoingEvent } from "./outgoing_message.js";
+import { dumpStation } from "./station/state.js";
+import { StationEvent } from "./station/event.js";
+import { dumpDevice } from "./device/state.js";
+import { DeviceEvent } from "./device/event.js";
+import { DriverEvent } from "./driver/event.js";
+import { Client, ClientsController } from "./server.js";
+import { StationCommand } from "./station/command.js";
+import { DeviceCommand } from "./device/command.js";
+import { maxSchemaVersion as internalSchemaVersion } from "./const.js";
+import { DeviceMessageHandler } from "./device/message_handler.js";
+import { DriverMessageHandler } from "./driver/message_handler.js";
+import { convertCamelCaseToSnakeCase } from "./utils.js";
 
 export class EventForwarder {
 
-    constructor(private clients: ClientsController, private logger: Logger) {}
+    constructor(private clients: ClientsController, private logger: Logger<ILogObj>) {}
 
     public start(): void {
 

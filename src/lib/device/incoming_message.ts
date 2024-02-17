@@ -1,8 +1,7 @@
-import { CommandName, PropertyName, Schedule } from "eufy-security-client";
-import { PanTiltDirection } from "eufy-security-client/build/p2p/types";
+import { CommandName, PresetPositionType, PropertyName, Schedule, PanTiltDirection } from "eufy-security-client";
 
-import { IncomingCommandBase } from "../incoming_message_base";
-import { DeviceCommand } from "./command";
+import { IncomingCommandBase } from "../incoming_message_base.js";
+import { DeviceCommand } from "./command.js";
 
 export interface IncomingCommandDeviceBase extends IncomingCommandBase {
     serialNumber: string;
@@ -233,6 +232,21 @@ export interface IncomingCommandDeviceVerifyPIN extends IncomingCommandDeviceBas
     pin: string;
 }
 
+export interface IncomingCommandDevicePresetPosition extends IncomingCommandDeviceBase {
+    command: DeviceCommand.presetPosition;
+    position: PresetPositionType;
+}
+
+export interface IncomingCommandDeviceSavePresetPosition extends IncomingCommandDeviceBase {
+    command: DeviceCommand.savePresetPosition;
+    position: PresetPositionType;
+}
+
+export interface IncomingCommandDeviceDeletePresetPosition extends IncomingCommandDeviceBase {
+    command: DeviceCommand.deletePresetPosition;
+    position: PresetPositionType;
+}
+
 export type IncomingMessageDevice =
   | IncomingCommandDeviceSetStatusLed
   | IncomingCommandDeviceSetAutoNightVision
@@ -280,4 +294,7 @@ export type IncomingMessageDevice =
   | IncomingCommandDeviceUpdateUserPasscode
   | IncomingCommandDeviceUpdateUserSchedule
   | IncomingCommandDeviceUpdateUser
-  | IncomingCommandDeviceVerifyPIN;
+  | IncomingCommandDeviceVerifyPIN
+  | IncomingCommandDevicePresetPosition
+  | IncomingCommandDeviceSavePresetPosition
+  | IncomingCommandDeviceDeletePresetPosition;

@@ -1,6 +1,6 @@
 import { CommandName } from "eufy-security-client";
 
-import { StationCommand } from "./command";
+import { StationCommand } from "./command.js";
 
 export interface StationResultTypes {
     [StationCommand.reboot]: { async?: boolean };

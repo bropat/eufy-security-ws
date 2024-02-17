@@ -1,8 +1,8 @@
 import { EufySecurity } from "eufy-security-client";
 
-import { DeviceState, dumpDevice } from "./device/state";
-import { DriverState, dumpDriver } from "./driver/state"
-import { dumpStation, StationState } from "./station/state";
+import { DeviceState, dumpDevice } from "./device/state.js";
+import { DriverState, dumpDriver } from "./driver/state.js"
+import { dumpStation, StationState } from "./station/state.js";
 
 export type Modify<T, R> = Omit<T, keyof R> & R;
 

@@ -1,8 +1,8 @@
-import { IncomingMessageStation } from "./station/incoming_message";
-import { ServerCommand } from "./command";
-import { IncomingCommandBase } from "./incoming_message_base";
-import { IncomingMessageDevice } from "./device/incoming_message";
-import { IncomingMessageDriver } from "./driver/incoming_message";
+import { IncomingMessageStation } from "./station/incoming_message.js";
+import { ServerCommand } from "./command.js";
+import { IncomingCommandBase } from "./incoming_message_base.js";
+import { IncomingMessageDevice } from "./device/incoming_message.js";
+import { IncomingMessageDriver } from "./driver/incoming_message.js";
 
 interface IncomingCommandStartListening extends IncomingCommandBase {
     command: ServerCommand.startListening;

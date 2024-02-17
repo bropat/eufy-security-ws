@@ -1,6 +1,6 @@
 import { AlarmEvent, CustomData, DatabaseCountByDate, DatabaseQueryLatestInfo, DatabaseQueryLocal, DatabaseReturnCode, Picture } from "eufy-security-client";
 
-import { JSONValue, OutgoingBaseEvent } from "../outgoing_message";
+import { JSONValue, OutgoingBaseEvent } from "../outgoing_message.js";
 
 export enum StationEvent {
     stationAdded = "station added",

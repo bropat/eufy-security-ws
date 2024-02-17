@@ -1,8 +1,8 @@
 import { EventFilterType } from "eufy-security-client";
-import { TLogLevelName } from "tslog";
 
-import { DriverCommand } from "./command";
-import { IncomingCommandBase } from "../incoming_message_base";
+import { DriverCommand } from "./command.js";
+import { IncomingCommandBase } from "../incoming_message_base.js";
+import { LogLevelName } from "../logging.js";
 
 export interface IncomingCommandSetVerifyCode extends IncomingCommandBase {
     command: DriverCommand.setVerifyCode;
@@ -61,7 +61,7 @@ export interface IncomingCommandGetHistoryEvents extends IncomingCommandBase {
 
 export interface IncomingCommandSetLogLevel extends IncomingCommandBase {
     command: DriverCommand.setLogLevel;
-    level: TLogLevelName;
+    level: LogLevelName;
 }
 
 export interface IncomingCommandGetLogLevel extends IncomingCommandBase {

@@ -1,5 +1,5 @@
 import { Device, DynamicLighting, IndexedProperty, Picture, PropertyName, RGBColor } from "eufy-security-client"
-import { Modify } from "../state";
+import { Modify } from "../state.js";
 
 export interface DevicePropertiesSchema0 {
     name: string;
@@ -293,13 +293,31 @@ DevicePropertiesSchema4,
 }
 >;
 
+type DevicePropertiesSchema6 = Modify<
+DevicePropertiesSchema5,
+{
+    notificationVehicle: boolean;
+    flickerAdjustment: number;
+    leavingDetection: boolean;
+    leavingReactionNotification: boolean;
+    leavingReactionStartTime: string;
+    leavingReactionEndTime: string;
+    someoneGoing: boolean;
+    lockEventOrigin: number;
+    beepVolume: number;
+    nightvisionOptimization: boolean;
+    nightvisionOptimizationSide: number;
+}
+>;
+
 export type DeviceProperties = 
   | DevicePropertiesSchema0
   | DevicePropertiesSchema1
   | DevicePropertiesSchema2
   | DevicePropertiesSchema3
   | DevicePropertiesSchema4
-  | DevicePropertiesSchema5;
+  | DevicePropertiesSchema5
+  | DevicePropertiesSchema6;
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export const dumpDeviceProperties = (device: Device, schemaVersion: number): DeviceProperties => {
@@ -594,21 +612,332 @@ export const dumpDeviceProperties = (device: Device, schemaVersion: number): Dev
     device5.trackerType = device.getPropertyValue(PropertyName.DeviceTrackerType) as number;
     device5.leftBehindAlarm = device.getPropertyValue(PropertyName.DeviceLeftBehindAlarm) as boolean;
     device5.findPhone = device.getPropertyValue(PropertyName.DeviceFindPhone) as boolean;
-    
-    return device5;
+
+    if (schemaVersion >= 20) {
+        return device5;
+    }
+
+    // All schemas >= 21
+    const device6 = device5 as DevicePropertiesSchema6;
+    device6.notificationVehicle = device.getPropertyValue(PropertyName.DeviceNotificationVehicle) as boolean;
+    device6.flickerAdjustment = device.getPropertyValue(PropertyName.DeviceFlickerAdjustment) as number;
+    device6.leavingDetection = device.getPropertyValue(PropertyName.DeviceLeavingDetection) as boolean;
+    device6.leavingReactionNotification = device.getPropertyValue(PropertyName.DeviceLeavingReactionNotification) as boolean;
+    device6.leavingReactionStartTime = device.getPropertyValue(PropertyName.DeviceLeavingReactionStartTime) as string;
+    device6.leavingReactionEndTime = device.getPropertyValue(PropertyName.DeviceLeavingReactionEndTime) as string;
+    device6.someoneGoing = device.getPropertyValue(PropertyName.DeviceSomeoneGoing) as boolean;
+    device6.lockEventOrigin = device.getPropertyValue(PropertyName.DeviceLockEventOrigin) as number;
+    device6.beepVolume = device.getPropertyValue(PropertyName.DeviceBeepVolume) as number;
+    device6.nightvisionOptimization = device.getPropertyValue(PropertyName.DeviceNightvisionOptimization) as boolean;
+    device6.nightvisionOptimizationSide = device.getPropertyValue(PropertyName.DeviceNightvisionOptimizationSide) as number;
+
+    return device6;
 }
 
 export const dumpDevicePropertiesMetadata = (device: Device, schemaVersion: number): IndexedProperty => {
-    //TODO: Change behaviour. This should check schemaversion and so on and dumpDeviceProperties should do what does this
-    const properties = dumpDeviceProperties(device, schemaVersion);
-    const metadata = device.getPropertiesMetadata();
+    const metadata = device.getPropertiesMetadata(true);
+    const result: IndexedProperty = {
+        name: metadata[PropertyName.Name],
+        model: metadata[PropertyName.Model],
+        serialNumber: metadata[PropertyName.SerialNumber],
+        hardwareVersion: metadata[PropertyName.HardwareVersion],
+        softwareVersion: metadata[PropertyName.SoftwareVersion],
+        type: metadata[PropertyName.Type],
+        stationSerialNumber: metadata[PropertyName.DeviceStationSN],
+        battery: metadata[PropertyName.DeviceBattery],
+        batteryTemperature: metadata[PropertyName.DeviceBatteryTemp],
+        batteryLow: metadata[PropertyName.DeviceBatteryLow],
+        batteryIsCharging: metadata[PropertyName.DeviceBatteryIsCharging],
+        lastChargingDays: metadata[PropertyName.DeviceLastChargingDays],
+        lastChargingTotalEvents: metadata[PropertyName.DeviceLastChargingTotalEvents],
+        lastChargingRecordedEvents: metadata[PropertyName.DeviceLastChargingRecordedEvents],
+        lastChargingFalseEvents: metadata[PropertyName.DeviceLastChargingFalseEvents],
+        batteryUsageLastWeek: metadata[PropertyName.DeviceBatteryUsageLastWeek],
+        wifiRssi: metadata[PropertyName.DeviceWifiRSSI],
+        wifiSignalLevel: metadata[PropertyName.DeviceWifiSignalLevel],
+        enabled: metadata[PropertyName.DeviceEnabled],
+        antitheftDetection: metadata[PropertyName.DeviceAntitheftDetection],
+        autoNightvision: metadata[PropertyName.DeviceAutoNightvision],
+        nightvision: metadata[PropertyName.DeviceNightvision],
+        statusLed: metadata[PropertyName.DeviceStatusLed],
+        motionDetection: metadata[PropertyName.DeviceMotionDetection],
+        motionDetectionType: metadata[PropertyName.DeviceMotionDetectionType],
+        motionDetectionSensitivity: metadata[PropertyName.DeviceMotionDetectionSensitivity],
+        motionDetectionTypeHuman: metadata[PropertyName.DeviceMotionDetectionTypeHuman],
+        motionDetectionTypeHumanRecognition: metadata[PropertyName.DeviceMotionDetectionTypeHumanRecognition],
+        motionDetectionTypePet: metadata[PropertyName.DeviceMotionDetectionTypePet],
+        motionDetectionTypeVehicle: metadata[PropertyName.DeviceMotionDetectionTypeVehicle],
+        motionDetectionTypeAllOtherMotions: metadata[PropertyName.DeviceMotionDetectionTypeAllOtherMotions],
+        motionZone: metadata[PropertyName.DeviceMotionZone],
+        motionDetectionRange: metadata[PropertyName.DeviceMotionDetectionRange],
+        motionDetectionRangeStandardSensitivity: metadata[PropertyName.DeviceMotionDetectionRangeStandardSensitivity],
+        motionDetectionRangeAdvancedLeftSensitivity: metadata[PropertyName.DeviceMotionDetectionRangeAdvancedLeftSensitivity],
+        motionDetectionRangeAdvancedMiddleSensitivity: metadata[PropertyName.DeviceMotionDetectionRangeAdvancedMiddleSensitivity],
+        motionDetectionRangeAdvancedRightSensitivity: metadata[PropertyName.DeviceMotionDetectionRangeAdvancedRightSensitivity],
+        motionDetectionTestMode: metadata[PropertyName.DeviceMotionDetectionTestMode],
+        motionDetected: metadata[PropertyName.DeviceMotionDetected],
+        motionTracking: metadata[PropertyName.DeviceMotionTracking],
+        motionTrackingSensitivity: metadata[PropertyName.DeviceMotionTrackingSensitivity],
+        motionAutoCruise: metadata[PropertyName.DeviceMotionAutoCruise],
+        motionOutOfViewDetection: metadata[PropertyName.DeviceMotionOutOfViewDetection],
+        personDetected: metadata[PropertyName.DevicePersonDetected],
+        personName: metadata[PropertyName.DevicePersonName],
+        rtspStream: metadata[PropertyName.DeviceRTSPStream],
+        rtspStreamUrl: metadata[PropertyName.DeviceRTSPStreamUrl],
+        watermark: metadata[PropertyName.DeviceWatermark],
+        pictureUrl: metadata[PropertyName.DevicePictureUrl],
+        state: metadata[PropertyName.DeviceState],
+        petDetection: metadata[PropertyName.DevicePetDetection],
+        petDetected: metadata[PropertyName.DevicePetDetected],
+        soundDetection: metadata[PropertyName.DeviceSoundDetection],
+        soundDetectionType: metadata[PropertyName.DeviceSoundDetectionType],
+        soundDetectionSensitivity: metadata[PropertyName.DeviceSoundDetectionSensitivity],
+        soundDetected: metadata[PropertyName.DeviceSoundDetected],
+        cryingDetected: metadata[PropertyName.DeviceCryingDetected],
+        sensorOpen: metadata[PropertyName.DeviceSensorOpen],
+        sensorChangeTime: metadata[PropertyName.DeviceSensorChangeTime],
+        motionSensorPirEvent: metadata[PropertyName.DeviceMotionSensorPIREvent],
+        locked: metadata[PropertyName.DeviceLocked],
+        ringing: metadata[PropertyName.DeviceRinging],
+        lockStatus: metadata[PropertyName.DeviceLockStatus],
+        light: metadata[PropertyName.DeviceLight],
+        microphone: metadata[PropertyName.DeviceMicrophone],
+        speaker: metadata[PropertyName.DeviceSpeaker],
+        speakerVolume: metadata[PropertyName.DeviceSpeakerVolume],
+        ringtoneVolume: metadata[PropertyName.DeviceRingtoneVolume],
+        audioRecording: metadata[PropertyName.DeviceAudioRecording],
+        powerSource: metadata[PropertyName.DevicePowerSource],
+        powerWorkingMode: metadata[PropertyName.DevicePowerWorkingMode],
+        chargingStatus: metadata[PropertyName.DeviceChargingStatus],
+        recordingEndClipMotionStops: metadata[PropertyName.DeviceRecordingEndClipMotionStops],
+        recordingClipLength: metadata[PropertyName.DeviceRecordingClipLength],
+        recordingRetriggerInterval: metadata[PropertyName.DeviceRecordingRetriggerInterval],
+        videoStreamingQuality: metadata[PropertyName.DeviceVideoStreamingQuality],
+        videoRecordingQuality: metadata[PropertyName.DeviceVideoRecordingQuality],
+        videoWdr: metadata[PropertyName.DeviceVideoWDR],
+        lightSettingsEnable: metadata[PropertyName.DeviceLightSettingsEnable],
+        lightSettingsBrightnessManual: metadata[PropertyName.DeviceLightSettingsBrightnessManual],
+        lightSettingsColorTemperatureManual: metadata[PropertyName.DeviceLightSettingsColorTemperatureManual],
+        lightSettingsBrightnessMotion: metadata[PropertyName.DeviceLightSettingsBrightnessMotion],
+        lightSettingsColorTemperatureMotion: metadata[PropertyName.DeviceLightSettingsColorTemperatureMotion],
+        lightSettingsBrightnessSchedule: metadata[PropertyName.DeviceLightSettingsBrightnessSchedule],
+        lightSettingsColorTemperatureSchedule: metadata[PropertyName.DeviceLightSettingsColorTemperatureSchedule],
+        lightSettingsMotionTriggered: metadata[PropertyName.DeviceLightSettingsMotionTriggered],
+        lightSettingsMotionActivationMode: metadata[PropertyName.DeviceLightSettingsMotionActivationMode],
+        lightSettingsMotionTriggeredDistance: metadata[PropertyName.DeviceLightSettingsMotionTriggeredDistance],
+        lightSettingsMotionTriggeredTimer: metadata[PropertyName.DeviceLightSettingsMotionTriggeredTimer],
+        chimeIndoor: metadata[PropertyName.DeviceChimeIndoor],
+        chimeHomebase: metadata[PropertyName.DeviceChimeHomebase],
+        chimeHomebaseRingtoneVolume: metadata[PropertyName.DeviceChimeHomebaseRingtoneVolume],
+        chimeHomebaseRingtoneType: metadata[PropertyName.DeviceChimeHomebaseRingtoneType],
+        notificationType: metadata[PropertyName.DeviceNotificationType],
+        rotationSpeed: metadata[PropertyName.DeviceRotationSpeed],
+        imageMirrored: metadata[PropertyName.DeviceImageMirrored],
+        notificationPerson: metadata[PropertyName.DeviceNotificationPerson],
+        notificationPet: metadata[PropertyName.DeviceNotificationPet],
+        notificationAllOtherMotion: metadata[PropertyName.DeviceNotificationAllOtherMotion],
+        notificationCrying: metadata[PropertyName.DeviceNotificationCrying],
+        notificationAllSound: metadata[PropertyName.DeviceNotificationAllSound],
+        notificationIntervalTime: metadata[PropertyName.DeviceNotificationIntervalTime],
+        notificationRing: metadata[PropertyName.DeviceNotificationRing],
+        notificationMotion: metadata[PropertyName.DeviceNotificationMotion],
+        notificationRadarDetector: metadata[PropertyName.DeviceNotificationRadarDetector],
+        continuousRecording: metadata[PropertyName.DeviceContinuousRecording],
+        continuousRecordingType: metadata[PropertyName.DeviceContinuousRecordingType],
+        chirpVolume: metadata[PropertyName.DeviceChirpVolume],
+        chirpTone: metadata[PropertyName.DeviceChirpTone],
+        videoHdr: metadata[PropertyName.DeviceVideoHDR],
+        videoDistortionCorrection: metadata[PropertyName.DeviceVideoDistortionCorrection],
+        videoRingRecord: metadata[PropertyName.DeviceVideoRingRecord],
+        videoNightvisionImageAdjustment: metadata[PropertyName.DeviceVideoNightvisionImageAdjustment],
+        videoColorNightvision: metadata[PropertyName.DeviceVideoColorNightvision],
+        autoCalibration: metadata[PropertyName.DeviceAutoCalibration],
+        autoLock: metadata[PropertyName.DeviceAutoLock],
+        autoLockTimer: metadata[PropertyName.DeviceAutoLockTimer],
+        autoLockSchedule: metadata[PropertyName.DeviceAutoLockSchedule],
+        autoLockScheduleStartTime: metadata[PropertyName.DeviceAutoLockScheduleStartTime],
+        autoLockScheduleEndTime: metadata[PropertyName.DeviceAutoLockScheduleEndTime],
+        oneTouchLocking: metadata[PropertyName.DeviceOneTouchLocking],
+        wrongTryProtection: metadata[PropertyName.DeviceWrongTryProtection],
+        wrongTryAttempts: metadata[PropertyName.DeviceWrongTryAttempts],
+        wrongTryLockdownTime: metadata[PropertyName.DeviceWrongTryLockdownTime],
+        scramblePasscode: metadata[PropertyName.DeviceScramblePasscode],
+        sound: metadata[PropertyName.DeviceSound],
+        notification: metadata[PropertyName.DeviceNotification],
+        notificationUnlocked: metadata[PropertyName.DeviceNotificationUnlocked],
+        notificationLocked: metadata[PropertyName.DeviceNotificationLocked],
+        loiteringDetection: metadata[PropertyName.DeviceLoiteringDetection],
+        loiteringDetectionRange: metadata[PropertyName.DeviceLoiteringDetectionRange],
+        loiteringDetectionLength: metadata[PropertyName.DeviceLoiteringDetectionLength],
+        motionDetectionSensitivityMode: metadata[PropertyName.DeviceMotionDetectionSensitivityMode],
+        motionDetectionSensitivityStandard: metadata[PropertyName.DeviceMotionDetectionSensitivityStandard],
+        motionDetectionSensitivityAdvancedA: metadata[PropertyName.DeviceMotionDetectionSensitivityAdvancedA],
+        motionDetectionSensitivityAdvancedB: metadata[PropertyName.DeviceMotionDetectionSensitivityAdvancedB],
+        motionDetectionSensitivityAdvancedC: metadata[PropertyName.DeviceMotionDetectionSensitivityAdvancedC],
+        motionDetectionSensitivityAdvancedD: metadata[PropertyName.DeviceMotionDetectionSensitivityAdvancedD],
+        motionDetectionSensitivityAdvancedE: metadata[PropertyName.DeviceMotionDetectionSensitivityAdvancedE],
+        motionDetectionSensitivityAdvancedF: metadata[PropertyName.DeviceMotionDetectionSensitivityAdvancedF],
+        motionDetectionSensitivityAdvancedG: metadata[PropertyName.DeviceMotionDetectionSensitivityAdvancedG],
+        motionDetectionSensitivityAdvancedH: metadata[PropertyName.DeviceMotionDetectionSensitivityAdvancedH],
+        loiteringCustomResponsePhoneNotification: metadata[PropertyName.DeviceLoiteringCustomResponsePhoneNotification],
+        loiteringCustomResponseAutoVoiceResponse: metadata[PropertyName.DeviceLoiteringCustomResponseAutoVoiceResponse],
+        loiteringCustomResponseAutoVoiceResponseVoice: metadata[PropertyName.DeviceLoiteringCustomResponseAutoVoiceResponseVoice],
+        loiteringCustomResponseHomeBaseNotification: metadata[PropertyName.DeviceLoiteringCustomResponseHomeBaseNotification],
+        loiteringCustomResponseTimeFrom: metadata[PropertyName.DeviceLoiteringCustomResponseTimeFrom],
+        loiteringCustomResponseTimeTo: metadata[PropertyName.DeviceLoiteringCustomResponseTimeTo],
+        deliveryGuard: metadata[PropertyName.DeviceDeliveryGuard],
+        deliveryGuardPackageGuarding: metadata[PropertyName.DeviceDeliveryGuardPackageGuarding],
+        deliveryGuardPackageGuardingVoiceResponseVoice: metadata[PropertyName.DeviceDeliveryGuardPackageGuardingVoiceResponseVoice],
+        deliveryGuardPackageGuardingActivatedTimeFrom: metadata[PropertyName.DeviceDeliveryGuardPackageGuardingActivatedTimeFrom],
+        deliveryGuardPackageGuardingActivatedTimeTo: metadata[PropertyName.DeviceDeliveryGuardPackageGuardingActivatedTimeTo],
+        deliveryGuardUncollectedPackageAlert: metadata[PropertyName.DeviceDeliveryGuardUncollectedPackageAlert],
+        deliveryGuardUncollectedPackageAlertTimeToCheck: metadata[PropertyName.DeviceDeliveryGuardUncollectedPackageAlertTimeToCheck],
+        deliveryGuardPackageLiveCheckAssistance: metadata[PropertyName.DeviceDeliveryGuardPackageLiveCheckAssistance],
+        dualCamWatchViewMode: metadata[PropertyName.DeviceDualCamWatchViewMode],
+        ringAutoResponse: metadata[PropertyName.DeviceRingAutoResponse],
+        ringAutoResponseVoiceResponse: metadata[PropertyName.DeviceRingAutoResponseVoiceResponse],
+        ringAutoResponseVoiceResponseVoice: metadata[PropertyName.DeviceRingAutoResponseVoiceResponseVoice],
+        ringAutoResponseTimeFrom: metadata[PropertyName.DeviceRingAutoResponseTimeFrom],
+        ringAutoResponseTimeTo: metadata[PropertyName.DeviceRingAutoResponseTimeTo],
+        defaultAngle: metadata[PropertyName.DeviceDefaultAngle],
+        defaultAngleIdleTime: metadata[PropertyName.DeviceDefaultAngleIdleTime],
+        soundDetectionRoundLook: metadata[PropertyName.DeviceSoundDetectionRoundLook],
+        packageDelivered: metadata[PropertyName.DevicePackageDelivered],
+        packageStranded: metadata[PropertyName.DevicePackageStranded],
+        packageTaken: metadata[PropertyName.DevicePackageTaken],
+        someoneLoitering: metadata[PropertyName.DeviceSomeoneLoitering],
+        radarMotionDetected: metadata[PropertyName.DeviceRadarMotionDetected],
+        leftOpenAlarm: metadata[PropertyName.DeviceLeftOpenAlarm],
+        leftOpenAlarmDuration: metadata[PropertyName.DeviceLeftOpenAlarmDuration],
+        dualUnlock: metadata[PropertyName.DeviceDualUnlock],
+        powerSave: metadata[PropertyName.DevicePowerSave],
+        interiorBrightness: metadata[PropertyName.DeviceInteriorBrightness],
+        interiorBrightnessDuration: metadata[PropertyName.DeviceInteriorBrightnessDuration],
+        tamperAlarm: metadata[PropertyName.DeviceTamperAlarm],
+        remoteUnlock: metadata[PropertyName.DeviceRemoteUnlock],
+        remoteUnlockMasterPIN: metadata[PropertyName.DeviceRemoteUnlockMasterPIN],
+        alarmVolume: metadata[PropertyName.DeviceAlarmVolume],
+        promptVolume: metadata[PropertyName.DevicePromptVolume],
+        notificationUnlockByKey: metadata[PropertyName.DeviceNotificationUnlockByKey],
+        notificationUnlockByPIN: metadata[PropertyName.DeviceNotificationUnlockByPIN],
+        notificationUnlockByFingerprint: metadata[PropertyName.DeviceNotificationUnlockByFingerprint],
+        notificationUnlockByApp: metadata[PropertyName.DeviceNotificationUnlockByApp],
+        notificationDualUnlock: metadata[PropertyName.DeviceNotificationDualUnlock],
+        notificationDualLock: metadata[PropertyName.DeviceNotificationDualLock],
+        notificationWrongTryProtect: metadata[PropertyName.DeviceNotificationWrongTryProtect],
+        notificationJammed: metadata[PropertyName.DeviceNotificationJammed],
+        jammedAlert: metadata[PropertyName.DeviceJammedAlert],
+        "911Alert": metadata[PropertyName.Device911Alert],
+        "911AlertEvent": metadata[PropertyName.Device911AlertEvent],
+        shakeAlert: metadata[PropertyName.DeviceShakeAlert],
+        shakeAlertEvent: metadata[PropertyName.DeviceShakeAlertEvent],
+        lowBatteryAlert: metadata[PropertyName.DeviceLowBatteryAlert],
+        longTimeNotCloseAlert: metadata[PropertyName.DeviceLongTimeNotCloseAlert],
+        wrongTryProtectAlert: metadata[PropertyName.DeviceWrongTryProtectAlert],
+        videoTypeStoreToNAS: metadata[PropertyName.DeviceVideoTypeStoreToNAS],
+        snooze: metadata[PropertyName.DeviceSnooze],
+        snoozeTime: metadata[PropertyName.DeviceSnoozeTime],
+        identityPersonDetected: metadata[PropertyName.DeviceIdentityPersonDetected],
+        strangerPersonDetected: metadata[PropertyName.DeviceStrangerPersonDetected],
+        vehicleDetected: metadata[PropertyName.DeviceVehicleDetected],
+        dogDetected: metadata[PropertyName.DeviceDogDetected],
+        dogLickDetected: metadata[PropertyName.DeviceDogLickDetected],
+        dogPoopDetected: metadata[PropertyName.DeviceDogPoopDetected],
+        detectionStatisticsWorkingDays: metadata[PropertyName.DeviceDetectionStatisticsWorkingDays],
+        detectionStatisticsDetectedEvents: metadata[PropertyName.DeviceDetectionStatisticsDetectedEvents],
+        detectionStatisticsRecordedEvents: metadata[PropertyName.DeviceDetectionStatisticsRecordedEvents],
+    };
 
-    const result: IndexedProperty = {};
+    if (schemaVersion <= 14) {
+        return result;
+    }
 
-    Object.keys(metadata).forEach((property) => {
-        if (Object.keys(properties).includes(property))
-            result[property] = metadata[property];
-    });
+    result["snoozeStartTime"] = metadata[PropertyName.DeviceSnoozeStartTime];
+    result["snoozeHomebase"] = metadata[PropertyName.DeviceSnoozeHomebase];
+    result["snoozeMotion"] = metadata[PropertyName.DeviceSnoozeMotion];
+    result["snoozeChime"] = metadata[PropertyName.DeviceSnoozeChime];
 
+    if (schemaVersion <= 15) {
+        return result;
+    }
+    
+    result["cellularRSSI"] = metadata[PropertyName.DeviceCellularRSSI];
+    result["cellularSignalLevel"] = metadata[PropertyName.DeviceCellularSignalLevel];
+    result["cellularSignal"] = metadata[PropertyName.DeviceCellularSignal];
+    result["cellularBand"] = metadata[PropertyName.DeviceCellularBand];
+    result["cellularIMEI"] = metadata[PropertyName.DeviceCellularIMEI];
+    result["cellularICCID"] = metadata[PropertyName.DeviceCellularICCID];
+
+    if (schemaVersion <= 16) {
+        return result;
+    }
+
+    delete result["pictureUrl"];
+    result["picture"] = metadata[PropertyName.DevicePicture];
+
+    if (schemaVersion <= 18) {
+        return result;
+    }
+
+    result["lightSettingsManualLightingActiveMode"] = metadata[PropertyName.DeviceLightSettingsManualLightingActiveMode];
+    result["lightSettingsManualDailyLighting"] = metadata[PropertyName.DeviceLightSettingsManualDailyLighting];
+    result["lightSettingsManualColoredLighting"] = metadata[PropertyName.DeviceLightSettingsManualColoredLighting];
+    result["lightSettingsManualDynamicLighting"] = metadata[PropertyName.DeviceLightSettingsManualDynamicLighting];
+    result["lightSettingsMotionLightingActiveMode"] = metadata[PropertyName.DeviceLightSettingsMotionLightingActiveMode];
+    result["lightSettingsMotionDailyLighting"] = metadata[PropertyName.DeviceLightSettingsMotionDailyLighting];
+    result["lightSettingsMotionColoredLighting"] = metadata[PropertyName.DeviceLightSettingsMotionColoredLighting];
+    result["lightSettingsMotionDynamicLighting"] = metadata[PropertyName.DeviceLightSettingsMotionDynamicLighting];
+    result["lightSettingsScheduleLightingActiveMode"] = metadata[PropertyName.DeviceLightSettingsScheduleLightingActiveMode];
+    result["lightSettingsScheduleDailyLighting"] = metadata[PropertyName.DeviceLightSettingsScheduleDailyLighting];
+    result["lightSettingsScheduleColoredLighting"] = metadata[PropertyName.DeviceLightSettingsScheduleColoredLighting];
+    result["lightSettingsScheduleDynamicLighting"] = metadata[PropertyName.DeviceLightSettingsScheduleDynamicLighting];
+    result["lightSettingsColoredLightingColors"] = metadata[PropertyName.DeviceLightSettingsColoredLightingColors];
+    result["lightSettingsDynamicLightingThemes"] = metadata[PropertyName.DeviceLightSettingsDynamicLightingThemes];
+    result["doorControlWarning"] = metadata[PropertyName.DeviceDoorControlWarning];
+    result["door1Open"] = metadata[PropertyName.DeviceDoor1Open];
+    result["door2Open"] = metadata[PropertyName.DeviceDoor2Open];
+    result["doorSensor1Status"] = metadata[PropertyName.DeviceDoorSensor1Status];
+    result["doorSensor2Status"] = metadata[PropertyName.DeviceDoorSensor2Status];
+    result["doorSensor1MacAddress"] = metadata[PropertyName.DeviceDoorSensor1MacAddress];
+    result["doorSensor2MacAddress"] = metadata[PropertyName.DeviceDoorSensor2MacAddress];
+    result["doorSensor1Name"] = metadata[PropertyName.DeviceDoorSensor1Name];
+    result["doorSensor2Name"] = metadata[PropertyName.DeviceDoorSensor2Name];
+    result["doorSensor1SerialNumber"] = metadata[PropertyName.DeviceDoorSensor1SerialNumber];
+    result["doorSensor2SerialNumber"] = metadata[PropertyName.DeviceDoorSensor2SerialNumber];
+    result["doorSensor1Version"] = metadata[PropertyName.DeviceDoorSensor1Version];
+    result["doorSensor2Version"] = metadata[PropertyName.DeviceDoorSensor2Version];
+    result["doorSensor1LowBattery"] = metadata[PropertyName.DeviceDoorSensor1LowBattery];
+    result["doorSensor2LowBattery"] = metadata[PropertyName.DeviceDoorSensor2LowBattery];
+    result["doorSensor1BatteryLevel"] = metadata[PropertyName.DeviceDoorSensor1BatteryLevel];
+    result["doorSensor2BatteryLevel"] = metadata[PropertyName.DeviceDoorSensor2BatteryLevel];
+    
+    if (schemaVersion <= 19) {
+        return result;
+    }
+
+    result["locationCoordinates"] = metadata[PropertyName.DeviceLocationCoordinates];
+    result["locationAddress"] = metadata[PropertyName.DeviceLocationAddress];
+    result["locationLastUpdate"] = metadata[PropertyName.DeviceLocationLastUpdate];
+    result["trackerType"] = metadata[PropertyName.DeviceTrackerType];
+    result["leftBehindAlarm"] = metadata[PropertyName.DeviceLeftBehindAlarm];
+    result["findPhone"] = metadata[PropertyName.DeviceFindPhone];
+
+    if (schemaVersion <= 20) {
+        return result;
+    }
+
+    // All schemas >= 21
+    result["notificationVehicle"] = metadata[PropertyName.DeviceNotificationVehicle];
+    result["flickerAdjustment"] = metadata[PropertyName.DeviceFlickerAdjustment];
+    result["leavingDetection"] = metadata[PropertyName.DeviceLeavingDetection];
+    result["leavingReactionNotification"] = metadata[PropertyName.DeviceLeavingReactionNotification];
+    result["leavingReactionStartTime"] = metadata[PropertyName.DeviceLeavingReactionStartTime];
+    result["leavingReactionEndTime"] = metadata[PropertyName.DeviceLeavingReactionEndTime];
+    result["someoneGoing"] = metadata[PropertyName.DeviceSomeoneGoing];
+    result["lockEventOrigin"] = metadata[PropertyName.DeviceLockEventOrigin];
+    result["beepVolume"] = metadata[PropertyName.DeviceBeepVolume];
+    result["nightvisionOptimization"] = metadata[PropertyName.DeviceNightvisionOptimization];
+    result["nightvisionOptimizationSide"] = metadata[PropertyName.DeviceNightvisionOptimizationSide];
+    
     return result;
 }

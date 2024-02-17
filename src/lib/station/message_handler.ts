@@ -1,12 +1,12 @@
 import { EufySecurity } from "eufy-security-client";
 import date from "date-and-time";
 
-import { UnknownCommandError } from "../error";
-import { Client } from "../server";
-import { StationCommand } from "./command";
-import { IncomingCommandSetProperty, IncomingCommandTriggerAlarm, IncomingCommandSetGuardMode, IncomingMessageStation, IncomingCommandHasCommand, IncomingCommandHasProperty, IncomingCommandChime, IncomingCommandDownloadImage, IncomingCommandDatabaseQueryLocal, IncomingCommandDatabaseCountByDate, IncomingCommandDatabaseDelete } from "./incoming_message";
-import { StationResultTypes } from "./outgoing_message";
-import { dumpStationProperties, dumpStationPropertiesMetadata } from "./properties";
+import { UnknownCommandError } from "../error.js";
+import { Client } from "../server.js";
+import { StationCommand } from "./command.js";
+import { IncomingCommandSetProperty, IncomingCommandTriggerAlarm, IncomingCommandSetGuardMode, IncomingMessageStation, IncomingCommandHasCommand, IncomingCommandHasProperty, IncomingCommandChime, IncomingCommandDownloadImage, IncomingCommandDatabaseQueryLocal, IncomingCommandDatabaseCountByDate, IncomingCommandDatabaseDelete } from "./incoming_message.js";
+import { StationResultTypes } from "./outgoing_message.js";
+import { dumpStationProperties, dumpStationPropertiesMetadata } from "./properties.js";
 
 export class StationMessageHandler {
 

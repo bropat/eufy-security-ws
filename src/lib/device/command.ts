@@ -36,6 +36,9 @@ export enum DeviceCommand {
     updateUserSchedule = "device.update_user_schedule",
     updateUser = "device.update_user",
     verifyPIN = "device.verify_pin",
+    presetPosition = "device.preset_position",
+    savePresetPosition = "device.save_preset_position",
+    deletePresetPosition = "device.delete_preset_position",
 
     // Deprecated - The following commands have been removed from schema version 13
     setStatusLed = "device.set_status_led",

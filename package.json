@@ -2,10 +2,12 @@
   "name": "eufy-security-ws",
   "version": "1.8.0",
   "description": "Node WebSocket server implementation to integrate Eufy Security devices",
-  "main": "dist/lib/index.js",
+  "exports": {
+    "import": "./dist/lib/index.js"
+  },
   "bin": {
-    "eufy-security-server": "dist/bin/server.js",
-    "eufy-security-client": "dist/bin/client.js"
+    "eufy-security-server": "./dist/bin/server.js",
+    "eufy-security-client": "./dist/bin/client.js"
   },
   "publishConfig": {
     "access": "public"
@@ -46,23 +48,23 @@
   "dependencies": {
     "ansi-colors": "^4.1.3",
     "commander": "^12.0.0",
-    "eufy-security-client": "file:eufy-security-client-3.0.0-139.tgz",
+    "eufy-security-client": "file:eufy-security-client-3.0.0-144.tgz",
     "fs-extra": "^11.2.0",
-    "tslog": "^3.3.4",
+    "tslog": "^4.9.2",
     "ws": "^8.16.0",
     "date-and-time": "^3.1.1"
   },
   "devDependencies": {
-    "@types/node": "^18.19.15",
+    "@types/node": "^18.19.17",
     "@types/node-rsa": "^1.1.4",
     "@types/ws": "^8.5.10",
-    "@typescript-eslint/eslint-plugin": "^6.21.0",
-    "@typescript-eslint/parser": "^6.21.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.1",
+    "@typescript-eslint/parser": "^7.0.1",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
     "prettier": "3.2.5",
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
   }, 
-  "type": "commonjs"
+  "type": "module"
 }

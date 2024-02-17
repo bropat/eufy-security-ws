@@ -1,6 +1,6 @@
 import { Voices, CommandName, User } from "eufy-security-client";
 
-import { DeviceCommand } from "./command";
+import { DeviceCommand } from "./command.js";
 
 export interface DeviceResultTypes {
     [DeviceCommand.setStatusLed]: Record<string, never>;
@@ -50,4 +50,7 @@ export interface DeviceResultTypes {
     [DeviceCommand.updateUserPasscode]: { async?: boolean };
     [DeviceCommand.updateUserSchedule]: { async?: boolean };
     [DeviceCommand.verifyPIN]: { async?: boolean };
+    [DeviceCommand.presetPosition]: { async?: boolean };
+    [DeviceCommand.savePresetPosition]: { async?: boolean };
+    [DeviceCommand.deletePresetPosition]: { async?: boolean };
 }

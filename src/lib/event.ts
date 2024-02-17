@@ -1,4 +1,4 @@
-import { OutgoingBaseEvent } from "./outgoing_message";
+import { OutgoingBaseEvent } from "./outgoing_message.js";
 
 export enum ServerEvent {
     shutdown = "shutdown",

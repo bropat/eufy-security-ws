@@ -2,11 +2,16 @@
 
 import { resolve } from "path";
 import { Command, Option } from "commander";
-import { Logger } from "tslog";
+import { ILogObj, Logger } from "tslog";
 import { EufySecurity, EufySecurityConfig, LogLevel } from "eufy-security-client"
+import { createRequire } from "module";
 
-import { EufySecurityServer } from "../lib/server";
+import { EufySecurityServer } from "../lib/server.js";
+import { initializeInspectStyles } from "../lib/utils.js";
 
+initializeInspectStyles();
+
+const require = createRequire(import.meta.url);
 const program = new Command();
 program
     .addOption(new Option("-c, --config <file>", "Configuration file").default("config.json", "looks in current directory"))
@@ -57,13 +62,14 @@ const args = program.opts();
         };
     }
 
-    const logger = new Logger({
-        minLevel: args.verbose ? "silly" : "info",
-        suppressStdOutput: args.quiet ? true : false,
-        displayFilePath: args.verbose ? "hideNodeModulesOnly" : "hidden",
-        displayFunctionName: args.verbose ? true : false
+    const logger = new Logger<ILogObj>({
+        prefix: ["server"],
+        minLevel: args.verbose ? 0 /* silly */ : 3 /* info */,
+        prettyLogTemplate: "{{yyyy}}.{{mm}}.{{dd}} {{hh}}:{{MM}}:{{ss}}:{{ms}}\t{{logLevelName}}\t",
+        type: args.quiet ? "hidden" : "pretty",
+        hideLogPositionForProduction: true,
     });
-    const driver: EufySecurity = await EufySecurity.initialize(config, logger);
+    const driver: EufySecurity = await EufySecurity.initialize(config, logger.getSubLogger({ prefix: ["driver"] }));
 
     let server: EufySecurityServer;
 

@@ -1,7 +1,7 @@
 import { CommandName, FilterDetectType, FilterEventType, FilterStorageType, PropertyName } from "eufy-security-client";
 
-import { IncomingCommandBase } from "../incoming_message_base";
-import { StationCommand } from "./command";
+import { IncomingCommandBase } from "../incoming_message_base.js";
+import { StationCommand } from "./command.js";
 
 export interface IncomingCommandStationBase extends IncomingCommandBase {
     serialNumber: string;
