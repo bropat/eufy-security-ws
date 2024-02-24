@@ -307,6 +307,20 @@ DevicePropertiesSchema5,
     beepVolume: number;
     nightvisionOptimization: boolean;
     nightvisionOptimizationSide: number;
+    deliveries: number;
+    openMethod: number;
+    motionActivatedPrompt: boolean;
+    open: boolean;
+    openedByType: number;
+    openedByName: string;
+    tamperingAlert: boolean;
+    lowTemperatureAlert: boolean;
+    highTemperatureAlert: boolean;
+    lidStuckAlert: boolean;
+    pinIncorrectAlert: boolean;
+    batteryFullyChargedAlert: boolean;
+    isDeliveryDenied: boolean;
+    hasMasterPin: boolean;
 }
 >;
 
@@ -604,7 +618,7 @@ export const dumpDeviceProperties = (device: Device, schemaVersion: number): Dev
         return device4;
     }
 
-    // All schemas >= 20
+    // All schemas <= 20
     const device5 = device4 as DevicePropertiesSchema5;
     device5.locationCoordinates = device.getPropertyValue(PropertyName.DeviceLocationCoordinates) as string;
     device5.locationAddress = device.getPropertyValue(PropertyName.DeviceLocationAddress) as string;
@@ -613,7 +627,7 @@ export const dumpDeviceProperties = (device: Device, schemaVersion: number): Dev
     device5.leftBehindAlarm = device.getPropertyValue(PropertyName.DeviceLeftBehindAlarm) as boolean;
     device5.findPhone = device.getPropertyValue(PropertyName.DeviceFindPhone) as boolean;
 
-    if (schemaVersion >= 20) {
+    if (schemaVersion <= 20) {
         return device5;
     }
 
@@ -630,6 +644,20 @@ export const dumpDeviceProperties = (device: Device, schemaVersion: number): Dev
     device6.beepVolume = device.getPropertyValue(PropertyName.DeviceBeepVolume) as number;
     device6.nightvisionOptimization = device.getPropertyValue(PropertyName.DeviceNightvisionOptimization) as boolean;
     device6.nightvisionOptimizationSide = device.getPropertyValue(PropertyName.DeviceNightvisionOptimizationSide) as number;
+    device6.deliveries = device.getPropertyValue(PropertyName.DeviceDeliveries) as number;
+    device6.openMethod = device.getPropertyValue(PropertyName.DeviceOpenMethod) as number;
+    device6.motionActivatedPrompt = device.getPropertyValue(PropertyName.DeviceMotionActivatedPrompt) as boolean;
+    device6.open = device.getPropertyValue(PropertyName.DeviceOpen) as boolean;
+    device6.openedByType = device.getPropertyValue(PropertyName.DeviceOpenedByType) as number;
+    device6.openedByName = device.getPropertyValue(PropertyName.DeviceOpenedByName) as string;
+    device6.tamperingAlert = device.getPropertyValue(PropertyName.DeviceTamperingAlert) as boolean;
+    device6.lowTemperatureAlert = device.getPropertyValue(PropertyName.DeviceLowTemperatureAlert) as boolean;
+    device6.highTemperatureAlert = device.getPropertyValue(PropertyName.DeviceHighTemperatureAlert) as boolean;
+    device6.lidStuckAlert = device.getPropertyValue(PropertyName.DeviceLidStuckAlert) as boolean;
+    device6.pinIncorrectAlert = device.getPropertyValue(PropertyName.DevicePinIncorrectAlert) as boolean;
+    device6.batteryFullyChargedAlert = device.getPropertyValue(PropertyName.DeviceBatteryFullyChargedAlert) as boolean;
+    device6.isDeliveryDenied = device.getPropertyValue(PropertyName.DeviceIsDeliveryDenied) as boolean;
+    device6.hasMasterPin = device.getPropertyValue(PropertyName.DeviceHasMasterPin) as boolean;
 
     return device6;
 }
@@ -938,6 +966,20 @@ export const dumpDevicePropertiesMetadata = (device: Device, schemaVersion: numb
     result["beepVolume"] = metadata[PropertyName.DeviceBeepVolume];
     result["nightvisionOptimization"] = metadata[PropertyName.DeviceNightvisionOptimization];
     result["nightvisionOptimizationSide"] = metadata[PropertyName.DeviceNightvisionOptimizationSide];
+    result["deliveries"] = metadata[PropertyName.DeviceDeliveries];
+    result["openMethod"] = metadata[PropertyName.DeviceOpenMethod];
+    result["motionActivatedPrompt"] = metadata[PropertyName.DeviceMotionActivatedPrompt];
+    result["open"] = metadata[PropertyName.DeviceOpen];
+    result["openedByType"] = metadata[PropertyName.DeviceOpenedByType];
+    result["openedByName"] = metadata[PropertyName.DeviceOpenedByName];
+    result["tamperingAlert"] = metadata[PropertyName.DeviceTamperingAlert];
+    result["lowTemperatureAlert"] = metadata[PropertyName.DeviceLowTemperatureAlert];
+    result["highTemperatureAlert"] = metadata[PropertyName.DeviceHighTemperatureAlert];
+    result["lidStuckAlert"] = metadata[PropertyName.DeviceLidStuckAlert];
+    result["pinIncorrectAlert"] = metadata[PropertyName.DevicePinIncorrectAlert];
+    result["batteryFullyChargedAlert"] = metadata[PropertyName.DeviceBatteryFullyChargedAlert];
+    result["isDeliveryDenied"] = metadata[PropertyName.DeviceIsDeliveryDenied];
+    result["hasMasterPin"] = metadata[PropertyName.DeviceHasMasterPin];
     
     return result;
 }

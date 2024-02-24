@@ -3,17 +3,18 @@
 This document describes the changes that are introduced with each schema version.
 
 ## Schema 21
-* Added new property `notificationVehicle`, `flickerAdjustment`, `leavingDetection`, `leavingReactionNotification`, `leavingReactionStartTime`, `leavingReactionEndTime`, `someoneGoing`, `lockEventOrigin`, `beepVolume`, `nightvisionOptimization` and `nightvisionOptimizationSide` to Device
-* Added new property `storageInfoEmmc`, `storageInfoHdd`, `crossCameraTracking`, `continuousTrackingTime`, `trackingAssistance`, `crossTrackingCameraList` and `crossTrackingGroupList` to Station
-* Added new commands `preset_position`, `save_preset_position` and `delete_preset_position` to Device
+* Added new properties `notificationVehicle`, `flickerAdjustment`, `leavingDetection`, `leavingReactionNotification`, `leavingReactionStartTime`, `leavingReactionEndTime`, `someoneGoing`, `lockEventOrigin`, `beepVolume`, `nightvisionOptimization`, `nightvisionOptimizationSide`, `deliveries`, `openMethod`, `motionActivatedPrompt`, `open`, `openedByType`, `openedByName`, `tamperingAlert`, `lowTemperatureAlert`, `highTemperatureAlert`, `lidStuckAlert`, `pinIncorrectAlert`, `batteryFullyChargedAlert`, `isDeliveryDenied` and `hasMasterPin` to Device
+* Added new Device events `open`, `tampering`, `low temperature`, `high temperature`, `lid stuck`, `pin incorrect` and `battery fully charged`
+* Added new properties `storageInfoEmmc`, `storageInfoHdd`, `crossCameraTracking`, `continuousTrackingTime`, `trackingAssistance`, `crossTrackingCameraList` and `crossTrackingGroupList` to Station
+* Added new commands `preset_position`, `save_preset_position`, `delete_preset_position` and `open` to Device
 
 ## Schema 20
 
-* Added new property `locationCoordinates`, `locationAddress`, `locationLastUpdate`, `trackerType`, `leftBehindAlarm` and `findPhone` to Device
+* Added new properties `locationCoordinates`, `locationAddress`, `locationLastUpdate`, `trackerType`, `leftBehindAlarm` and `findPhone` to Device
 
 ## Schema 19
 
-* Added new property `lightSettingsManualLightingActiveMode`, `lightSettingsManualDailyLighting`, `lightSettingsManualColoredLighting`, `lightSettingsManualDynamicLighting`, `lightSettingsMotionLightingActiveMode`, `lightSettingsMotionDailyLighting`, `lightSettingsMotionColoredLighting`, `lightSettingsMotionDynamicLighting`, `lightSettingsScheduleLightingActiveMode`, `lightSettingsScheduleDailyLighting`, `lightSettingsScheduleColoredLighting`, `lightSettingsScheduleDynamicLighting`, `lightSettingsColoredLightingColors`, `lightSettingsDynamicLightingThemes`, `doorControlWarning`, `door1Open`, `door2Open`, `doorSensor1Status`, `doorSensor2Status`, `doorSensor1MacAddress`, `doorSensor2MacAddress`, `doorSensor1Name`, `doorSensor2Name`, `doorSensor1SerialNumber`, `doorSensor2SerialNumber`, `doorSensor1Version`, `doorSensor2Version`, `doorSensor1LowBattery`, `doorSensor2LowBattery`, `doorSensor1BatteryLevel` 
+* Added new properties `lightSettingsManualLightingActiveMode`, `lightSettingsManualDailyLighting`, `lightSettingsManualColoredLighting`, `lightSettingsManualDynamicLighting`, `lightSettingsMotionLightingActiveMode`, `lightSettingsMotionDailyLighting`, `lightSettingsMotionColoredLighting`, `lightSettingsMotionDynamicLighting`, `lightSettingsScheduleLightingActiveMode`, `lightSettingsScheduleDailyLighting`, `lightSettingsScheduleColoredLighting`, `lightSettingsScheduleDynamicLighting`, `lightSettingsColoredLightingColors`, `lightSettingsDynamicLightingThemes`, `doorControlWarning`, `door1Open`, `door2Open`, `doorSensor1Status`, `doorSensor2Status`, `doorSensor1MacAddress`, `doorSensor2MacAddress`, `doorSensor1Name`, `doorSensor2Name`, `doorSensor1SerialNumber`, `doorSensor2SerialNumber`, `doorSensor1Version`, `doorSensor2Version`, `doorSensor1LowBattery`, `doorSensor2LowBattery`, `doorSensor1BatteryLevel` 
 and `doorSensor2BatteryLevel` to Device
 
 ## Schema 18
@@ -30,17 +31,17 @@ and `doorSensor2BatteryLevel` to Device
 
 ## Schema 16
 
-* Added new property `cellularRSSI`, `cellularSignalLevel`, `cellularSignal`, `cellularBand`, `cellularIMEI` and `cellularICCID` to Device
+* Added new properties `cellularRSSI`, `cellularSignalLevel`, `cellularSignal`, `cellularBand`, `cellularIMEI` and `cellularICCID` to Device
 
 ## Schema 15
 
-* Added new property `snoozeStartTime`, `snoozeHomebase`, `snoozeMotion` and `snoozeChime` to Device
+* Added new properties `snoozeStartTime`, `snoozeHomebase`, `snoozeMotion` and `snoozeChime` to Device
 * Added new Device events `stranger person detected`, `dog detected`, `dog lick detected` and `dog poop detected`
 * Added new command `chime` to Station
 
 ## Schema 14
 
-* Added new property `alarm`, `alarmType`, `alarmArmed`, `alarmArmDelay`, `alarmDelay` and `alarmDelayType` to Station
+* Added new properties `alarm`, `alarmType`, `alarmArmed`, `alarmArmDelay`, `alarmDelay` and `alarmDelayType` to Station
 * Added new Device event `vehicle detected`
 * Added new Driver event `connection error`
 

@@ -157,6 +157,9 @@ const cmdHelp = (cmd: string): void => {
         case DeviceCommand.deletePresetPosition:
             console.log(`${cmd} <device_sn> <position>`);
             break;
+        case DeviceCommand.open:
+            console.log(`${cmd} <device_sn>`);
+            break;
         case StationCommand.setGuardMode:
             console.log(`${cmd} <station_sn> <numeric_code>`);
             break;
@@ -1083,6 +1086,19 @@ const cmd = async(args: Array<string>, silent = false, internal = false): Promis
                     command: DeviceCommand.deletePresetPosition,
                     serialNumber: args[1],
                     position: Number.parseInt(args[2]),
+                }));
+            } else {
+                cmdHelp(args[0]);
+                if (silent)
+                    handleShutdown(1);
+            }
+            break;
+        case DeviceCommand.open:
+            if (args.length === 2) {
+                socket.send(JSON.stringify({
+                    messageId: DeviceCommand.open.split(".")[1],
+                    command: DeviceCommand.open,
+                    serialNumber: args[1],
                 }));
             } else {
                 cmdHelp(args[0]);

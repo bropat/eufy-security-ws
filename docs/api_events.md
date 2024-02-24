@@ -1748,3 +1748,111 @@ interface {
   }
 }
 ```
+
+### `tampering`
+
+[compatible with schema version: 21+]
+
+This event is sent whenever tampering is triggered by the device (the cooldown is determined by the `eventDurationSeconds` param).
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "device";
+    event: "tampering";
+    serialNumber: string;
+    state: boolean;
+  }
+}
+```
+
+### `low temperature`
+
+[compatible with schema version: 21+]
+
+This event is sent whenever low temperature is triggered by the device (the cooldown is determined by the `eventDurationSeconds` param).
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "device";
+    event: "low temperature";
+    serialNumber: string;
+    state: boolean;
+  }
+}
+```
+
+### `high temperature`
+
+[compatible with schema version: 21+]
+
+This event is sent whenever high temperature is triggered by the device (the cooldown is determined by the `eventDurationSeconds` param).
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "device";
+    event: "high temperature";
+    serialNumber: string;
+    state: boolean;
+  }
+}
+```
+
+### `pin incorrect`
+
+[compatible with schema version: 21+]
+
+This event is sent whenever pin incorrect is triggered by the device (the cooldown is determined by the `eventDurationSeconds` param).
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "device";
+    event: "pin incorrect";
+    serialNumber: string;
+    state: boolean;
+  }
+}
+```
+
+### `lid stuck`
+
+[compatible with schema version: 21+]
+
+This event is sent whenever lid stuck is triggered by the device (the cooldown is determined by the `eventDurationSeconds` param).
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "device";
+    event: "lid stuck";
+    serialNumber: string;
+    state: boolean;
+  }
+}
+```
+
+### `battery fully charged`
+
+[compatible with schema version: 21+]
+
+This event is sent whenever battery fully charged is triggered by the device (the cooldown is determined by the `eventDurationSeconds` param).
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "device";
+    event: "battery fully charged";
+    serialNumber: string;
+    state: boolean;
+  }
+}
+```

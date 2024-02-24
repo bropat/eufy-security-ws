@@ -53,4 +53,5 @@ export interface DeviceResultTypes {
     [DeviceCommand.presetPosition]: { async?: boolean };
     [DeviceCommand.savePresetPosition]: { async?: boolean };
     [DeviceCommand.deletePresetPosition]: { async?: boolean };
+    [DeviceCommand.open]: { async?: boolean };
 }

@@ -51,6 +51,13 @@ export enum DeviceEvent {
     userScheduleUpdated = "user schedule updated",
     userPasscodeUpdated = "user passcode updated",
     pinVerified = "pin verified",
+    open = "open",
+    tampering = "tampering",
+    lowTemperature = "low temperature",
+    highTemperature = "high temperature",
+    lidStuck = "lid stuck",
+    pinIncorrect = "pin incorrect",
+    batteryFullyCharged = "battery fully charged",
 }
 
 export interface OutgoingEventDeviceBase extends OutgoingBaseEvent {
@@ -415,6 +422,55 @@ export interface OutgoingEventDeviceDogPoopDetected extends OutgoingEventDeviceB
     state: boolean;
 }
 
+export interface OutgoingEventDeviceOpen extends OutgoingEventDeviceBase {
+    source: "device";
+    event: DeviceEvent.open;
+    serialNumber: string;
+    state: boolean;
+}
+
+export interface OutgoingEventDeviceTampering extends OutgoingEventDeviceBase {
+    source: "device";
+    event: DeviceEvent.tampering;
+    serialNumber: string;
+    state: boolean;
+}
+
+export interface OutgoingEventDeviceLowTemperature extends OutgoingEventDeviceBase {
+    source: "device";
+    event: DeviceEvent.lowTemperature;
+    serialNumber: string;
+    state: boolean;
+}
+
+export interface OutgoingEventDeviceHighTemperature extends OutgoingEventDeviceBase {
+    source: "device";
+    event: DeviceEvent.highTemperature;
+    serialNumber: string;
+    state: boolean;
+}
+
+export interface OutgoingEventDeviceLidStuck extends OutgoingEventDeviceBase {
+    source: "device";
+    event: DeviceEvent.lidStuck;
+    serialNumber: string;
+    state: boolean;
+}
+
+export interface OutgoingEventDevicePinIncorrect extends OutgoingEventDeviceBase {
+    source: "device";
+    event: DeviceEvent.pinIncorrect;
+    serialNumber: string;
+    state: boolean;
+}
+
+export interface OutgoingEventDeviceBatteryFullyCharged extends OutgoingEventDeviceBase {
+    source: "device";
+    event: DeviceEvent.batteryFullyCharged;
+    serialNumber: string;
+    state: boolean;
+}
+
 export type OutgoingEventDevice =
   | OutgoingEventDeviceAdded
   | OutgoingEventDeviceRemoved
@@ -463,4 +519,11 @@ export type OutgoingEventDevice =
   | OutgoingEventDeviceStrangerPersonDetected
   | OutgoingEventDeviceDogDetected
   | OutgoingEventDeviceDogLickDetected
-  | OutgoingEventDeviceDogPoopDetected;
+  | OutgoingEventDeviceDogPoopDetected
+  | OutgoingEventDeviceOpen
+  | OutgoingEventDeviceTampering
+  | OutgoingEventDeviceLowTemperature
+  | OutgoingEventDeviceHighTemperature
+  | OutgoingEventDeviceLidStuck
+  | OutgoingEventDevicePinIncorrect
+  | OutgoingEventDeviceBatteryFullyCharged;

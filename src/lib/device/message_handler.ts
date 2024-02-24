@@ -632,6 +632,13 @@ export class DeviceMessageHandler {
                 } else {
                     throw new UnknownCommandError(command);
                 }
+            case DeviceCommand.open:
+                if (client.schemaVersion >= 21) {
+                    station.open(device);
+                    return { async: true };
+                } else {
+                    throw new UnknownCommandError(command);
+                }
             default:
                 throw new UnknownCommandError(command);
         }

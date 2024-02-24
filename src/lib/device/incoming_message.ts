@@ -247,6 +247,10 @@ export interface IncomingCommandDeviceDeletePresetPosition extends IncomingComma
     position: PresetPositionType;
 }
 
+export interface IncomingCommandDeviceOpen extends IncomingCommandDeviceBase {
+    command: DeviceCommand.open;
+}
+
 export type IncomingMessageDevice =
   | IncomingCommandDeviceSetStatusLed
   | IncomingCommandDeviceSetAutoNightVision
@@ -297,4 +301,5 @@ export type IncomingMessageDevice =
   | IncomingCommandDeviceVerifyPIN
   | IncomingCommandDevicePresetPosition
   | IncomingCommandDeviceSavePresetPosition
-  | IncomingCommandDeviceDeletePresetPosition;
+  | IncomingCommandDeviceDeletePresetPosition
+  | IncomingCommandDeviceOpen;

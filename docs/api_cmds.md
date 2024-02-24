@@ -1141,6 +1141,18 @@ interface {
 }
 ```
 
+### Open
+
+[compatible with schema version: 21+]
+
+```ts
+interface {
+  messageId: string;
+  command: "device.open";
+  serialNumber: string;
+}
+```
+
 ### Enable/disable status led
 
 [compatible with schema version: 0-12]

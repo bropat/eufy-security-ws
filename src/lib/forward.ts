@@ -1040,6 +1040,69 @@ export class EventForwarder {
                 }, 10);
             }
         });
+
+        device.on("open", (device: Device, state: boolean) => {
+            this.forwardEvent({
+                source: "device",
+                event: DeviceEvent.open,
+                serialNumber: device.getSerial(),
+                state: state,
+            }, 21);
+        });
+
+        device.on("tampering", (device: Device, state: boolean) => {
+            this.forwardEvent({
+                source: "device",
+                event: DeviceEvent.tampering,
+                serialNumber: device.getSerial(),
+                state: state,
+            }, 21);
+        });
+
+        device.on("low temperature", (device: Device, state: boolean) => {
+            this.forwardEvent({
+                source: "device",
+                event: DeviceEvent.lowTemperature,
+                serialNumber: device.getSerial(),
+                state: state,
+            }, 21);
+        });
+
+        device.on("high temperature", (device: Device, state: boolean) => {
+            this.forwardEvent({
+                source: "device",
+                event: DeviceEvent.highTemperature,
+                serialNumber: device.getSerial(),
+                state: state,
+            }, 21);
+        });
+
+        device.on("pin incorrect", (device: Device, state: boolean) => {
+            this.forwardEvent({
+                source: "device",
+                event: DeviceEvent.pinIncorrect,
+                serialNumber: device.getSerial(),
+                state: state,
+            }, 21);
+        });
+
+        device.on("lid stuck", (device: Device, state: boolean) => {
+            this.forwardEvent({
+                source: "device",
+                event: DeviceEvent.lidStuck,
+                serialNumber: device.getSerial(),
+                state: state,
+            }, 21);
+        });
+
+        device.on("battery fully charged", (device: Device, state: boolean) => {
+            this.forwardEvent({
+                source: "device",
+                event: DeviceEvent.batteryFullyCharged,
+                serialNumber: device.getSerial(),
+                state: state,
+            }, 21);
+        });
     }
 
 }
