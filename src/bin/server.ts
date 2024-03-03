@@ -60,16 +60,20 @@ const args = program.opts();
         config.logging = {
             level: LogLevel.Debug
         };
+    } else {
+        config.logging = {
+            level: LogLevel.Info
+        };
     }
 
     const logger = new Logger<ILogObj>({
-        prefix: ["server"],
+        name: "eufy-security-ws",
         minLevel: args.verbose ? 0 /* silly */ : 3 /* info */,
-        prettyLogTemplate: "{{yyyy}}.{{mm}}.{{dd}} {{hh}}:{{MM}}:{{ss}}:{{ms}}\t{{logLevelName}}\t",
+        prettyLogTemplate: "{{yyyy}}.{{mm}}.{{dd}} {{hh}}:{{MM}}:{{ss}}:{{ms}}\t{{logLevelName}}\t{{name}}\t",
         type: args.quiet ? "hidden" : "pretty",
         hideLogPositionForProduction: true,
     });
-    const driver: EufySecurity = await EufySecurity.initialize(config, logger.getSubLogger({ prefix: ["driver"] }));
+    const driver: EufySecurity = await EufySecurity.initialize(config, logger.getSubLogger({ name: "eufy-security-client" }));
 
     let server: EufySecurityServer;
 

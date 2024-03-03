@@ -173,13 +173,54 @@ interface {
 
 This event is sent whenever a log message is generated. Clients will only receive these events when they have issued the `driver.start_listening_logs` command.
 
+[event with schema version: 9-20]
+
 ```ts
 interface {
   type: "event";
   event: {
     source: "driver";
     event: "logging";
-    message: ILogObject;  // tslog object
+    message: {
+      hostname: string;
+      date: string;
+      logLevel: string;
+      logLevelId: number;
+      filePath: string;
+      fullFilePath: string;
+      fileName: string;
+      lineNumber: number;
+      columnNumber: number;
+      isConstructor: boolean;
+      functionName: string;
+      typeName: string;
+      methodName: string;
+      argumentsArray: Array<string>;
+    };
+  }
+}
+```
+
+[event with schema version: 21+]
+
+```ts
+interface {
+  type: "event";
+  event: {
+    source: "driver";
+    event: "logging";
+    message: {
+      message: string;
+      arguments?: { [name: string]: unknown };
+      meta: {
+          runtime: string;
+          runtimeVersion: string;
+          hostname: string;
+          date: string;
+          logLevel: string;
+          driverVersion: string;
+      }
+    }
   }
 }
 ```

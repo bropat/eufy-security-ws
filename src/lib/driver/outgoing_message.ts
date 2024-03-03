@@ -19,6 +19,7 @@ export interface DriverResultTypes {
     [DriverCommand.startListeningLogs]: Record<string, never>;
     [DriverCommand.stopListeningLogs]: Record<string, never>;
     [DriverCommand.isMqttConnected]: { connected: boolean };
+    [DriverCommand.isListeningLogs]: { started: boolean };
 
     //Legacy
     [DriverCommand.isConnectedLegacy]: { connected: boolean };

@@ -69,6 +69,7 @@ const cmdHelp = (cmd: string): void => {
         case DriverCommand.getLogLevel:
         case DriverCommand.startListeningLogs:
         case DriverCommand.stopListeningLogs:
+        case DriverCommand.isListeningLogs:
             console.log(`${cmd}`);
             break;
         case DriverCommand.setLogLevel:
@@ -384,6 +385,18 @@ const cmd = async(args: Array<string>, silent = false, internal = false): Promis
                 socket.send(JSON.stringify({
                     messageId: DriverCommand.stopListeningLogs.split(".")[1],
                     command: DriverCommand.stopListeningLogs
+                }));
+            } else {
+                cmdHelp(args[0]);
+                if (silent)
+                    handleShutdown(1);
+            }
+            break;
+        case DriverCommand.isListeningLogs:
+            if (args.length === 1) {
+                socket.send(JSON.stringify({
+                    messageId: DriverCommand.isListeningLogs.split(".")[1],
+                    command: DriverCommand.isListeningLogs
                 }));
             } else {
                 cmdHelp(args[0]);

@@ -76,6 +76,10 @@ export interface IncomingCommandStopListeningLogs extends IncomingCommandBase {
     command: DriverCommand.stopListeningLogs;
 }
 
+export interface IncomingCommandIsListeningLogs extends IncomingCommandBase {
+    command: DriverCommand.isListeningLogs;
+}
+
 export interface IncomingCommandIsMqttConnected extends IncomingCommandBase {
     command: DriverCommand.isMqttConnected;
 }
@@ -95,4 +99,5 @@ export type IncomingMessageDriver =
     | IncomingCommandGetLogLevel
     | IncomingCommandStartListeningLogs
     | IncomingCommandStopListeningLogs
-    | IncomingCommandIsMqttConnected;
+    | IncomingCommandIsMqttConnected
+    | IncomingCommandIsListeningLogs;

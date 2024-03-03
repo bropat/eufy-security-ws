@@ -286,6 +286,25 @@ interface {
 }
 ```
 
+### Get if listening logs was started
+
+[compatible with schema version: 21+]
+
+```ts
+interface {
+    messageId: string;
+    command: "driver.is_listening_logs";
+}
+```
+
+Returns:
+
+```ts
+interface {
+    started: boolean;
+}
+```
+
 ## Station level commands
 
 ### Reboot station

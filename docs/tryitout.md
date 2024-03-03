@@ -72,21 +72,25 @@ Options:
   -s, --schemaVersion <host>    Schema version the server should support (default: max client supported version)
   -H, --host <host>             Host to connect to (default: "localhost")
   -p, --port <port>             Port to connect to (default: 3000)
-  -c, --command <command_name>  Silent command to execute (choices: "driver.set_verify_code", "driver.set_captcha", "driver.poll_refresh", "driver.is_connected", "driver.is_push_connected",
-                                "driver.connect", "driver.disconnect", "driver.get_alarm_events", "driver.get_video_events", "driver.get_history_events", "driver.set_log_level",
-                                "driver.get_log_level", "driver.start_listening_logs", "driver.stop_listening_logs", "driver.is_mqtt_connected", "driver.isConnected", "driver.isPushConnected",
-                                "device.get_properties_metadata", "device.get_properties", "device.set_property", "device.has_property", "device.start_livestream", "device.stop_livestream",
-                                "device.is_livestreaming", "device.trigger_alarm", "device.reset_alarm", "device.pan_and_tilt", "device.quick_response", "device.start_download",
-                                "device.cancel_download", "device.is_downloading", "device.get_voices", "device.get_commands", "device.has_command", "device.start_rtsp_livestream",
-                                "device.stop_rtsp_livestream", "device.is_rtsp_livestreaming", "device.calibrate_lock", "device.calibrate", "device.set_default_angle",
-                                "device.set_privacy_angle", "device.unlock", "device.start_talkback", "device.stop_talkback", "device.is_talkback_ongoing", "device.talkback_audio_data",
-                                "device.set_status_led", "device.set_auto_night_vision", "device.set_motion_detection", "device.set_sound_detection", "device.set_pet_detection",
-                                "device.set_rtsp_stream", "device.set_anti_theft_detection", "device.set_watermark", "device.enable_device", "device.lock_device", "station.reboot",
-                                "station.is_connected", "station.connect", "station.disconnect", "station.get_properties_metadata", "station.get_properties", "station.set_property",
-                                "station.has_property", "station.trigger_alarm", "station.reset_alarm", "station.get_commands", "station.has_command", "station.set_guard_mode",
-                                "station.isConnected")
+  -c, --command <command_name>  Silent command to execute (choices: "driver.set_verify_code", "driver.set_captcha", "driver.poll_refresh", "driver.is_connected",
+                                "driver.is_push_connected", "driver.connect", "driver.disconnect", "driver.get_alarm_events", "driver.get_video_events", "driver.get_history_events",
+                                "driver.set_log_level", "driver.get_log_level", "driver.start_listening_logs", "driver.stop_listening_logs", "driver.is_listening_logs",
+                                "driver.is_mqtt_connected", "driver.isConnected", "driver.isPushConnected", "device.get_properties_metadata", "device.get_properties",
+                                "device.set_property", "device.has_property", "device.start_livestream", "device.stop_livestream", "device.is_livestreaming", "device.trigger_alarm",
+                                "device.reset_alarm", "device.pan_and_tilt", "device.quick_response", "device.start_download", "device.cancel_download", "device.is_downloading",
+                                "device.get_voices", "device.get_commands", "device.has_command", "device.start_rtsp_livestream", "device.stop_rtsp_livestream",
+                                "device.is_rtsp_livestreaming", "device.calibrate_lock", "device.calibrate", "device.set_default_angle", "device.set_privacy_angle", "device.unlock",
+                                "device.start_talkback", "device.stop_talkback", "device.is_talkback_ongoing", "device.talkback_audio_data", "device.snooze", "device.add_user",
+                                "device.delete_user", "device.get_users", "device.update_user_passcode", "device.update_user_schedule", "device.update_user", "device.verify_pin",
+                                "device.preset_position", "device.save_preset_position", "device.delete_preset_position", "device.open", "device.set_status_led",
+                                "device.set_auto_night_vision", "device.set_motion_detection", "device.set_sound_detection", "device.set_pet_detection", "device.set_rtsp_stream",
+                                "device.set_anti_theft_detection", "device.set_watermark", "device.enable_device", "device.lock_device", "station.reboot", "station.is_connected",
+                                "station.connect", "station.disconnect", "station.get_properties_metadata", "station.get_properties", "station.set_property", "station.has_property",
+                                "station.trigger_alarm", "station.reset_alarm", "station.get_commands", "station.has_command", "station.chime", "station.download_image",
+                                "station.database_query_latest_info", "station.database_query_local", "station.database_count_by_date", "station.database_delete",
+                                "station.set_guard_mode", "station.isConnected", "quit", "exit")
   -a, --arguments <args...>     Arguments for silent command if expected
-  -t, --timeout <command_name>  Silent command timeout seconds (default: 30)
+  -t, --timeout <seconds>       Silent command timeout seconds (default: 30)
   -v, --verbose
   -h, --help                    display help for command
 ```

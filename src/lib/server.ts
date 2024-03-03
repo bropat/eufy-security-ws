@@ -18,7 +18,7 @@ import { ServerCommand } from "./command.js";
 import { DriverMessageHandler } from "./driver/message_handler.js";
 import { IncomingMessageDriver } from "./driver/incoming_message.js";
 import { dumpState } from "./state.js";
-import { LoggingEventForwarder } from "./logging.js";
+import { LogLevel, LoggingEventForwarder } from "./logging.js";
 import { ServerEvent } from "./event.js";
 import { DriverEvent } from "./driver/event.js";
 
@@ -340,12 +340,12 @@ export class ClientsController {
     get loggingEventForwarderStarted(): boolean {
         return this.loggingEventForwarder?.started === true;
     }
-    
+
     public restartLoggingEventForwarderIfNeeded(): void {
         this.loggingEventForwarder?.restartIfNeeded();
     }
-    
-    public configureLoggingEventForwarder(): void {
+
+    public startLoggingEventForwarder(): void {
         if (this.loggingEventForwarder === undefined) {
             this.loggingEventForwarder = new LoggingEventForwarder(this, this.logger);
         }
@@ -354,7 +354,7 @@ export class ClientsController {
         }
     }
     
-    public cleanupLoggingEventForwarder(): void {
+    public stopLoggingEventForwarder(): void {
         if (this.clients.filter((cl) => cl.receiveLogs).length == 0 && this.loggingEventForwarderStarted) {
             this.loggingEventForwarder?.stop();
         }
@@ -432,7 +432,7 @@ export class ClientsController {
                 });
             });
         });
-        this.cleanupLoggingEventForwarder();
+        this.stopLoggingEventForwarder();
     }
 
     disconnect(): void {
@@ -450,7 +450,7 @@ export class ClientsController {
         });
         this.clients.forEach((client) => client.disconnect());
         this.clients = [];
-        this.cleanupLoggingEventForwarder();
+        this.stopLoggingEventForwarder();
     }
 }
 

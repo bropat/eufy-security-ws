@@ -7,7 +7,7 @@ import { DriverCommand } from "./command.js";
 import { DriverEvent } from "./event.js";
 import { IncomingMessageDriver, IncomingCommandSetVerifyCode, IncomingCommandGetVideoEvents, IncomingCommandSetCaptcha, IncomingCommandSetLogLevel, IncomingCommandGetAlarmEvents, IncomingCommandGetHistoryEvents } from "./incoming_message.js";
 import { DriverResultTypes } from "./outgoing_message.js";
-import { LogLevel, LogLevelName, convertLogLevel } from "../logging.js";
+import { LogLevel, LogLevelName, convertLogLevelToDriver, convertLogLevelToServer } from "../logging.js";
 
 export class DriverMessageHandler {
 
@@ -148,17 +148,9 @@ export class DriverMessageHandler {
                 }
             }
             case DriverCommand.getLogLevel:
-                return { level: LogLevel[logger.settings.minLevel] as LogLevelName };
+                return { level: LogLevel[convertLogLevelToServer(driver.getLoggingLevel("all"))] as LogLevelName };
             case DriverCommand.setLogLevel:
-                // If the logging event forwarder is enabled, we need to restart
-                // it so that it picks up the new config.
-                //TODO: Finish migration to new tslog
-                //TODO: throw error
-                /*if (LogLevel[(message as IncomingCommandSetLogLevel).level] === undefined) {
-                    throw error
-                }*/
-                logger.settings.minLevel = LogLevel[(message as IncomingCommandSetLogLevel).level];
-                driver.updateLogging("all", convertLogLevel((message as IncomingCommandSetLogLevel).level));
+                driver.setLoggingLevel("all", convertLogLevelToDriver((message as IncomingCommandSetLogLevel).level));
                 clientsController.restartLoggingEventForwarderIfNeeded();
                 clientsController.clients.forEach((client) => {
                     client.sendEvent({
@@ -170,16 +162,24 @@ export class DriverMessageHandler {
                 return {};
             case DriverCommand.startListeningLogs:
                 client.receiveLogs = true;
-                clientsController.configureLoggingEventForwarder();
+                clientsController.startLoggingEventForwarder();
                 return {};
             case DriverCommand.stopListeningLogs:
                 client.receiveLogs = false;
-                clientsController.cleanupLoggingEventForwarder();
+                clientsController.stopLoggingEventForwarder();
                 return {};
             case DriverCommand.isMqttConnected:
             {
                 const result = driver.isMQTTConnected();
                 return { connected: result };
+            }
+            case DriverCommand.isListeningLogs:
+            {
+                if (client.schemaVersion >= 21) {
+                    return { started: clientsController.loggingEventForwarderStarted };
+                } else {
+                    throw new UnknownCommandError(command);
+                }
             }
             default:
                 throw new UnknownCommandError(command);

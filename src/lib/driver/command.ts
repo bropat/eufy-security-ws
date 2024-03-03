@@ -13,6 +13,7 @@ export enum DriverCommand {
     getLogLevel = "driver.get_log_level",
     startListeningLogs = "driver.start_listening_logs",
     stopListeningLogs = "driver.stop_listening_logs",
+    isListeningLogs = "driver.is_listening_logs",
     isMqttConnected = "driver.is_mqtt_connected",
 
     //Legacy commands

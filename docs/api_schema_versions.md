@@ -7,6 +7,7 @@ This document describes the changes that are introduced with each schema version
 * Added new Device events `open`, `tampering`, `low temperature`, `high temperature`, `lid stuck`, `pin incorrect` and `battery fully charged`
 * Added new properties `storageInfoEmmc`, `storageInfoHdd`, `crossCameraTracking`, `continuousTrackingTime`, `trackingAssistance`, `crossTrackingCameraList` and `crossTrackingGroupList` to Station
 * Added new commands `preset_position`, `save_preset_position`, `delete_preset_position` and `open` to Device
+* Added new command `isListeningLogs` to Driver
 
 ## Schema 20
 
