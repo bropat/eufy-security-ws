@@ -1,5 +1,20 @@
 #!/bin/bash
 
+# allow setting specific environment variables with docker secrets
+# the format is <variable-name>_FILE
+supportedSecrets=( "USERNAME" 
+                   "PASSWORD"
+                  )
+for secret in ${supportedSecrets[@]}; do
+    envFile="${secret}_FILE"
+    if [ $(printenv ${envFile}) ]; then envFileName=`printenv ${envFile}`; fi
+    if [[ ${!envFile} && -f "$envFileName" ]]; then
+        val=`cat $envFileName`
+        export "${secret}"="$val"
+        echo "${secret} environment variable was set by secret ${envFile}"
+    fi
+done
+
 if [ -z "${USERNAME}" ] || [ -z "${PASSWORD}" ]; then
     echo "Missing one of USERNAME or PASSWORD"
     exit 1
