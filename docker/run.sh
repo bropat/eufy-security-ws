@@ -128,5 +128,33 @@ JSON_STRING="$( jq -n \
     }"
   )"
 
+check_version() {
+    if [ "$1" = "$2" ]; then
+        return 1 # equal
+    fi
+    version=$(printf '%s\n' "$1" "$2" | sort -V | tail -n 1)
+    if [ "$version" = "$2" ]; then
+        return 2 # greater
+    fi
+    return 0 # lower
+}
+
+node_version=$(node -v)
+node_result=0
+if [ "${node_version:1:2}" = "18" ]; then
+    check_version "v18.19.1" "$node_version"
+    node_result=$?
+elif [ "${node_version:1:2}" = "20" ]; then
+    check_version "v20.11.1" "$node_version"
+    node_result=$?
+else
+    check_version "v21.6.2" "$node_version"
+    node_result=$?
+fi
+WORKAROUND_ISSUE_310=""
+if [ $node_result -gt 0 ] ; then
+    WORKAROUND_ISSUE_310="--security-revert=CVE-2023-46809"
+fi
+
 echo "$JSON_STRING" > /dev/shm/eufy-security-ws-config.json
-exec /usr/local/bin/node --security-revert=CVE-2023-46809 /usr/src/app/dist/bin/server.js --host 0.0.0.0 --config /dev/shm/eufy-security-ws-config.json $DEBUG_OPTION $PORT_OPTION
+exec /usr/local/bin/node $WORKAROUND_ISSUE_310 /usr/src/app/dist/bin/server.js --host 0.0.0.0 --config /dev/shm/eufy-security-ws-config.json $DEBUG_OPTION $PORT_OPTION
