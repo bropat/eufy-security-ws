@@ -129,4 +129,4 @@ JSON_STRING="$( jq -n \
   )"
 
 echo "$JSON_STRING" > /dev/shm/eufy-security-ws-config.json
-exec /usr/local/bin/node /usr/src/app/dist/bin/server.js --host 0.0.0.0 --config /dev/shm/eufy-security-ws-config.json $DEBUG_OPTION $PORT_OPTION
+exec /usr/local/bin/node --security-revert=CVE-2023-46809 /usr/src/app/dist/bin/server.js --host 0.0.0.0 --config /dev/shm/eufy-security-ws-config.json $DEBUG_OPTION $PORT_OPTION
