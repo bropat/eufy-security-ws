@@ -17,7 +17,7 @@ Options:
 ```
 
 ```shell
-ts-node src/bin/server.ts
+tsx src/bin/server.ts
 ```
 
 Opens server on `ws://localhost:3000`.
@@ -98,29 +98,29 @@ Options:
 Default connects to `ws://localhost:3000`:
 
 ```shell
-ts-node src/bin/client.ts
+tsx src/bin/client.ts
 ```
 
 To specify different host and port:
 
 ```shell
-ts-node src/bin/client.ts --host 192.168.1.100 --port 6000
+tsx src/bin/client.ts --host 192.168.1.100 --port 6000
 ```
 
 To specify a schema version other than the latest (`maxSchemaVersion`):
 
 ```shell
-ts-node src/bin/client.ts --schemaVersion 0
+tsx src/bin/client.ts --schemaVersion 0
 ```
 
 To run single command in silent mode (default interactive mode):
 
 ```shell
-ts-node src/bin/client.ts --command device.start_livestream -a T1234P0123456789
+tsx src/bin/client.ts --command device.start_livestream -a T1234P0123456789
 ```
 
 ```shell
-ts-node src/bin/client.ts --command device.set_property -a T1234P0123456789 enabled false
+tsx src/bin/client.ts --command device.set_property -a T1234P0123456789 enabled false
 ```
 
 All these options can be combined.
