@@ -1,9 +1,9 @@
-FROM node:20-alpine3.18 AS build
+FROM node:18-alpine3.18 AS build
 WORKDIR /tmp
 COPY . .
 RUN npm ci && npm run build
 
-FROM node:20-alpine3.18 AS prod
+FROM node:18-alpine3.18 AS prod
 WORKDIR /tmp_prod
 COPY --from=build /tmp/dist ./dist
 COPY --from=build /tmp/docker/run.sh ./run.sh
