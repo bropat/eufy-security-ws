@@ -54,7 +54,7 @@
     "fs-extra": "^11.2.0",
     "tslog": "^4.9.3",
     "ws": "^8.18.3",
-    "date-and-time": "^3.6.0"
+    "date-and-time": "^4.0.4"
   },
   "devDependencies": {
     "@types/node": "^20.19.9",
