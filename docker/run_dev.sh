@@ -180,6 +180,8 @@ if [ -n "${EUFY_CLIENT_GIT_URL}" ] && [ -n "${EUFY_CLIENT_GIT_BRANCH}" ];  then
     npm i
     npm run prepublishOnly -y
     mv build /usr/src/app/node_modules/eufy-security-client/build
+    cp package.json /usr/src/app/node_modules/eufy-security-client/build/
+    rm -r /tmp/eufy-security-client
 fi
 
 echo "$JSON_STRING" > /dev/shm/eufy-security-ws-config.json
