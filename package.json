@@ -1,6 +1,6 @@
 {
   "name": "eufy-security-ws",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "description": "Node WebSocket server implementation to integrate Eufy Security devices",
   "exports": {
     "import": "./dist/lib/index.js"
@@ -54,7 +54,7 @@
     "ansi-colors": "^4.1.3",
     "commander": "^15.0.0",
     "date-and-time": "^4.5.0",
-    "eufy-security-client": "4.1.0",
+    "eufy-security-client": "^4.1.0",
     "fs-extra": "^11.3.5",
     "tslog": "^4.9.3",
     "ws": "^8.21.0"
