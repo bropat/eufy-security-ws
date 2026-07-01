@@ -21,7 +21,7 @@ import {
   DatabaseQueryByDate,
   DatabaseCountByDate,
 } from "eufy-security-client";
-import { Readable } from "stream";
+import { PassThrough } from "stream";
 import { ILogObj, Logger } from "tslog";
 
 import { JSONValue, OutgoingEvent } from "./outgoing_message.js";
@@ -238,8 +238,8 @@ export class EventForwarder {
         station: Station,
         device: Device,
         metadata: StreamMetadata,
-        videostream: Readable,
-        audiostream: Readable,
+        videostream: PassThrough,
+        audiostream: PassThrough,
       ) => {
         const serialNumber = device.getSerial();
         this.clients.clients
@@ -334,8 +334,8 @@ export class EventForwarder {
         station: Station,
         device: Device,
         metadata: StreamMetadata,
-        videostream: Readable,
-        audiostream: Readable,
+        videostream: PassThrough,
+        audiostream: PassThrough,
       ) => {
         const serialNumber = device.getSerial();
         this.clients.clients
