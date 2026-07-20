@@ -56,7 +56,7 @@
     "date-and-time": "^4.5.0",
     "eufy-security-client": "4.1.0",
     "fs-extra": "^11.3.5",
-    "tslog": "^4.9.3",
+    "tslog": "^5.1.0",
     "ws": "^8.21.0"
   },
   "devDependencies": {
