@@ -1,36 +1,13 @@
 # eufy-security-ws
 
+
 > [!CAUTION]
 > # 🚨🚨🚨 LIBRARY DEPRECATION NOTICE 🚨🚨🚨
 >
-> ### ⚠️ Eufy is shutting down the legacy APIs this library is built on. ⚠️
+> Active development moved to https://github.com/mega-yfue/eufy-sdk 
 >
-> Eufy is in the middle of a large migration of their ecosystem. The newer **Eufy Mega**
-> platform (the "5-in-1" app, covering Security / Clean / Lights / Care) is gradually
-> becoming the only supported backend, and Eufy has **already started removing access to
-> the legacy APIs** this library was originally built on. Until recently both worked in
-> parallel — that is no longer guaranteed.
->
-> **🔔 What this means for you:**
->
-> - 🟢 A recent PR restores **push notifications** against the new v6 ("eufy_mega")
->   backend, so push works again **for now**. This is a short-term stopgap.
-> - 🟡 Other functionality that still depends on legacy endpoints may stop working
->   **without warning** as Eufy continues the rollout. The current Eufy app no longer
->   uses the legacy API at all.
-> - 🔴 Once the legacy API is fully shut down, **this library will stop functioning** —
->   no amount of patching here will change that.
->
-> **🚧 What's next:**
->
-> A new integration built around **Eufy Mega** is in active development (auto-discovery,
-> less battery drain for P2P), designed from the ground up rather than bolted onto the
-> Security-only structure, and coordinated across the Home Assistant, Homebridge and
-> Homey communities so the new library works for everyone.
->
-> ### 👉 Treat this release as a **temporary stopgap.** 👈
->
-> *This notice will be updated as the migration progresses.*
+
+---
 
 ![Logo](docs/_media/eufy-security-ws.png)
 
